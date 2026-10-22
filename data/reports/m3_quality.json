@@ -1,0 +1,1258 @@
+{
+  "generated_at": "2026-10-22T05:34:06+00:00",
+  "summary": {
+    "authors": 5892,
+    "stable_ids": 5892,
+    "ledger_active": 5892,
+    "ledger_merged": 0,
+    "ledger_inactive": 0,
+    "identity_events": 5895,
+    "separation_rules": 9,
+    "split_rows": 81,
+    "splits_applied": 6,
+    "split_events": 3,
+    "fragments": 65,
+    "uncertain": 10,
+    "pending_candidates": 0,
+    "resolved_candidates": 7,
+    "authors_needs_review": 45,
+    "career_assignments": 669,
+    "article_slots": 10782
+  },
+  "identity_events": [
+    {
+      "event_type": "created",
+      "n": 5892
+    },
+    {
+      "event_type": "split",
+      "n": 3
+    }
+  ],
+  "merge_candidates": [
+    {
+      "candidate_id": 50,
+      "name_a": "Kevin M Murphy",
+      "name_b": "Kevin J Murphy",
+      "reason": "conflicting middle initials: m vs j",
+      "status": "resolved_split",
+      "review_notes": "OpenAlex author IDs differ: A5044098731 vs A5103280100.",
+      "evidence": "{\"left_openalex_id\": \"A5044098731\", \"right_openalex_id\": \"A5103280100\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 51,
+      "name_a": "Robert L Clark",
+      "name_b": "Robert Clark",
+      "reason": "known namesake pair",
+      "status": "resolved_split",
+      "review_notes": "OpenAlex author IDs differ: A5057150141 vs A5026436988.",
+      "evidence": "{\"left_openalex_id\": \"A5057150141\", \"right_openalex_id\": \"A5026436988\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 52,
+      "name_a": "Rebecca L Thornton",
+      "name_b": "Rebecca Achee Thornton",
+      "reason": "conflicting middle initials: l vs a",
+      "status": "resolved_split",
+      "review_notes": "OpenAlex author IDs differ: A5015014002 vs A5055961553.",
+      "evidence": "{\"left_openalex_id\": \"A5015014002\", \"right_openalex_id\": \"A5055961553\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 53,
+      "name_a": "Robert J. Gordon",
+      "name_b": "Robert Gordon",
+      "reason": "known namesake pair",
+      "status": "resolved_split",
+      "review_notes": "Robert J. Gordon (Northwestern) and Robert N. Gordon (NYU Stern / Twenty-First Securities) have conflicting middle initials and institutions.",
+      "evidence": "{\"left_openalex_id\": null, \"right_openalex_id\": \"A5037502870\", \"verdict\": \"insufficient\"}"
+    },
+    {
+      "candidate_id": 54,
+      "name_a": "Margaret M McConnell",
+      "name_b": "Margaret McConnell",
+      "reason": "known namesake pair",
+      "status": "resolved_split",
+      "review_notes": "OpenAlex author IDs differ: A5055786108 vs A5009259131.",
+      "evidence": "{\"left_openalex_id\": \"A5055786108\", \"right_openalex_id\": \"A5009259131\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 55,
+      "name_a": "Jing Cynthia Wu",
+      "name_b": "Jing Wu",
+      "reason": "known namesake pair",
+      "status": "resolved_split",
+      "review_notes": "OpenAlex author IDs differ: A5023757993 vs A5084213008.",
+      "evidence": "{\"left_openalex_id\": \"A5023757993\", \"right_openalex_id\": \"A5084213008\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 56,
+      "name_a": "Michael Walker",
+      "name_b": "Michael S. Walker",
+      "reason": "known namesake pair",
+      "status": "resolved_split",
+      "review_notes": "OpenAlex author IDs differ: A5040394450 vs A5104017335.",
+      "evidence": "{\"left_openalex_id\": \"A5040394450\", \"right_openalex_id\": \"A5104017335\", \"verdict\": \"different\"}"
+    }
+  ],
+  "multi_id_review": [
+    {
+      "canonical_name": "Abhijit Banerjee",
+      "stable_id": "aer-a-000409",
+      "openalex_id": "A5048028100",
+      "proposed_name": "Abhijit Banerjee",
+      "paper_count": 12,
+      "first_year": 2003,
+      "last_year": 2021,
+      "institutions": "Massachusetts Institute of Technology; California Institute of Technology; National Bureau of Economic Research; Harvard University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Abhijit Banerjee",
+      "stable_id": "aer-a-000409",
+      "openalex_id": "A5101958476",
+      "proposed_name": "Abhijit Banerjee",
+      "paper_count": 1,
+      "first_year": 2023,
+      "last_year": 2023,
+      "institutions": "Universitas Gadjah Mada",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Alexander Ludwig",
+      "stable_id": "aer-a-003362",
+      "openalex_id": "A5049262173",
+      "proposed_name": "Alexander Ludwig",
+      "paper_count": 1,
+      "first_year": 2013,
+      "last_year": 2013,
+      "institutions": "University of Cologne",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Alexander Ludwig",
+      "stable_id": "aer-a-003362",
+      "openalex_id": "A5103016132",
+      "proposed_name": "Alexander Ludwig",
+      "paper_count": 1,
+      "first_year": 2014,
+      "last_year": 2014,
+      "institutions": "University of Cologne",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "André Meier",
+      "stable_id": "aer-a-002187",
+      "openalex_id": "A5027845849",
+      "proposed_name": "André Meier",
+      "paper_count": 1,
+      "first_year": 2010,
+      "last_year": 2010,
+      "institutions": "International Monetary Fund",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"IMF (2010) and Tudor Capital (2026) are compatible with a career move, but no independent identifier confirms it.\"}"
+    },
+    {
+      "canonical_name": "André Meier",
+      "stable_id": "aer-a-002187",
+      "openalex_id": "A5123454213",
+      "proposed_name": "André Meier",
+      "paper_count": 1,
+      "first_year": 2026,
+      "last_year": 2026,
+      "institutions": null,
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"IMF (2010) and Tudor Capital (2026) are compatible with a career move, but no independent identifier confirms it.\"}"
+    },
+    {
+      "canonical_name": "Benjamin I. Page",
+      "stable_id": "aer-a-005890",
+      "openalex_id": "A5089044770",
+      "proposed_name": "Benjamin I. Page",
+      "paper_count": 1,
+      "first_year": 2000,
+      "last_year": 2000,
+      "institutions": "Congressional Budget Office",
+      "status": "applied",
+      "evidence": "{\"reason\": \"Benjamin I. Page (2000) and Benjamin R Page (2005) have conflicting middle initials; the OpenAlex profiles are distinct.\", \"kept\": false}"
+    },
+    {
+      "canonical_name": "Benjamin R Page",
+      "stable_id": "aer-a-001088",
+      "openalex_id": "A5002652442",
+      "proposed_name": "Benjamin R Page",
+      "paper_count": 1,
+      "first_year": 2005,
+      "last_year": 2005,
+      "institutions": "Congressional Budget Office",
+      "status": "applied",
+      "evidence": "{\"reason\": \"Benjamin I. Page (2000) and Benjamin R Page (2005) have conflicting middle initials; the OpenAlex profiles are distinct.\", \"kept\": true}"
+    },
+    {
+      "canonical_name": "Colin F Camerer",
+      "stable_id": "aer-a-000444",
+      "openalex_id": "A5024087833",
+      "proposed_name": "Colin F. Camerer",
+      "paper_count": 9,
+      "first_year": 2003,
+      "last_year": 2015,
+      "institutions": "California Institute of Technology",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Colin F Camerer",
+      "stable_id": "aer-a-000444",
+      "openalex_id": "A5047168665",
+      "proposed_name": "Colin Camerer",
+      "paper_count": 1,
+      "first_year": 2001,
+      "last_year": 2001,
+      "institutions": "California Institute of Technology",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Daniel Chen",
+      "stable_id": "aer-a-005054",
+      "openalex_id": "A5100696404",
+      "proposed_name": "Daniel Chen",
+      "paper_count": 1,
+      "first_year": 2021,
+      "last_year": 2021,
+      "institutions": "Stanford University",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"Stanford GSB (2021) and Princeton Economics (2026) are compatible with a move, but the name is common and the records lack a distinguishing initial.\"}"
+    },
+    {
+      "canonical_name": "Daniel Chen",
+      "stable_id": "aer-a-005054",
+      "openalex_id": "A5126489057",
+      "proposed_name": "Daniel Chen",
+      "paper_count": 1,
+      "first_year": 2026,
+      "last_year": 2026,
+      "institutions": "Princeton University",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"Stanford GSB (2021) and Princeton Economics (2026) are compatible with a move, but the name is common and the records lack a distinguishing initial.\"}"
+    },
+    {
+      "canonical_name": "Daniel G. Sullivan",
+      "stable_id": "aer-a-005891",
+      "openalex_id": "A5060507064",
+      "proposed_name": "Daniel G. Sullivan",
+      "paper_count": 1,
+      "first_year": 2009,
+      "last_year": 2009,
+      "institutions": "Federal Reserve Bank of Chicago",
+      "status": "applied",
+      "evidence": "{\"reason\": \"Daniel G. Sullivan (Federal Reserve Bank of Chicago, 2009) and Daniel M. Sullivan (JPMorgan Chase Institute, 2024) have conflicting middle initials, institutions, and periods.\", \"kept\": false}"
+    },
+    {
+      "canonical_name": "Daniel M. Sullivan",
+      "stable_id": "aer-a-001853",
+      "openalex_id": "A5021617351",
+      "proposed_name": "Daniel M. Sullivan",
+      "paper_count": 1,
+      "first_year": 2024,
+      "last_year": 2024,
+      "institutions": "JPMorgan Chase & Co (United States)",
+      "status": "applied",
+      "evidence": "{\"reason\": \"Daniel G. Sullivan (Federal Reserve Bank of Chicago, 2009) and Daniel M. Sullivan (JPMorgan Chase Institute, 2024) have conflicting middle initials, institutions, and periods.\", \"kept\": true}"
+    },
+    {
+      "canonical_name": "Daniel S Hamermesh",
+      "stable_id": "aer-a-000163",
+      "openalex_id": "A5082907615",
+      "proposed_name": "Daniel S. Hamermesh",
+      "paper_count": 3,
+      "first_year": 2011,
+      "last_year": 2013,
+      "institutions": "Maastricht University; Royal Holloway University of London",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Daniel S Hamermesh",
+      "stable_id": "aer-a-000163",
+      "openalex_id": "A5108135703",
+      "proposed_name": "Daniel S. Hamermesh",
+      "paper_count": 3,
+      "first_year": 2002,
+      "last_year": 2017,
+      "institutions": "The University of Texas at Austin; National Bureau of Economic Research; Royal Holloway University of London",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "David E Weinstein",
+      "stable_id": "aer-a-000081",
+      "openalex_id": "A5077982232",
+      "proposed_name": "David Weinstein",
+      "paper_count": 1,
+      "first_year": 2002,
+      "last_year": 2002,
+      "institutions": "National Bureau of Economic Research",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "David E Weinstein",
+      "stable_id": "aer-a-000081",
+      "openalex_id": "A5112773136",
+      "proposed_name": "David E. Weinstein",
+      "paper_count": 7,
+      "first_year": 2000,
+      "last_year": 2011,
+      "institutions": "National Bureau of Economic Research; Columbia University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "David Lucking-Reiley",
+      "stable_id": "aer-a-000914",
+      "openalex_id": "A5079033270",
+      "proposed_name": "David Reiley",
+      "paper_count": 1,
+      "first_year": 2005,
+      "last_year": 2005,
+      "institutions": "University of Arizona",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "David Lucking-Reiley",
+      "stable_id": "aer-a-000914",
+      "openalex_id": "A5081078707",
+      "proposed_name": "David Lucking‐Reiley",
+      "paper_count": 1,
+      "first_year": 2000,
+      "last_year": 2000,
+      "institutions": "Vanderbilt University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "David S Johnson",
+      "stable_id": "aer-a-001334",
+      "openalex_id": "A5075693834",
+      "proposed_name": "David Johnson",
+      "paper_count": 3,
+      "first_year": 2006,
+      "last_year": 2013,
+      "institutions": "United States Census Bureau",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"Census Bureau (2006-2013) and University of Michigan (2026); a move is plausible but the records lack middle initials or an independent identifier.\"}"
+    },
+    {
+      "canonical_name": "David S Johnson",
+      "stable_id": "aer-a-001334",
+      "openalex_id": "A5133265256",
+      "proposed_name": "David Johnson",
+      "paper_count": 1,
+      "first_year": 2026,
+      "last_year": 2026,
+      "institutions": "University of Michigan",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"Census Bureau (2006-2013) and University of Michigan (2026); a move is plausible but the records lack middle initials or an independent identifier.\"}"
+    },
+    {
+      "canonical_name": "David S. Lee",
+      "stable_id": "aer-a-001907",
+      "openalex_id": "A5100648331",
+      "proposed_name": "David S. Lee",
+      "paper_count": 1,
+      "first_year": 2022,
+      "last_year": 2022,
+      "institutions": "National Bureau of Economic Research",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "David S. Lee",
+      "stable_id": "aer-a-001907",
+      "openalex_id": "A5100648333",
+      "proposed_name": "David Stephen Lee",
+      "paper_count": 1,
+      "first_year": 2009,
+      "last_year": 2009,
+      "institutions": null,
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Edward L Glaeser",
+      "stable_id": "aer-a-000566",
+      "openalex_id": "A5112385517",
+      "proposed_name": "Edward L. Glaeser",
+      "paper_count": 1,
+      "first_year": 2003,
+      "last_year": 2003,
+      "institutions": "National Bureau of Economic Research",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Edward L Glaeser",
+      "stable_id": "aer-a-000566",
+      "openalex_id": "A5113890882",
+      "proposed_name": "Edward L. Glaeser",
+      "paper_count": 10,
+      "first_year": 2001,
+      "last_year": 2022,
+      "institutions": "National Bureau of Economic Research; Harvard University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Feng Zhu",
+      "stable_id": "aer-a-002872",
+      "openalex_id": "A5037259758",
+      "proposed_name": "Feng Zhu",
+      "paper_count": 1,
+      "first_year": 2012,
+      "last_year": 2012,
+      "institutions": "University of Southern California",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Feng Zhu",
+      "stable_id": "aer-a-002872",
+      "openalex_id": "A5102940426",
+      "proposed_name": "Feng Zhu",
+      "paper_count": 1,
+      "first_year": 2011,
+      "last_year": 2011,
+      "institutions": "University of Southern California",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Gabriel Jiménez",
+      "stable_id": "aer-a-003153",
+      "openalex_id": "A5091042267",
+      "proposed_name": "Gabriel Jiménez",
+      "paper_count": 1,
+      "first_year": 2012,
+      "last_year": 2012,
+      "institutions": "Bank of Spain",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Gabriel Jiménez",
+      "stable_id": "aer-a-003153",
+      "openalex_id": "A5133571151",
+      "proposed_name": "Gabriel Jiménez",
+      "paper_count": 1,
+      "first_year": 2026,
+      "last_year": 2026,
+      "institutions": "Bank of Spain",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "H. Peyton Young",
+      "stable_id": "aer-a-002033",
+      "openalex_id": "A5063285903",
+      "proposed_name": "Peyton Young",
+      "paper_count": 1,
+      "first_year": 2025,
+      "last_year": 2025,
+      "institutions": "University of Oxford",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "H. Peyton Young",
+      "stable_id": "aer-a-002033",
+      "openalex_id": "A5103100665",
+      "proposed_name": "H. Peyton Young",
+      "paper_count": 1,
+      "first_year": 2009,
+      "last_year": 2009,
+      "institutions": "University of Oxford",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "H. Peyton Young",
+      "stable_id": "aer-a-002033",
+      "openalex_id": "A5111382231",
+      "proposed_name": "H. Peyton Young",
+      "paper_count": 1,
+      "first_year": 2001,
+      "last_year": 2001,
+      "institutions": "Johns Hopkins University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "J. Vernon Henderson",
+      "stable_id": "aer-a-002713",
+      "openalex_id": "A5036094575",
+      "proposed_name": "J. Vernon Henderson",
+      "paper_count": 1,
+      "first_year": 2012,
+      "last_year": 2012,
+      "institutions": "National Bureau of Economic Research",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "J. Vernon Henderson",
+      "stable_id": "aer-a-002713",
+      "openalex_id": "A5109240929",
+      "proposed_name": "Vernon Henderson",
+      "paper_count": 1,
+      "first_year": 2011,
+      "last_year": 2011,
+      "institutions": "Brown University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Janet Currie",
+      "stable_id": "aer-a-000260",
+      "openalex_id": "A5045972447",
+      "proposed_name": "Janet Currie",
+      "paper_count": 7,
+      "first_year": 2002,
+      "last_year": 2023,
+      "institutions": "National Bureau of Economic Research; Columbia University; Princeton University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Janet Currie",
+      "stable_id": "aer-a-000260",
+      "openalex_id": "A5102995382",
+      "proposed_name": "Janet Lynne Currie",
+      "paper_count": 2,
+      "first_year": 2003,
+      "last_year": 2025,
+      "institutions": "National Bureau of Economic Research; Princeton University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Jean Lee",
+      "stable_id": "aer-a-003340",
+      "openalex_id": "A5078874316",
+      "proposed_name": "Jean Y. H. Lee",
+      "paper_count": 1,
+      "first_year": 2014,
+      "last_year": 2014,
+      "institutions": "New York University",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"World Bank (2013) and NYU (2014) are compatible with a move, but the records lack a distinguishing middle name or identifier.\"}"
+    },
+    {
+      "canonical_name": "Jean Lee",
+      "stable_id": "aer-a-003340",
+      "openalex_id": "A5101938644",
+      "proposed_name": "Jean Lee",
+      "paper_count": 1,
+      "first_year": 2013,
+      "last_year": 2013,
+      "institutions": "World Bank",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"World Bank (2013) and NYU (2014) are compatible with a move, but the records lack a distinguishing middle name or identifier.\"}"
+    },
+    {
+      "canonical_name": "Jessica Cohen",
+      "stable_id": "aer-a-000126",
+      "openalex_id": "A5007737625",
+      "proposed_name": "Jessica Cohen",
+      "paper_count": 1,
+      "first_year": 2017,
+      "last_year": 2017,
+      "institutions": "Harvard University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Jessica Cohen",
+      "stable_id": "aer-a-000126",
+      "openalex_id": "A5101680513",
+      "proposed_name": "Jessica L. Cohen",
+      "paper_count": 1,
+      "first_year": 2015,
+      "last_year": 2015,
+      "institutions": "Brookings Institution",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "John M. Morgan",
+      "stable_id": "aer-a-001667",
+      "openalex_id": "A5113551723",
+      "proposed_name": "John M. Morgan",
+      "paper_count": 3,
+      "first_year": 2008,
+      "last_year": 2009,
+      "institutions": "University of California, Berkeley",
+      "status": "applied",
+      "evidence": "{\"reason\": \"John W. Morgan (Princeton, 2001) and John M. Morgan (UC Berkeley, 2008-09) have conflicting middle initials, different institutions, and non-overlapping papers.\", \"kept\": true}"
+    },
+    {
+      "canonical_name": "John W. Morgan",
+      "stable_id": "aer-a-005892",
+      "openalex_id": "A5037782885",
+      "proposed_name": "John W. Morgan",
+      "paper_count": 1,
+      "first_year": 2001,
+      "last_year": 2001,
+      "institutions": "Princeton University",
+      "status": "applied",
+      "evidence": "{\"reason\": \"John W. Morgan (Princeton, 2001) and John M. Morgan (UC Berkeley, 2008-09) have conflicting middle initials, different institutions, and non-overlapping papers.\", \"kept\": false}"
+    },
+    {
+      "canonical_name": "Jose Maria Fernandez",
+      "stable_id": "aer-a-003346",
+      "openalex_id": "A5049863469",
+      "proposed_name": "José M. Fernández",
+      "paper_count": 1,
+      "first_year": 2017,
+      "last_year": 2017,
+      "institutions": "University of Louisville",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"MIT financial engineering (2013) and University of Louisville (2017) differ in field and institution; no independent identifier.\"}"
+    },
+    {
+      "canonical_name": "Jose Maria Fernandez",
+      "stable_id": "aer-a-003346",
+      "openalex_id": "A5103894497",
+      "proposed_name": "José María Fernández",
+      "paper_count": 1,
+      "first_year": 2013,
+      "last_year": 2013,
+      "institutions": "Massachusetts Institute of Technology",
+      "status": "proposed",
+      "evidence": "{\"decision\": \"uncertain\", \"reason\": \"MIT financial engineering (2013) and University of Louisville (2017) differ in field and institution; no independent identifier.\"}"
+    },
+    {
+      "canonical_name": "Matt Lowe",
+      "stable_id": "aer-a-005038",
+      "openalex_id": "A5000095758",
+      "proposed_name": "Matt Lowe",
+      "paper_count": 1,
+      "first_year": 2026,
+      "last_year": 2026,
+      "institutions": "University of British Columbia",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Matt Lowe",
+      "stable_id": "aer-a-005038",
+      "openalex_id": "A5022354340",
+      "proposed_name": "Matt Lowe",
+      "paper_count": 1,
+      "first_year": 2021,
+      "last_year": 2021,
+      "institutions": "University of British Columbia",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Matthew E Kahn",
+      "stable_id": "aer-a-000455",
+      "openalex_id": "A5091249810",
+      "proposed_name": "Matthew E. Kahn",
+      "paper_count": 2,
+      "first_year": 2007,
+      "last_year": 2015,
+      "institutions": "University of California, Los Angeles",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Matthew E Kahn",
+      "stable_id": "aer-a-000455",
+      "openalex_id": "A5103281228",
+      "proposed_name": "Matthew E. Kahn",
+      "paper_count": 3,
+      "first_year": 2003,
+      "last_year": 2012,
+      "institutions": "Tufts University; University of California, Los Angeles",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Matthew Elliott",
+      "stable_id": "aer-a-003604",
+      "openalex_id": "A5070340080",
+      "proposed_name": "Matthew Elliott",
+      "paper_count": 1,
+      "first_year": 2014,
+      "last_year": 2014,
+      "institutions": "California Institute of Technology",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Matthew Elliott",
+      "stable_id": "aer-a-003604",
+      "openalex_id": "A5101557384",
+      "proposed_name": "Matthew Elliott",
+      "paper_count": 2,
+      "first_year": 2014,
+      "last_year": 2022,
+      "institutions": "California Institute of Technology; University of Cambridge",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Nathan H. Miller",
+      "stable_id": "aer-a-001991",
+      "openalex_id": "A5103271522",
+      "proposed_name": "Nathan Miller",
+      "paper_count": 1,
+      "first_year": 2021,
+      "last_year": 2021,
+      "institutions": "Georgetown University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Nathan H. Miller",
+      "stable_id": "aer-a-001991",
+      "openalex_id": "A5103645313",
+      "proposed_name": "Nathan H. Miller",
+      "paper_count": 1,
+      "first_year": 2009,
+      "last_year": 2009,
+      "institutions": "University of California, Berkeley",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Pedro Bordalo",
+      "stable_id": "aer-a-003010",
+      "openalex_id": "A5001437473",
+      "proposed_name": "Pedro Bordalo",
+      "paper_count": 1,
+      "first_year": 2013,
+      "last_year": 2013,
+      "institutions": "Royal Holloway University of London",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Pedro Bordalo",
+      "stable_id": "aer-a-003010",
+      "openalex_id": "A5062865486",
+      "proposed_name": "Pedro Bordalo",
+      "paper_count": 4,
+      "first_year": 2012,
+      "last_year": 2026,
+      "institutions": "Royal Holloway University of London; University of Oxford",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Qing Gong",
+      "stable_id": "aer-a-004271",
+      "openalex_id": "A5060669278",
+      "proposed_name": "Qing Gong",
+      "paper_count": 1,
+      "first_year": 2017,
+      "last_year": 2017,
+      "institutions": "Leonard Davis Institute of Health Economics",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Qing Gong",
+      "stable_id": "aer-a-004271",
+      "openalex_id": "A5101268967",
+      "proposed_name": "Qing Gong",
+      "paper_count": 1,
+      "first_year": 2020,
+      "last_year": 2020,
+      "institutions": "University of North Carolina at Chapel Hill",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Randall Wright",
+      "stable_id": "aer-a-000056",
+      "openalex_id": "A5022852970",
+      "proposed_name": "Randall Wright",
+      "paper_count": 1,
+      "first_year": 2011,
+      "last_year": 2011,
+      "institutions": "Federal Reserve Bank of Minneapolis",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Randall Wright",
+      "stable_id": "aer-a-000056",
+      "openalex_id": "A5110289044",
+      "proposed_name": "Randall Wright",
+      "paper_count": 3,
+      "first_year": 2002,
+      "last_year": 2018,
+      "institutions": "University of Pennsylvania; Federal Reserve",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robert J. Gordon",
+      "stable_id": "aer-a-002103",
+      "openalex_id": "A5041061619",
+      "proposed_name": "Robert J. Gordon",
+      "paper_count": 2,
+      "first_year": 2010,
+      "last_year": 2015,
+      "institutions": "Northwestern University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robert J. Gordon",
+      "stable_id": "aer-a-002103",
+      "openalex_id": "A5101678246",
+      "proposed_name": "Robert J. Gordon",
+      "paper_count": 1,
+      "first_year": 2016,
+      "last_year": 2016,
+      "institutions": "Northwestern University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robert McClelland",
+      "stable_id": "aer-a-002768",
+      "openalex_id": "A5015806295",
+      "proposed_name": "Robert McClelland",
+      "paper_count": 1,
+      "first_year": 2011,
+      "last_year": 2011,
+      "institutions": "Congressional Budget Office",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robert McClelland",
+      "stable_id": "aer-a-002768",
+      "openalex_id": "A5077016877",
+      "proposed_name": "Robert McClelland",
+      "paper_count": 1,
+      "first_year": 2013,
+      "last_year": 2013,
+      "institutions": "Congressional Budget Office",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robert P Inman",
+      "stable_id": "aer-a-001087",
+      "openalex_id": "A5038121079",
+      "proposed_name": "Robert Davies Inman",
+      "paper_count": 1,
+      "first_year": 2023,
+      "last_year": 2023,
+      "institutions": "University of Pennsylvania",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robert P Inman",
+      "stable_id": "aer-a-001087",
+      "openalex_id": "A5106486822",
+      "proposed_name": "Robert P. Inman",
+      "paper_count": 1,
+      "first_year": 2005,
+      "last_year": 2005,
+      "institutions": "University of Pennsylvania",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robin S. Lee",
+      "stable_id": "aer-a-003461",
+      "openalex_id": "A5030747175",
+      "proposed_name": "Robin S. Lee",
+      "paper_count": 1,
+      "first_year": 2013,
+      "last_year": 2013,
+      "institutions": "New York University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Robin S. Lee",
+      "stable_id": "aer-a-003461",
+      "openalex_id": "A5057375131",
+      "proposed_name": "Robin S. Lee",
+      "paper_count": 1,
+      "first_year": 2019,
+      "last_year": 2019,
+      "institutions": "National Bureau of Economic Research",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Ron S. Jarmin",
+      "stable_id": "aer-a-003718",
+      "openalex_id": "A5036939043",
+      "proposed_name": "Ron S. Jarmin",
+      "paper_count": 6,
+      "first_year": 2014,
+      "last_year": 2020,
+      "institutions": "United States Census Bureau",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Ron S. Jarmin",
+      "stable_id": "aer-a-003718",
+      "openalex_id": "A5136153702",
+      "proposed_name": "Ron S. Jarmin",
+      "paper_count": 1,
+      "first_year": 2026,
+      "last_year": 2026,
+      "institutions": "United States Census Bureau",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "S. Nageeb Ali",
+      "stable_id": "aer-a-001660",
+      "openalex_id": "A5027237739",
+      "proposed_name": "S. Nageeb Ali",
+      "paper_count": 1,
+      "first_year": 2023,
+      "last_year": 2023,
+      "institutions": "Pennsylvania State University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "S. Nageeb Ali",
+      "stable_id": "aer-a-001660",
+      "openalex_id": "A5073666806",
+      "proposed_name": "S. Nageeb Ali",
+      "paper_count": 4,
+      "first_year": 2008,
+      "last_year": 2025,
+      "institutions": "University of California San Diego; Pennsylvania State University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Sun-Bin Kim",
+      "stable_id": "aer-a-001587",
+      "openalex_id": "A5088757396",
+      "proposed_name": "Sun-Bin Kim",
+      "paper_count": 1,
+      "first_year": 2007,
+      "last_year": 2007,
+      "institutions": "Korea University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Sun-Bin Kim",
+      "stable_id": "aer-a-001587",
+      "openalex_id": "A5112198322",
+      "proposed_name": "Sun-Bin Kim",
+      "paper_count": 2,
+      "first_year": 2011,
+      "last_year": 2014,
+      "institutions": "Yonsei University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Supreet Kaur",
+      "stable_id": "aer-a-002247",
+      "openalex_id": "A5100769403",
+      "proposed_name": "Supreet Kaur",
+      "paper_count": 2,
+      "first_year": 2019,
+      "last_year": 2021,
+      "institutions": "University of California, Berkeley",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Supreet Kaur",
+      "stable_id": "aer-a-002247",
+      "openalex_id": "A5100769406",
+      "proposed_name": "Supreet Kaur",
+      "paper_count": 1,
+      "first_year": 2010,
+      "last_year": 2010,
+      "institutions": "Harvard University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Yan Chen",
+      "stable_id": "aer-a-000336",
+      "openalex_id": "A5050847122",
+      "proposed_name": "Yan Chen",
+      "paper_count": 4,
+      "first_year": 2004,
+      "last_year": 2011,
+      "institutions": "University of Michigan",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Yan Chen",
+      "stable_id": "aer-a-000336",
+      "openalex_id": "A5100378075",
+      "proposed_name": "Yan Chen",
+      "paper_count": 1,
+      "first_year": 2002,
+      "last_year": 2002,
+      "institutions": "University of Michigan",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Yongxiang Wang",
+      "stable_id": "aer-a-002195",
+      "openalex_id": "A5100641859",
+      "proposed_name": "Yongxiang Wang",
+      "paper_count": 1,
+      "first_year": 2020,
+      "last_year": 2020,
+      "institutions": "University of Southern California",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Yongxiang Wang",
+      "stable_id": "aer-a-002195",
+      "openalex_id": "A5100641861",
+      "proposed_name": "Yongxiang Wang",
+      "paper_count": 1,
+      "first_year": 2010,
+      "last_year": 2010,
+      "institutions": "Columbia University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Yuyu Chen",
+      "stable_id": "aer-a-001869",
+      "openalex_id": "A5036046257",
+      "proposed_name": "Yuyu Chen",
+      "paper_count": 2,
+      "first_year": 2009,
+      "last_year": 2019,
+      "institutions": "Peking University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    },
+    {
+      "canonical_name": "Yuyu Chen",
+      "stable_id": "aer-a-001869",
+      "openalex_id": "A5101644130",
+      "proposed_name": "Yuyu Chen",
+      "paper_count": 1,
+      "first_year": 2009,
+      "last_year": 2009,
+      "institutions": "Peking University",
+      "status": "rejected",
+      "evidence": "{\"decision\": \"fragment\", \"reason\": \"Same canonical name and non-conflicting institution/year evidence; treated as OpenAlex profile duplication rather than distinct people.\"}"
+    }
+  ],
+  "career_stages": [
+    {
+      "stage": "non_academic",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 632
+    },
+    {
+      "stage": "full_professor",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 23
+    },
+    {
+      "stage": "research_fellow",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 4
+    },
+    {
+      "stage": "assistant_professor",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 3
+    },
+    {
+      "stage": "associate_professor",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 3
+    },
+    {
+      "stage": "lecturer_other_academic",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 2
+    },
+    {
+      "stage": "emeritus",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 1
+    },
+    {
+      "stage": "phd_student",
+      "evidence_type": "byline_rank",
+      "confidence": "high",
+      "n": 1
+    }
+  ],
+  "career_by_year": [
+    {
+      "year": 2000,
+      "slots": 318,
+      "assigned": 24
+    },
+    {
+      "year": 2001,
+      "slots": 354,
+      "assigned": 22
+    },
+    {
+      "year": 2002,
+      "slots": 359,
+      "assigned": 23
+    },
+    {
+      "year": 2003,
+      "slots": 342,
+      "assigned": 16
+    },
+    {
+      "year": 2004,
+      "slots": 341,
+      "assigned": 22
+    },
+    {
+      "year": 2005,
+      "slots": 371,
+      "assigned": 23
+    },
+    {
+      "year": 2006,
+      "slots": 364,
+      "assigned": 25
+    },
+    {
+      "year": 2007,
+      "slots": 384,
+      "assigned": 26
+    },
+    {
+      "year": 2008,
+      "slots": 394,
+      "assigned": 17
+    },
+    {
+      "year": 2009,
+      "slots": 417,
+      "assigned": 29
+    },
+    {
+      "year": 2010,
+      "slots": 502,
+      "assigned": 35
+    },
+    {
+      "year": 2011,
+      "slots": 546,
+      "assigned": 28
+    },
+    {
+      "year": 2012,
+      "slots": 563,
+      "assigned": 37
+    },
+    {
+      "year": 2013,
+      "slots": 505,
+      "assigned": 27
+    },
+    {
+      "year": 2014,
+      "slots": 593,
+      "assigned": 45
+    },
+    {
+      "year": 2015,
+      "slots": 548,
+      "assigned": 20
+    },
+    {
+      "year": 2016,
+      "slots": 614,
+      "assigned": 64
+    },
+    {
+      "year": 2017,
+      "slots": 618,
+      "assigned": 48
+    },
+    {
+      "year": 2018,
+      "slots": 265,
+      "assigned": 19
+    },
+    {
+      "year": 2019,
+      "slots": 303,
+      "assigned": 17
+    },
+    {
+      "year": 2020,
+      "slots": 302,
+      "assigned": 14
+    },
+    {
+      "year": 2021,
+      "slots": 310,
+      "assigned": 13
+    },
+    {
+      "year": 2022,
+      "slots": 284,
+      "assigned": 15
+    },
+    {
+      "year": 2023,
+      "slots": 256,
+      "assigned": 11
+    },
+    {
+      "year": 2024,
+      "slots": 313,
+      "assigned": 17
+    },
+    {
+      "year": 2025,
+      "slots": 322,
+      "assigned": 22
+    },
+    {
+      "year": 2026,
+      "slots": 294,
+      "assigned": 10
+    }
+  ]
+}

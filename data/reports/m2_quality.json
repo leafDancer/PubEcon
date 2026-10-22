@@ -1,0 +1,1403 @@
+{
+  "generated_at": "2026-10-22T05:20:13+00:00",
+  "summary": {
+    "records": 5498,
+    "articles": 4786,
+    "pp_papers": 1795,
+    "front_matter": 223,
+    "issue_metadata": 30,
+    "unattributed": 49,
+    "errata": 17,
+    "association_reports": 324,
+    "retraction_notices": 2,
+    "retracted_originals": 2,
+    "duplicates": 67,
+    "authorships": 10782,
+    "authors": 5889,
+    "authors_with_orcid": 1,
+    "authors_name_key": 5471,
+    "authors_name_variant": 417,
+    "authors_merged_variants": 417,
+    "authors_needs_review": 93,
+    "author_aliases": 6381,
+    "merge_candidates": 7,
+    "coauthorship_edges": 9375,
+    "with_affiliation": 10760,
+    "with_rank": 669,
+    "with_academic_rank": 37,
+    "non_academic_slots": 632,
+    "with_abstract": 4305,
+    "abstract_crossref": 3472,
+    "abstract_aea": 0,
+    "abstract_openalex": 833,
+    "abstract_missing": 481,
+    "openalex_papers": 4735,
+    "jel_papers": 698,
+    "jel_codes": 1706,
+    "openalex_topic_papers": 4733,
+    "dates_aea": 700,
+    "dates_issue_metadata": 0,
+    "dates_calendar": 0,
+    "dates_crossref": 0,
+    "authors_with_openalex": 5520,
+    "author_openalex_conflicts": 40,
+    "institutions_resolved": 990,
+    "authorship_institution_links": 13386,
+    "slots_with_openalex_institution": 10188,
+    "aea_pages": 700,
+    "openalex_works": 4735,
+    "missing_page_first": 0,
+    "reversed_page_ranges": 1,
+    "min_year": 2000,
+    "max_year": 2026
+  },
+  "content_types": [
+    {
+      "content_type": "article",
+      "n": 4786
+    },
+    {
+      "content_type": "association_report",
+      "n": 324
+    },
+    {
+      "content_type": "front_matter",
+      "n": 223
+    },
+    {
+      "content_type": "duplicate",
+      "n": 67
+    },
+    {
+      "content_type": "unattributed",
+      "n": 49
+    },
+    {
+      "content_type": "issue_metadata",
+      "n": 30
+    },
+    {
+      "content_type": "erratum",
+      "n": 17
+    },
+    {
+      "content_type": "retraction_notice",
+      "n": 2
+    }
+  ],
+  "by_year": [
+    {
+      "year": 2000,
+      "papers": 182,
+      "authorships": 318,
+      "with_affiliation": 315,
+      "with_rank": 24,
+      "with_abstract": 136,
+      "pp_papers": 91
+    },
+    {
+      "year": 2001,
+      "papers": 182,
+      "authorships": 354,
+      "with_affiliation": 354,
+      "with_rank": 22,
+      "with_abstract": 126,
+      "pp_papers": 84
+    },
+    {
+      "year": 2002,
+      "papers": 189,
+      "authorships": 359,
+      "with_affiliation": 358,
+      "with_rank": 23,
+      "with_abstract": 140,
+      "pp_papers": 86
+    },
+    {
+      "year": 2003,
+      "papers": 184,
+      "authorships": 342,
+      "with_affiliation": 342,
+      "with_rank": 16,
+      "with_abstract": 131,
+      "pp_papers": 78
+    },
+    {
+      "year": 2004,
+      "papers": 177,
+      "authorships": 341,
+      "with_affiliation": 341,
+      "with_rank": 22,
+      "with_abstract": 126,
+      "pp_papers": 83
+    },
+    {
+      "year": 2005,
+      "papers": 181,
+      "authorships": 371,
+      "with_affiliation": 370,
+      "with_rank": 23,
+      "with_abstract": 136,
+      "pp_papers": 82
+    },
+    {
+      "year": 2006,
+      "papers": 187,
+      "authorships": 364,
+      "with_affiliation": 364,
+      "with_rank": 25,
+      "with_abstract": 157,
+      "pp_papers": 87
+    },
+    {
+      "year": 2007,
+      "papers": 190,
+      "authorships": 384,
+      "with_affiliation": 384,
+      "with_rank": 26,
+      "with_abstract": 151,
+      "pp_papers": 89
+    },
+    {
+      "year": 2008,
+      "papers": 189,
+      "authorships": 394,
+      "with_affiliation": 394,
+      "with_rank": 17,
+      "with_abstract": 154,
+      "pp_papers": 91
+    },
+    {
+      "year": 2009,
+      "papers": 202,
+      "authorships": 417,
+      "with_affiliation": 417,
+      "with_rank": 29,
+      "with_abstract": 175,
+      "pp_papers": 104
+    },
+    {
+      "year": 2010,
+      "papers": 223,
+      "authorships": 502,
+      "with_affiliation": 502,
+      "with_rank": 35,
+      "with_abstract": 180,
+      "pp_papers": 119
+    },
+    {
+      "year": 2011,
+      "papers": 246,
+      "authorships": 546,
+      "with_affiliation": 546,
+      "with_rank": 28,
+      "with_abstract": 246,
+      "pp_papers": 116
+    },
+    {
+      "year": 2012,
+      "papers": 240,
+      "authorships": 563,
+      "with_affiliation": 558,
+      "with_rank": 37,
+      "with_abstract": 240,
+      "pp_papers": 106
+    },
+    {
+      "year": 2013,
+      "papers": 221,
+      "authorships": 505,
+      "with_affiliation": 505,
+      "with_rank": 27,
+      "with_abstract": 221,
+      "pp_papers": 111
+    },
+    {
+      "year": 2014,
+      "papers": 247,
+      "authorships": 593,
+      "with_affiliation": 593,
+      "with_rank": 45,
+      "with_abstract": 247,
+      "pp_papers": 99
+    },
+    {
+      "year": 2015,
+      "papers": 235,
+      "authorships": 548,
+      "with_affiliation": 548,
+      "with_rank": 20,
+      "with_abstract": 235,
+      "pp_papers": 119
+    },
+    {
+      "year": 2016,
+      "papers": 248,
+      "authorships": 614,
+      "with_affiliation": 606,
+      "with_rank": 64,
+      "with_abstract": 248,
+      "pp_papers": 123
+    },
+    {
+      "year": 2017,
+      "papers": 249,
+      "authorships": 618,
+      "with_affiliation": 618,
+      "with_rank": 48,
+      "with_abstract": 249,
+      "pp_papers": 127
+    },
+    {
+      "year": 2018,
+      "papers": 113,
+      "authorships": 265,
+      "with_affiliation": 265,
+      "with_rank": 19,
+      "with_abstract": 112,
+      "pp_papers": 0
+    },
+    {
+      "year": 2019,
+      "papers": 126,
+      "authorships": 303,
+      "with_affiliation": 303,
+      "with_rank": 17,
+      "with_abstract": 126,
+      "pp_papers": 0
+    },
+    {
+      "year": 2020,
+      "papers": 118,
+      "authorships": 302,
+      "with_affiliation": 302,
+      "with_rank": 14,
+      "with_abstract": 118,
+      "pp_papers": 0
+    },
+    {
+      "year": 2021,
+      "papers": 114,
+      "authorships": 310,
+      "with_affiliation": 310,
+      "with_rank": 13,
+      "with_abstract": 113,
+      "pp_papers": 0
+    },
+    {
+      "year": 2022,
+      "papers": 115,
+      "authorships": 284,
+      "with_affiliation": 282,
+      "with_rank": 15,
+      "with_abstract": 115,
+      "pp_papers": 0
+    },
+    {
+      "year": 2023,
+      "papers": 94,
+      "authorships": 256,
+      "with_affiliation": 256,
+      "with_rank": 11,
+      "with_abstract": 94,
+      "pp_papers": 0
+    },
+    {
+      "year": 2024,
+      "papers": 111,
+      "authorships": 313,
+      "with_affiliation": 313,
+      "with_rank": 17,
+      "with_abstract": 110,
+      "pp_papers": 0
+    },
+    {
+      "year": 2025,
+      "papers": 120,
+      "authorships": 322,
+      "with_affiliation": 322,
+      "with_rank": 22,
+      "with_abstract": 119,
+      "pp_papers": 0
+    },
+    {
+      "year": 2026,
+      "papers": 103,
+      "authorships": 294,
+      "with_affiliation": 292,
+      "with_rank": 10,
+      "with_abstract": 100,
+      "pp_papers": 0
+    }
+  ],
+  "item_types": [
+    {
+      "item_type": "journal-article",
+      "n": 5468
+    },
+    {
+      "item_type": "journal-issue",
+      "n": 30
+    }
+  ],
+  "pp_issues": [
+    {
+      "year": 2000,
+      "volume": "90",
+      "issue": "2",
+      "articles": 91,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2000 (91 articles)"
+    },
+    {
+      "year": 2001,
+      "volume": "91",
+      "issue": "2",
+      "articles": 84,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2001 (84 articles)"
+    },
+    {
+      "year": 2002,
+      "volume": "92",
+      "issue": "2",
+      "articles": 86,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2002 (86 articles)"
+    },
+    {
+      "year": 2003,
+      "volume": "93",
+      "issue": "2",
+      "articles": 78,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2003 (78 articles)"
+    },
+    {
+      "year": 2004,
+      "volume": "94",
+      "issue": "2",
+      "articles": 83,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2004 (83 articles)"
+    },
+    {
+      "year": 2005,
+      "volume": "95",
+      "issue": "2",
+      "articles": 82,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2005 (82 articles)"
+    },
+    {
+      "year": 2006,
+      "volume": "96",
+      "issue": "2",
+      "articles": 87,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2006 (87 articles)"
+    },
+    {
+      "year": 2007,
+      "volume": "97",
+      "issue": "2",
+      "articles": 89,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2007 (89 articles)"
+    },
+    {
+      "year": 2008,
+      "volume": "98",
+      "issue": "2",
+      "articles": 91,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2008 (91 articles)"
+    },
+    {
+      "year": 2009,
+      "volume": "99",
+      "issue": "2",
+      "articles": 104,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2009 (104 articles)"
+    },
+    {
+      "year": 2010,
+      "volume": "100",
+      "issue": "2",
+      "articles": 119,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2010 (119 articles)"
+    },
+    {
+      "year": 2011,
+      "volume": "101",
+      "issue": "3",
+      "articles": 116,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2011 (116 articles)"
+    },
+    {
+      "year": 2012,
+      "volume": "102",
+      "issue": "3",
+      "articles": 106,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2012 (106 articles)"
+    },
+    {
+      "year": 2013,
+      "volume": "103",
+      "issue": "3",
+      "articles": 111,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2013 (111 articles)"
+    },
+    {
+      "year": 2014,
+      "volume": "104",
+      "issue": "5",
+      "articles": 99,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2014 (99 articles)"
+    },
+    {
+      "year": 2015,
+      "volume": "105",
+      "issue": "5",
+      "articles": 119,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2015 (119 articles)"
+    },
+    {
+      "year": 2016,
+      "volume": "106",
+      "issue": "5",
+      "articles": 123,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2016 (123 articles)"
+    },
+    {
+      "year": 2017,
+      "volume": "107",
+      "issue": "5",
+      "articles": 127,
+      "month": 5,
+      "confidence": "issue_cluster: largest spring issue in 2017 (127 articles)"
+    }
+  ],
+  "authors_per_paper": [
+    {
+      "authors_per_paper": 1,
+      "papers": 1180
+    },
+    {
+      "authors_per_paper": 2,
+      "papers": 1916
+    },
+    {
+      "authors_per_paper": 3,
+      "papers": 1179
+    },
+    {
+      "authors_per_paper": 4,
+      "papers": 377
+    },
+    {
+      "authors_per_paper": 5,
+      "papers": 101
+    },
+    {
+      "authors_per_paper": 6,
+      "papers": 22
+    },
+    {
+      "authors_per_paper": 7,
+      "papers": 6
+    },
+    {
+      "authors_per_paper": 8,
+      "papers": 2
+    },
+    {
+      "authors_per_paper": 9,
+      "papers": 2
+    },
+    {
+      "authors_per_paper": 12,
+      "papers": 1
+    }
+  ],
+  "rank_categories": [
+    {
+      "category": "(no rank detected)",
+      "n": 10113
+    },
+    {
+      "category": "non_academic",
+      "n": 632
+    },
+    {
+      "category": "full_professor",
+      "n": 23
+    },
+    {
+      "category": "research_fellow",
+      "n": 4
+    },
+    {
+      "category": "associate_professor",
+      "n": 3
+    },
+    {
+      "category": "assistant_professor",
+      "n": 3
+    },
+    {
+      "category": "other_academic",
+      "n": 2
+    },
+    {
+      "category": "phd_student",
+      "n": 1
+    },
+    {
+      "category": "emeritus",
+      "n": 1
+    }
+  ],
+  "top_institution_hints": [
+    {
+      "institution_hint": "Harvard University",
+      "n": 474
+    },
+    {
+      "institution_hint": "Stanford University",
+      "n": 374
+    },
+    {
+      "institution_hint": "University of Chicago",
+      "n": 348
+    },
+    {
+      "institution_hint": "Massachusetts Institute of Technology",
+      "n": 279
+    },
+    {
+      "institution_hint": "University of California Berkeley",
+      "n": 275
+    },
+    {
+      "institution_hint": "Princeton University",
+      "n": 245
+    },
+    {
+      "institution_hint": "Columbia University",
+      "n": 231
+    },
+    {
+      "institution_hint": "University of Pennsylvania",
+      "n": 204
+    },
+    {
+      "institution_hint": "Northwestern University",
+      "n": 193
+    },
+    {
+      "institution_hint": "New York University",
+      "n": 191
+    },
+    {
+      "institution_hint": "Yale University",
+      "n": 174
+    },
+    {
+      "institution_hint": "University of Michigan",
+      "n": 150
+    },
+    {
+      "institution_hint": "London School of Economics",
+      "n": 139
+    },
+    {
+      "institution_hint": "Duke University",
+      "n": 124
+    },
+    {
+      "institution_hint": "Cornell University",
+      "n": 93
+    },
+    {
+      "institution_hint": "University of California San Diego",
+      "n": 90
+    },
+    {
+      "institution_hint": "University of Toronto",
+      "n": 85
+    },
+    {
+      "institution_hint": "University of Maryland",
+      "n": 81
+    },
+    {
+      "institution_hint": "Brown University",
+      "n": 81
+    },
+    {
+      "institution_hint": "Harvard Business School",
+      "n": 75
+    },
+    {
+      "institution_hint": "Boston University",
+      "n": 73
+    },
+    {
+      "institution_hint": "University of California Los Angeles",
+      "n": 72
+    },
+    {
+      "institution_hint": "Federal Reserve Bank of New York",
+      "n": 70
+    },
+    {
+      "institution_hint": "Carnegie Mellon University",
+      "n": 68
+    },
+    {
+      "institution_hint": "University of Minnesota",
+      "n": 67
+    }
+  ],
+  "flags": {
+    "missing_title": 0,
+    "missing_year": 0,
+    "synthetic_doi": 0,
+    "future_year": 0,
+    "no_author": 0
+  },
+  "duplicate_titles": [
+    {
+      "title": "Comment",
+      "published_year": 2009,
+      "n": 3
+    },
+    {
+      "title": "How Liable Should a Lender Be? The Case of Judgment-Proof Firms and Environmental Risk: Comment",
+      "published_year": 2001,
+      "n": 2
+    },
+    {
+      "title": "Inequality Aversion, Efficiency, and Maximin Preferences in Simple Distribution Experiments: Comment",
+      "published_year": 2006,
+      "n": 2
+    },
+    {
+      "title": "Intergenerational Occupational Mobility in Great Britain and the United States Since 1850: Comment",
+      "published_year": 2013,
+      "n": 2
+    },
+    {
+      "title": "Verifying the Solution from a Nonlinear Solver: A Case Study: Comment",
+      "published_year": 2004,
+      "n": 2
+    },
+    {
+      "title": "Verifying the Solution from a Nonlinear Solver: A Case Study: Reply",
+      "published_year": 2004,
+      "n": 2
+    }
+  ],
+  "abstract_sources": [
+    {
+      "source": "crossref",
+      "n": 3472
+    },
+    {
+      "source": "openalex",
+      "n": 833
+    },
+    {
+      "source": "(none)",
+      "n": 481
+    }
+  ],
+  "date_sources": [
+    {
+      "source": "aea_issue_calendar",
+      "n": 4086
+    },
+    {
+      "source": "aea_article_page",
+      "n": 700
+    }
+  ],
+  "enrichment_by_year": [
+    {
+      "year": 2000,
+      "papers": 182,
+      "openalex_papers": 180,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 90,
+      "jel_papers": 0,
+      "openalex_topic_papers": 180
+    },
+    {
+      "year": 2001,
+      "papers": 182,
+      "openalex_papers": 182,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 73,
+      "jel_papers": 0,
+      "openalex_topic_papers": 182
+    },
+    {
+      "year": 2002,
+      "papers": 189,
+      "openalex_papers": 189,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 92,
+      "jel_papers": 189,
+      "openalex_topic_papers": 189
+    },
+    {
+      "year": 2003,
+      "papers": 184,
+      "openalex_papers": 184,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 78,
+      "jel_papers": 183,
+      "openalex_topic_papers": 184
+    },
+    {
+      "year": 2004,
+      "papers": 177,
+      "openalex_papers": 177,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 68,
+      "jel_papers": 174,
+      "openalex_topic_papers": 177
+    },
+    {
+      "year": 2005,
+      "papers": 181,
+      "openalex_papers": 180,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 68,
+      "jel_papers": 152,
+      "openalex_topic_papers": 180
+    },
+    {
+      "year": 2006,
+      "papers": 187,
+      "openalex_papers": 175,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 69,
+      "jel_papers": 0,
+      "openalex_topic_papers": 175
+    },
+    {
+      "year": 2007,
+      "papers": 190,
+      "openalex_papers": 174,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 61,
+      "jel_papers": 0,
+      "openalex_topic_papers": 174
+    },
+    {
+      "year": 2008,
+      "papers": 189,
+      "openalex_papers": 187,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 61,
+      "jel_papers": 0,
+      "openalex_topic_papers": 187
+    },
+    {
+      "year": 2009,
+      "papers": 202,
+      "openalex_papers": 201,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 79,
+      "jel_papers": 0,
+      "openalex_topic_papers": 199
+    },
+    {
+      "year": 2010,
+      "papers": 223,
+      "openalex_papers": 221,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 78,
+      "jel_papers": 0,
+      "openalex_topic_papers": 221
+    },
+    {
+      "year": 2011,
+      "papers": 246,
+      "openalex_papers": 245,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 4,
+      "jel_papers": 0,
+      "openalex_topic_papers": 245
+    },
+    {
+      "year": 2012,
+      "papers": 240,
+      "openalex_papers": 237,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 2,
+      "jel_papers": 0,
+      "openalex_topic_papers": 237
+    },
+    {
+      "year": 2013,
+      "papers": 221,
+      "openalex_papers": 221,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 221
+    },
+    {
+      "year": 2014,
+      "papers": 247,
+      "openalex_papers": 246,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 1,
+      "jel_papers": 0,
+      "openalex_topic_papers": 246
+    },
+    {
+      "year": 2015,
+      "papers": 235,
+      "openalex_papers": 235,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 1,
+      "jel_papers": 0,
+      "openalex_topic_papers": 235
+    },
+    {
+      "year": 2016,
+      "papers": 248,
+      "openalex_papers": 248,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 2,
+      "jel_papers": 0,
+      "openalex_topic_papers": 248
+    },
+    {
+      "year": 2017,
+      "papers": 249,
+      "openalex_papers": 248,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 1,
+      "jel_papers": 0,
+      "openalex_topic_papers": 248
+    },
+    {
+      "year": 2018,
+      "papers": 113,
+      "openalex_papers": 113,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 1,
+      "jel_papers": 0,
+      "openalex_topic_papers": 113
+    },
+    {
+      "year": 2019,
+      "papers": 126,
+      "openalex_papers": 126,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 2,
+      "jel_papers": 0,
+      "openalex_topic_papers": 126
+    },
+    {
+      "year": 2020,
+      "papers": 118,
+      "openalex_papers": 118,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 2,
+      "jel_papers": 0,
+      "openalex_topic_papers": 118
+    },
+    {
+      "year": 2021,
+      "papers": 114,
+      "openalex_papers": 114,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 114
+    },
+    {
+      "year": 2022,
+      "papers": 115,
+      "openalex_papers": 114,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 114
+    },
+    {
+      "year": 2023,
+      "papers": 94,
+      "openalex_papers": 94,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 94
+    },
+    {
+      "year": 2024,
+      "papers": 111,
+      "openalex_papers": 111,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 111
+    },
+    {
+      "year": 2025,
+      "papers": 120,
+      "openalex_papers": 119,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 119
+    },
+    {
+      "year": 2026,
+      "papers": 103,
+      "openalex_papers": 96,
+      "aea_abstracts": 0,
+      "openalex_abstracts": 0,
+      "jel_papers": 0,
+      "openalex_topic_papers": 96
+    }
+  ],
+  "top_jel": [
+    {
+      "code": "I21",
+      "n": 36,
+      "label": "Analysis of Education"
+    },
+    {
+      "code": "J15",
+      "n": 34,
+      "label": "Economics of Minorities, Races, Indigenous Peoples, and Immigrants; Non-labor Discrimination"
+    },
+    {
+      "code": "D72",
+      "n": 31,
+      "label": "Political Processes: Rent-seeking, Lobbying, Elections, Legislatures, and Voting Behavior"
+    },
+    {
+      "code": "E52",
+      "n": 31,
+      "label": "Monetary Policy"
+    },
+    {
+      "code": "J13",
+      "n": 29,
+      "label": "Fertility; Family Planning; Child Care; Children; Youth"
+    },
+    {
+      "code": "J24",
+      "n": 26,
+      "label": "Human Capital; Skills; Occupational Choice; Labor Productivity"
+    },
+    {
+      "code": "D31",
+      "n": 25,
+      "label": "Personal Income, Wealth, and Their Distributions"
+    },
+    {
+      "code": "D83",
+      "n": 24,
+      "label": "Search; Learning; Information and Knowledge; Communication; Belief"
+    },
+    {
+      "code": "E32",
+      "n": 23,
+      "label": "Business Fluctuations; Cycles"
+    },
+    {
+      "code": "J16",
+      "n": 23,
+      "label": "Economics of Gender; Non-labor Discrimination"
+    },
+    {
+      "code": "L11",
+      "n": 23,
+      "label": "Production, Pricing, and Market Structure; Size Distribution of Firms"
+    },
+    {
+      "code": "G12",
+      "n": 22,
+      "label": "Asset Pricing; Trading Volume; Bond Interest Rates"
+    },
+    {
+      "code": "O33",
+      "n": 22,
+      "label": "Technological Change: Choices and Consequences; Diffusion Processes"
+    },
+    {
+      "code": "E31",
+      "n": 21,
+      "label": "Price Level; Inflation; Deflation"
+    },
+    {
+      "code": "H55",
+      "n": 21,
+      "label": "Social Security and Public Pensions"
+    }
+  ],
+  "top_institutions": [
+    {
+      "display_name": "National Bureau of Economic Research",
+      "country_code": "US",
+      "n": 1103
+    },
+    {
+      "display_name": "Harvard University",
+      "country_code": "US",
+      "n": 674
+    },
+    {
+      "display_name": "University of Chicago",
+      "country_code": "US",
+      "n": 473
+    },
+    {
+      "display_name": "Stanford University",
+      "country_code": "US",
+      "n": 444
+    },
+    {
+      "display_name": "Massachusetts Institute of Technology",
+      "country_code": "US",
+      "n": 437
+    },
+    {
+      "display_name": "University of California, Berkeley",
+      "country_code": "US",
+      "n": 391
+    },
+    {
+      "display_name": "Columbia University",
+      "country_code": "US",
+      "n": 282
+    },
+    {
+      "display_name": "Princeton University",
+      "country_code": "US",
+      "n": 262
+    },
+    {
+      "display_name": "Yale University",
+      "country_code": "US",
+      "n": 246
+    },
+    {
+      "display_name": "New York University",
+      "country_code": "US",
+      "n": 235
+    },
+    {
+      "display_name": "University of Pennsylvania",
+      "country_code": "US",
+      "n": 234
+    },
+    {
+      "display_name": "Northwestern University",
+      "country_code": "US",
+      "n": 215
+    },
+    {
+      "display_name": "London School of Economics and Political Science",
+      "country_code": "GB",
+      "n": 196
+    },
+    {
+      "display_name": "University of Michigan",
+      "country_code": "US",
+      "n": 174
+    },
+    {
+      "display_name": "University of California, Los Angeles",
+      "country_code": "US",
+      "n": 161
+    },
+    {
+      "display_name": "Duke University",
+      "country_code": "US",
+      "n": 152
+    },
+    {
+      "display_name": "Centre for Economic Policy Research",
+      "country_code": "GB",
+      "n": 145
+    },
+    {
+      "display_name": "Center for Economic and Policy Research",
+      "country_code": "US",
+      "n": 133
+    },
+    {
+      "display_name": "Cornell University",
+      "country_code": "US",
+      "n": 105
+    },
+    {
+      "display_name": "Federal Reserve Board of Governors",
+      "country_code": "US",
+      "n": 102
+    }
+  ],
+  "top_cited": [
+    {
+      "title": "The Colonial Origins of Comparative Development: An Empirical Investigation",
+      "published_year": 2001,
+      "openalex_cited_by_count": 8507,
+      "doi": "10.1257/aer.91.5.1369"
+    },
+    {
+      "title": "Gravity with Gravitas: A Solution to the Border Puzzle",
+      "published_year": 2003,
+      "openalex_cited_by_count": 7548,
+      "doi": "10.1257/000282803321455214"
+    },
+    {
+      "title": "The Colonial Origins of Comparative Development: An Empirical Investigation: Reply",
+      "published_year": 2012,
+      "openalex_cited_by_count": 6049,
+      "doi": "10.1257/aer.102.6.3077"
+    },
+    {
+      "title": "Risk Aversion and Incentive Effects",
+      "published_year": 2002,
+      "openalex_cited_by_count": 5969,
+      "doi": "10.1257/000282802762024700"
+    },
+    {
+      "title": "ERC: A Theory of Equity, Reciprocity, and Competition",
+      "published_year": 2000,
+      "openalex_cited_by_count": 5395,
+      "doi": "10.1257/aer.90.1.166"
+    },
+    {
+      "title": "Maps of Bounded Rationality: Psychology for Behavioral Economics",
+      "published_year": 2003,
+      "openalex_cited_by_count": 5369,
+      "doi": "10.1257/000282803322655392"
+    },
+    {
+      "title": "Two-Way Fixed Effects Estimators with Heterogeneous Treatment Effects",
+      "published_year": 2020,
+      "openalex_cited_by_count": 4988,
+      "doi": "10.1257/aer.20181169"
+    },
+    {
+      "title": "The Next Generation of the Penn World Table",
+      "published_year": 2015,
+      "openalex_cited_by_count": 4906,
+      "doi": "10.1257/aer.20130954"
+    },
+    {
+      "title": "Not All Oil Price Shocks Are Alike: Disentangling Demand and Supply Shocks in the Crude Oil Market",
+      "published_year": 2009,
+      "openalex_cited_by_count": 4627,
+      "doi": "10.1257/aer.99.3.1053"
+    },
+    {
+      "title": "Shocks and Frictions in US Business Cycles: A Bayesian DSGE Approach",
+      "published_year": 2007,
+      "openalex_cited_by_count": 4626,
+      "doi": "10.1257/aer.97.3.586"
+    },
+    {
+      "title": "Estimation and Inference of Impulse Responses by Local Projections",
+      "published_year": 2005,
+      "openalex_cited_by_count": 4614,
+      "doi": "10.1257/0002828053828518"
+    },
+    {
+      "title": "The Economic Costs of Conflict: A Case Study of the Basque Country",
+      "published_year": 2003,
+      "openalex_cited_by_count": 4511,
+      "doi": "10.1257/000282803321455188"
+    },
+    {
+      "title": "Are Emily and Greg More Employable Than Lakisha and Jamal? A Field Experiment on Labor Market Discrimination",
+      "published_year": 2004,
+      "openalex_cited_by_count": 4490,
+      "doi": "10.1257/0002828042002561"
+    },
+    {
+      "title": "The China Syndrome: Local Labor Market Effects of Import Competition in the United States",
+      "published_year": 2013,
+      "openalex_cited_by_count": 4441,
+      "doi": "10.1257/aer.103.6.2121"
+    },
+    {
+      "title": "Cooperation and Punishment in Public Goods Experiments",
+      "published_year": 2000,
+      "openalex_cited_by_count": 4314,
+      "doi": "10.1257/aer.90.4.980"
+    }
+  ],
+  "author_openalex_conflicts": [
+    {
+      "canonical_name": "H. Peyton Young",
+      "n": 3,
+      "openalex_ids": "A5063285903,A5103100665,A5111382231"
+    },
+    {
+      "canonical_name": "Abhijit Banerjee",
+      "n": 2,
+      "openalex_ids": "A5048028100,A5101958476"
+    },
+    {
+      "canonical_name": "Alexander Ludwig",
+      "n": 2,
+      "openalex_ids": "A5103016132,A5049262173"
+    },
+    {
+      "canonical_name": "André Meier",
+      "n": 2,
+      "openalex_ids": "A5123454213,A5027845849"
+    },
+    {
+      "canonical_name": "Benjamin R Page",
+      "n": 2,
+      "openalex_ids": "A5002652442,A5089044770"
+    },
+    {
+      "canonical_name": "Colin F Camerer",
+      "n": 2,
+      "openalex_ids": "A5024087833,A5047168665"
+    },
+    {
+      "canonical_name": "Daniel Chen",
+      "n": 2,
+      "openalex_ids": "A5126489057,A5100696404"
+    },
+    {
+      "canonical_name": "Daniel M. Sullivan",
+      "n": 2,
+      "openalex_ids": "A5021617351,A5060507064"
+    },
+    {
+      "canonical_name": "Daniel S Hamermesh",
+      "n": 2,
+      "openalex_ids": "A5108135703,A5082907615"
+    },
+    {
+      "canonical_name": "David E Weinstein",
+      "n": 2,
+      "openalex_ids": "A5112773136,A5077982232"
+    },
+    {
+      "canonical_name": "David Lucking-Reiley",
+      "n": 2,
+      "openalex_ids": "A5079033270,A5081078707"
+    },
+    {
+      "canonical_name": "David S Johnson",
+      "n": 2,
+      "openalex_ids": "A5075693834,A5133265256"
+    },
+    {
+      "canonical_name": "David S. Lee",
+      "n": 2,
+      "openalex_ids": "A5100648331,A5100648333"
+    },
+    {
+      "canonical_name": "Edward L Glaeser",
+      "n": 2,
+      "openalex_ids": "A5113890882,A5112385517"
+    },
+    {
+      "canonical_name": "Feng Zhu",
+      "n": 2,
+      "openalex_ids": "A5037259758,A5102940426"
+    },
+    {
+      "canonical_name": "Gabriel Jiménez",
+      "n": 2,
+      "openalex_ids": "A5133571151,A5091042267"
+    },
+    {
+      "canonical_name": "J. Vernon Henderson",
+      "n": 2,
+      "openalex_ids": "A5036094575,A5109240929"
+    },
+    {
+      "canonical_name": "Janet Currie",
+      "n": 2,
+      "openalex_ids": "A5045972447,A5102995382"
+    },
+    {
+      "canonical_name": "Jean Lee",
+      "n": 2,
+      "openalex_ids": "A5078874316,A5101938644"
+    },
+    {
+      "canonical_name": "Jessica Cohen",
+      "n": 2,
+      "openalex_ids": "A5007737625,A5101680513"
+    }
+  ],
+  "candidate_evidence": [
+    {
+      "candidate_id": 50,
+      "name_a": "Kevin M Murphy",
+      "name_b": "Kevin J Murphy",
+      "reason": "conflicting middle initials: m vs j",
+      "evidence": "{\"left_openalex_id\": \"A5044098731\", \"right_openalex_id\": \"A5103280100\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 51,
+      "name_a": "Robert L Clark",
+      "name_b": "Robert Clark",
+      "reason": "known namesake pair",
+      "evidence": "{\"left_openalex_id\": \"A5057150141\", \"right_openalex_id\": \"A5026436988\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 52,
+      "name_a": "Rebecca L Thornton",
+      "name_b": "Rebecca Achee Thornton",
+      "reason": "conflicting middle initials: l vs a",
+      "evidence": "{\"left_openalex_id\": \"A5015014002\", \"right_openalex_id\": \"A5055961553\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 53,
+      "name_a": "Robert J. Gordon",
+      "name_b": "Robert Gordon",
+      "reason": "known namesake pair",
+      "evidence": "{\"left_openalex_id\": null, \"right_openalex_id\": \"A5037502870\", \"verdict\": \"insufficient\"}"
+    },
+    {
+      "candidate_id": 54,
+      "name_a": "Margaret M McConnell",
+      "name_b": "Margaret McConnell",
+      "reason": "known namesake pair",
+      "evidence": "{\"left_openalex_id\": \"A5055786108\", \"right_openalex_id\": \"A5009259131\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 55,
+      "name_a": "Jing Cynthia Wu",
+      "name_b": "Jing Wu",
+      "reason": "known namesake pair",
+      "evidence": "{\"left_openalex_id\": \"A5023757993\", \"right_openalex_id\": \"A5084213008\", \"verdict\": \"different\"}"
+    },
+    {
+      "candidate_id": 56,
+      "name_a": "Michael Walker",
+      "name_b": "Michael S. Walker",
+      "reason": "known namesake pair",
+      "evidence": "{\"left_openalex_id\": \"A5040394450\", \"right_openalex_id\": \"A5104017335\", \"verdict\": \"different\"}"
+    }
+  ]
+}

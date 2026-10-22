@@ -1,0 +1,79 @@
+# Data source reconnaissance
+
+This note records what was actually observed while scoping the project. It is a decision record, not a vendor description.
+
+## Scope decision
+
+The project covers **AER 2000–present**. This deliberately excludes the 1911–1999 archive, which has no AEA DOI deposits and would require JSTOR/RePEc reconstruction. The 2000+ window is where Crossref, AEA, OpenAlex, and author CVs all have usable coverage.
+
+## Crossref
+
+- Journal endpoint: `https://api.crossref.org/journals/0002-8282/works`
+- Records from 1999 onward. The 2000+ filter returns **5,498 records** (observed 2026-10).
+- Cursor pagination works with `cursor=*`; `rows=1000` is accepted. A full harvest is roughly six page requests.
+- Author records include `given`, `family`, `sequence`, and `affiliation` entries. AEA deposits frequently include publish-time affiliations, often with rank words:
+
+  > `Assistant Professor of Economics, Princeton University (email: )`
+
+- Abstracts are present for many research articles. Subject fields are not consistently populated; JEL codes come from AEA pages instead.
+- Crossref rate limits can return HTTP 429 under bursts. The harvester uses a contact address, sequential requests, and exponential backoff, and caches every raw page.
+
+## AEA website
+
+- Article pages are addressable by DOI: `https://www.aeaweb.org/articles?id=<DOI>`.
+- The all-issues page `https://www.aeaweb.org/journals/aer/issues` lists every volume and issue with its cover month, including combined issues such as "April 2018 (Vol. 108, No. 4-5)". This is the source of record for issue months.
+- Each article page exposes machine-readable `citation_*` meta tags: `citation_publication_date` (`YYYY/MM`), `citation_volume`, `citation_issue`, `citation_firstpage`, `citation_lastpage`, `citation_author`, and `citation_author_institution`. These confirm the issue month and supply volume/issue/pages.
+- The page also contains a `JEL Classification` block with codes and official descriptions, and an `Abstract` section. Both are parsed and stored with provenance.
+- The 2001 Acemoglu–Johnson–Robinson page was fetched successfully and exposes authors, abstract, JEL classification, volume/issue/pages, and citation text.
+- The AEA `robots.txt` disallows GPTBot and Amazonbot; the site is otherwise reachable. The site is proxy-sensitive and occasionally returns a read timeout before succeeding on retry. The crawler uses a browser user agent, a persistent client, a small worker pool, rate limiting, retries, and a per-DOI HTML cache so it can resume without refetching.
+- Only metadata and short excerpts are stored; full article text is not redistributed.
+
+## OpenAlex
+
+- AER source: `S23254222`; reported `works_count` is 10,014.
+- **Year distribution is not trustworthy for historical work.** Pre-1969 records are nearly absent; a large block of 1960s–1990s articles is mislabelled as 2016 (1,032 AER records in 2016 vs roughly 280 in neighbouring years). An example is a 1994 article with `biblio.volume = 84` and `publication_year = 2016`, landing on Dialnet.
+- DOI matching works for 4,735 of 4,786 AER research articles (98.9%). The 51 misses are concentrated in 2006–2007 and in the newest 2026 issue.
+- OpenAlex `publication_date` inherits the same one-month-early shift as Crossref for 2002–2009. It is stored for comparison but never used to correct issue months.
+- OpenAlex abstracts are useful (1,210 records filled), but some are actually AEA page descriptions ("Title by Authors. Published in volume ... of American Economic Review"). 377 were filtered as boilerplate, leaving 833 usable abstracts.
+- OpenAlex topics are stored under `scheme='openalex_topic'` and are not treated as equivalent to JEL codes.
+- Author profiles carry useful ORCIDs and citation counts, but `affiliations` is noisy: Markus Brunnermeier's profile lists dozens of institutions that are clearly coauthor affiliations, not his employment history.
+- OpenAlex work authorship supplies author IDs and publish-time institution IDs. 5,526 of 5,892 canonical authors receive an OpenAlex link; 40 authors had more than one OpenAlex ID and were reviewed in M3 (3 splits, 32 duplicate-profile cases, 5 uncertain).
+- **Decision:** use OpenAlex only as DOI-keyed enrichment, never as the primary paper record or as a career timeline.
+
+## RePEc / IDEAS
+
+- Journal page: `https://ideas.repec.org/s/aea/aecrev.html`; `robots.txt` allows crawling except `/cgi-bin/`.
+- The journal page is paginated (`aecrev2.html`, …, `aecrev55.html`), so full-history issue lists are available if the scope ever expands.
+- Not needed for the 2000+ MVP because Crossref provides the article list.
+
+## Retractions
+
+- Crossref `update-to` identifies both AER retraction pairs: `10.1257/000282802762024656` ← `10.1257/aer.97.3.1032`, and `10.1257/aer.20210369` ← `10.1257/aer.113.7.2053`. The pipeline uses this relation first and keeps the explicit pairs only as a fallback.
+
+## Career data
+
+No bibliographic source contains publish-time career stage. The evidence hierarchy is:
+
+1. Publish-time byline rank (Crossref affiliation string; highest precision in recent years).
+2. CV education/employment timeline (degree years, position titles, start/end years).
+3. Heuristics from PhD year and first publication (low confidence, used sparingly).
+4. `unknown` (displayed as missing).
+
+Career facts will be stored as structured rows with source URLs. Personal data such as birth dates, home addresses, and email addresses is out of scope.
+
+## Known limitations
+
+- Author resolution is name-based, supplemented by OpenAlex evidence. The resolver handles middle initials, surname particles, Unicode transliteration, suffixes, and known namesakes. M3 introduced stable IDs and explicit review: 5,892 canonical authors, 7 resolved namesake candidates, 3 confirmed splits, 32 OpenAlex profile-duplication cases, and 5 uncertain multi-ID authors. 45 authors remain flagged. This is not a substitute for CV evidence.
+- Stable author IDs live in `author_identity_ledger`; `authors.author_id` remains an internal key and can change on rebuild. Confirmed splits are protected by `author_separation_rules`.
+- Affiliation strings are inconsistent, and explicit academic rank is present on only about 0.3% of author slots. OpenAlex resolves publish-time institutions for 10,188 of 10,782 slots (94.5%); combined with the Crossref byline hint, 10,602 slots (98.3%) have some institution string.
+- Byline-only career assignments cover 669 of 10,782 slots (6.2%); the remaining 10,113 are unknown until the CV timeline layer.
+- P&P articles are identified as the largest spring issue (April/May, at least 50 articles) in each year through 2017. The issue number is not stable: it is 2 in 2000–2010, 3 in 2011–2013, and 5 in 2014–2017. AEA issue metadata is used for verification where available.
+- AER's publication schedule and issue numbering changed over time; year-level analysis is safer than issue-level analysis.
+- Crossref coverage of front matter and non-research items varies. AER P&P issues also contain AEA committee reports, minutes, and Job Openings reports; these are classified as `association_report` and excluded from research-article statistics.
+- Crossref contains duplicate AER deposits: 51 legacy/modern DOI pairs in 2006 issue 4 and 2007 issue 1, plus research-article, erratum, and P&P front-matter pairs. Normalised matching identifies 67 duplicate rows; the modern DOI is canonical where possible.
+- Crossref publication months were one month earlier than the AEA issue cover month for 2002–2009. Every article month now comes from the AEA all-issues calendar or an AEA article page (currently 4,086 and 700 respectively); no article relies on the Crossref fallback. Day-level precision is dropped when the month is replaced; the raw Crossref date remains in `source_records`.
+- Crossref provides no subject/JEL fields for AER records. JEL codes are ingested from AEA article pages and stored under `scheme='jel'`; OpenAlex topics are a separate scheme. AEA rate-limits bulk crawling, so JEL coverage is partial and the crawler is resumable from its HTML cache; OpenAlex topics cover 98.9% of articles independently.
+- Institution hints are now entity-resolved against OpenAlex for 94.5% of slots, but 180 slots still lack any hint, and Crossref byline fragments (e.g. "and Development Studies Institute") remain in the raw `institution_hint` field.
+- OpenAlex does not index 51 AER articles (mostly 2006–2007 and the newest 2026 issue). Their Crossref metadata remains complete, but they lack OpenAlex topics, author IDs, and institution entities.
+- OpenAlex citation counts are stored separately from Crossref counts and are not reconciled. They are as-reported and can be inflated by duplicate works or citation-matching errors; the frontend labels the source.
+- One reversed numeric page range remains (`10.1257/aer.20181830`); it is flagged by the page validator and will be corrected against the AEA page.
