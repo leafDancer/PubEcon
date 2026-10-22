@@ -969,3 +969,345 @@ def generate_m3_report(conn, path: Path | None = None) -> tuple[Path, Path]:
     }
     metrics_path.write_text(json.dumps(metrics, ensure_ascii=False, indent=2), encoding="utf-8")
     return markdown_path, metrics_path
+
+
+def generate_m4_report(conn, path: Path | None = None) -> tuple[Path, Path]:
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    markdown_path = path or (REPORTS_DIR / "m4_quality.md")
+    metrics_path = markdown_path.with_suffix(".json")
+
+    summary = conn.execute(
+        """
+        SELECT
+            (SELECT COUNT(*) FROM authors) AS authors,
+            (SELECT COUNT(*) FROM authors WHERE orcid IS NOT NULL) AS authors_with_orcid,
+            (SELECT COUNT(DISTINCT author_id) FROM career_events
+                WHERE source_type='orcid') AS orcid_records,
+            (SELECT COUNT(*) FROM career_events WHERE source_type='orcid') AS orcid_events,
+            (SELECT COUNT(*) FROM career_events
+                WHERE source_type='orcid' AND start_year IS NOT NULL) AS dated_orcid_events,
+            (SELECT COUNT(DISTINCT author_id) FROM career_events
+                WHERE source_type='orcid') AS authors_with_events,
+            (SELECT COUNT(*) FROM career_assignments) AS career_assignments,
+            (SELECT COUNT(*) FROM career_assignments
+                WHERE evidence_type LIKE 'orcid%') AS orcid_assignments,
+            (SELECT COUNT(*) FROM career_assignments
+                WHERE evidence_type IN ('byline_rank','byline_affiliation')) AS byline_assignments,
+            (SELECT COUNT(*) FROM authorships a
+                JOIN papers p ON p.paper_id=a.paper_id
+                WHERE p.content_type='article' AND p.is_duplicate=0) AS article_slots,
+            (SELECT COUNT(*) FROM authors
+                WHERE review_status='orcid_name_conflict') AS orcid_name_conflicts,
+            (SELECT COUNT(*) FROM authors
+                WHERE review_status='orcid_conflict') AS orcid_conflicts,
+            (SELECT COUNT(*) FROM authors
+                WHERE orcid IS NOT NULL
+                  AND orcid_source IN ('verified_doi','verified_title',
+                                       'verified_institution','field_economics')) AS orcid_accepted,
+            (SELECT COUNT(*) FROM authors
+                WHERE orcid_source='orcid_unverified') AS orcid_unverified,
+            (SELECT COUNT(*) FROM authors
+                WHERE review_status='orcid_field_mismatch') AS orcid_field_mismatches,
+            (SELECT COUNT(*) FROM authors
+                WHERE review_status='orcid_unverified_career_risk') AS orcid_career_risk_rejections,
+            (SELECT COUNT(*) FROM author_cv_sources) AS cv_sources,
+            (SELECT COUNT(*) FROM author_cv_sources WHERE status='parsed') AS cv_parsed,
+            (SELECT COUNT(*) FROM career_events WHERE source_type='cv') AS cv_events,
+            (SELECT COUNT(*) FROM career_assignments
+                WHERE evidence_type LIKE 'cv%') AS cv_assignments,
+            (SELECT COUNT(*) FROM career_assignments
+                WHERE confidence IN ('high','medium')) AS high_medium_assignments,
+            (SELECT COUNT(*) FROM career_assignments
+                WHERE confidence='low') AS low_assignments
+        """
+    ).fetchone()
+
+    event_rows = conn.execute(
+        """
+        SELECT event_type, source_type, confidence, COUNT(*) AS n
+        FROM career_events
+        GROUP BY 1, 2, 3
+        ORDER BY n DESC, event_type
+        """
+    ).fetchall()
+
+    assignment_rows = conn.execute(
+        """
+        SELECT evidence_type, stage, confidence, COUNT(*) AS n
+        FROM career_assignments
+        GROUP BY 1, 2, 3
+        ORDER BY n DESC, stage
+        """
+    ).fetchall()
+
+    career_by_year = conn.execute(
+        """
+        SELECT p.published_year AS year,
+               COUNT(a.authorship_id) AS slots,
+               SUM(CASE WHEN ca.evidence_type IN ('byline_rank','byline_affiliation')
+                        THEN 1 ELSE 0 END) AS byline,
+               SUM(CASE WHEN ca.evidence_type LIKE 'orcid%' THEN 1 ELSE 0 END) AS orcid,
+               COUNT(ca.assignment_id) AS assigned
+        FROM authorships a
+        JOIN papers p ON p.paper_id=a.paper_id
+        LEFT JOIN career_assignments ca ON ca.authorship_id=a.authorship_id
+        WHERE p.content_type='article' AND p.is_duplicate=0
+        GROUP BY p.published_year
+        ORDER BY p.published_year
+        """
+    ).fetchall()
+
+    examples = conn.execute(
+        """
+        SELECT a.canonical_name, p.published_year, ca.stage, ca.evidence_type,
+               ca.confidence, ca.notes, ca.source_url
+        FROM career_assignments ca
+        JOIN authors a ON a.author_id=ca.author_id
+        JOIN papers p ON p.paper_id=ca.paper_id
+        WHERE ca.evidence_type LIKE 'orcid%' OR ca.evidence_type LIKE 'cv%'
+        ORDER BY p.published_year DESC, a.canonical_name
+        LIMIT 30
+        """
+    ).fetchall()
+
+    identity_rows = conn.execute(
+        """
+        SELECT orcid_source, orcid_match_confidence, COUNT(*) AS n
+        FROM authors
+        WHERE orcid IS NOT NULL
+        GROUP BY 1, 2
+        ORDER BY n DESC, orcid_source
+        """
+    ).fetchall()
+
+    review_rows = conn.execute(
+        """
+        SELECT review_status, COUNT(*) AS n
+        FROM authors
+        WHERE review_status LIKE 'orcid_%'
+        GROUP BY 1
+        ORDER BY n DESC
+        """
+    ).fetchall()
+
+    assignment_identity_rows = conn.execute(
+        """
+        SELECT a.orcid_match_confidence AS identity_confidence,
+               ca.confidence AS assignment_confidence,
+               COUNT(*) AS n
+        FROM career_assignments ca
+        JOIN authors a ON a.author_id=ca.author_id
+        WHERE ca.evidence_type LIKE 'orcid%'
+        GROUP BY 1, 2
+        ORDER BY identity_confidence, assignment_confidence
+        """
+    ).fetchall()
+
+    lines: list[str] = []
+    lines.append("# M4 Career Evidence Report — AER 2000+")
+    lines.append("")
+    lines.append(f"Generated: {utcnow()}")
+    lines.append("")
+    lines.append(
+        f"Scope: **{JOURNAL_NAME}** (ISSN 0002-8282), 2000–present. "
+        "M4 adds structured ORCID employment/education timelines and uses them "
+        "to infer career stage at publication."
+    )
+    lines.append("")
+    lines.append("## Summary")
+    lines.append("")
+    lines.append(
+        _table(
+            ["Metric", "Value"],
+            [
+                ("Canonical authors", summary["authors"]),
+                ("Authors with ORCID", summary["authors_with_orcid"]),
+                (
+                    "  — accepted identity evidence",
+                    summary["orcid_accepted"],
+                ),
+                ("  — unverified, career events withheld", summary["orcid_unverified"]),
+                ("ORCID identities contributing events", summary["orcid_records"]),
+                ("ORCID career events", summary["orcid_events"]),
+                ("ORCID events with a start year", summary["dated_orcid_events"]),
+                ("Career assignments (all sources)", summary["career_assignments"]),
+                ("  — byline assignments", summary["byline_assignments"]),
+                ("  — ORCID assignments", summary["orcid_assignments"]),
+                (
+                    "Career coverage (article slots)",
+                    _pct(summary["career_assignments"], summary["article_slots"]),
+                ),
+                ("  — high/medium confidence", summary["high_medium_assignments"]),
+                ("  — low confidence", summary["low_assignments"]),
+                ("ORCID name conflicts skipped", summary["orcid_name_conflicts"]),
+                ("ORCID author conflicts", summary["orcid_conflicts"]),
+                ("ORCID field mismatches rejected", summary["orcid_field_mismatches"]),
+                (
+                    "ORCID career-risk rejections",
+                    summary["orcid_career_risk_rejections"],
+                ),
+                ("CV/homepage sources", summary["cv_sources"]),
+                ("CV documents parsed", summary["cv_parsed"]),
+                ("CV career events", summary["cv_events"]),
+                ("CV assignments", summary["cv_assignments"]),
+            ],
+        )
+    )
+    lines.append("")
+    lines.append("## ORCID identity confidence")
+    lines.append("")
+    lines.append(
+        "Only ORCID records with direct AER evidence (a matching DOI, paper title, "
+        "or institution) or a conservative economics-field signal contribute career "
+        "events. Unverified records are retained as weak identity links but their "
+        "employment/education events are withheld."
+    )
+    lines.append("")
+    lines.append(
+        _table(
+            ["ORCID source", "Identity confidence", "Authors"],
+            [
+                (row["orcid_source"], row["orcid_match_confidence"], row["n"])
+                for row in identity_rows
+            ],
+        )
+    )
+    lines.append("")
+    if review_rows:
+        lines.append(
+            _table(
+                ["ORCID review status", "Authors"],
+                [(row["review_status"], row["n"]) for row in review_rows],
+            )
+        )
+        lines.append("")
+    if assignment_identity_rows:
+        lines.append(
+            _table(
+                ["ORCID identity confidence", "Assignment confidence", "Assignments"],
+                [
+                    (row["identity_confidence"], row["assignment_confidence"], row["n"])
+                    for row in assignment_identity_rows
+                ],
+            )
+        )
+        lines.append("")
+    lines.append("## Career events by source and type")
+    lines.append("")
+    lines.append(
+        _table(
+            ["Event type", "Source", "Confidence", "Events"],
+            [
+                (row["event_type"], row["source_type"], row["confidence"], row["n"])
+                for row in event_rows
+            ],
+        )
+    )
+    lines.append("")
+    lines.append("## Career assignments by evidence and stage")
+    lines.append("")
+    lines.append(
+        _table(
+            ["Evidence", "Stage", "Confidence", "Slots"],
+            [
+                (row["evidence_type"], row["stage"], row["confidence"], row["n"])
+                for row in assignment_rows
+            ],
+        )
+    )
+    lines.append("")
+    lines.append("## Career coverage by publication year")
+    lines.append("")
+    lines.append(
+        _table(
+            ["Year", "Article slots", "Byline", "ORCID", "Assigned", "Coverage"],
+            [
+                (
+                    row["year"],
+                    row["slots"],
+                    row["byline"],
+                    row["orcid"],
+                    row["assigned"],
+                    _pct(row["assigned"], row["slots"]),
+                )
+                for row in career_by_year
+            ],
+        )
+    )
+    lines.append("")
+    lines.append("## Recent ORCID-derived assignments")
+    lines.append("")
+    lines.append(
+        _table(
+            ["Author", "Year", "Stage", "Evidence", "Confidence", "Position", "Source"],
+            [
+                (
+                    row["canonical_name"],
+                    row["published_year"],
+                    row["stage"],
+                    row["evidence_type"],
+                    row["confidence"],
+                    row["notes"],
+                    row["source_url"],
+                )
+                for row in examples
+            ],
+        )
+    )
+    lines.append("")
+    lines.append("## Interpretation")
+    lines.append("")
+    lines.append(
+        "- ORCID employment/education records are self-reported and structured. They are used "
+        "only when an event's start/end interval covers the paper year; no event means no assignment."
+    )
+    lines.append(
+        "- Explicit rank titles (Assistant/Associate/Full Professor, Lecturer, Research Fellow, "
+        "Postdoc, Emeritus) are high confidence. Generic \"Professor\" titles are stored as "
+        "full professor with low confidence because the title may be current rather than the "
+        "rank at the paper date."
+    )
+    lines.append(
+        "- Doctoral education intervals are used for `phd_student` at medium confidence only when "
+        "the paper year falls inside the degree interval."
+    )
+    lines.append(
+        "- Byline evidence remains paper-specific and takes precedence over ORCID for the same slot. "
+        "ORCID fills slots that the byline cannot explain."
+    )
+    lines.append(
+        "- ORCID coverage is not complete: a large share of authors have an ORCID, but many records "
+        "lack dates or employment entries. CV discovery and parsing are still required for the "
+        "remaining authors and for rank changes that ORCID does not record."
+    )
+    lines.append(
+        "- ORCID identity is validated before its events are used. A matching AER DOI is the "
+        "strongest signal; a matching work title or an institution overlap is also accepted. "
+        "A conservative economics-field signal is accepted only at low confidence. Records with "
+        "a conflicting person name, a clearly non-economics field, or a career-changing event "
+        "but no positive evidence are rejected. Records with no positive evidence and no "
+        "career-changing event remain as low-confidence identity links with events withheld."
+    )
+    lines.append(
+        "- CV events come from public CVs/faculty pages discovered through ORCID researcher URLs. "
+        "The parser is conservative and section-based; CV assignments are used only after byline "
+        "and ORCID evidence, and raw CVs are stored only in the local ignored cache."
+    )
+    lines.append("")
+
+    markdown_path.write_text("\n".join(lines), encoding="utf-8")
+    metrics = {
+        "generated_at": utcnow(),
+        "summary": dict(summary),
+        "career_events": [dict(row) for row in event_rows],
+        "career_assignments": [dict(row) for row in assignment_rows],
+        "career_by_year": [dict(row) for row in career_by_year],
+        "examples": [dict(row) for row in examples],
+        "orcid_identity": [dict(row) for row in identity_rows],
+        "orcid_review": [dict(row) for row in review_rows],
+        "orcid_assignment_identity": [
+            dict(row) for row in assignment_identity_rows
+        ],
+    }
+    metrics_path.write_text(json.dumps(metrics, ensure_ascii=False, indent=2), encoding="utf-8")
+    return markdown_path, metrics_path

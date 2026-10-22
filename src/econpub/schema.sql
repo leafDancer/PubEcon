@@ -88,6 +88,9 @@ CREATE TABLE IF NOT EXISTS authors (
     given_name            TEXT,
     family_name           TEXT,
     orcid                 TEXT,
+    orcid_source          TEXT,
+    orcid_match_confidence TEXT,
+    wikidata_id           TEXT,
     openalex_id           TEXT,
     openalex_match_confidence TEXT,
     openalex_works_count  INTEGER,
@@ -126,6 +129,7 @@ CREATE TABLE IF NOT EXISTS authorships (
     institution_source TEXT,
     openalex_author_id TEXT,
     openalex_author_name TEXT,
+    openalex_orcid TEXT,
     openalex_institution_id TEXT,
     openalex_institution_name TEXT,
     openalex_raw_affiliation TEXT,
@@ -343,6 +347,8 @@ CREATE TABLE IF NOT EXISTS career_events (
     is_current     INTEGER,
     source_url     TEXT,
     source_type    TEXT,
+    source_snippet TEXT,
+    event_key      TEXT,
     confidence     TEXT,
     created_at     TEXT NOT NULL,
     FOREIGN KEY (author_id) REFERENCES authors(author_id),
@@ -350,6 +356,26 @@ CREATE TABLE IF NOT EXISTS career_events (
 );
 
 CREATE INDEX IF NOT EXISTS idx_career_author ON career_events(author_id);
+
+-- CV and homepage sources discovered for an author. Raw documents live on
+-- disk (ignored by git); the database stores provenance and status only.
+CREATE TABLE IF NOT EXISTS author_cv_sources (
+    source_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    author_id      INTEGER NOT NULL,
+    url            TEXT NOT NULL,
+    source_type    TEXT NOT NULL,
+    fetched_at     TEXT,
+    content_hash   TEXT,
+    local_path     TEXT,
+    status         TEXT NOT NULL DEFAULT 'candidate',
+    notes          TEXT,
+    created_at     TEXT NOT NULL,
+    UNIQUE (author_id, url),
+    FOREIGN KEY (author_id) REFERENCES authors(author_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_cv_sources_author ON author_cv_sources(author_id);
+CREATE INDEX IF NOT EXISTS idx_cv_sources_status ON author_cv_sources(status);
 
 -- The central inference table: what was this author's stage when this paper
 -- was published? Every row must carry evidence and a confidence level.
@@ -363,6 +389,7 @@ CREATE TABLE IF NOT EXISTS career_assignments (
     confidence    TEXT NOT NULL,
     source_url    TEXT,
     notes         TEXT,
+    career_event_id INTEGER,
     created_at    TEXT NOT NULL,
     FOREIGN KEY (authorship_id) REFERENCES authorships(authorship_id) ON DELETE CASCADE,
     FOREIGN KEY (author_id) REFERENCES authors(author_id),

@@ -32,16 +32,19 @@ This document defines what EconPub measures, how each field is derived, and wher
 
 Each `career_assignments` row carries `evidence_type`, `confidence`, and `source_url`.
 
-1. **`byline_rank` — high confidence, but rare**
-   The publish-time affiliation string explicitly states a rank, e.g. "Assistant Professor of Economics, Princeton University". This is contemporaneous evidence, not a reconstruction. In the AER 2000+ corpus only about 0.3% of author slots carry an explicit academic rank, so this source cannot carry the career layer on its own.
+1. **`byline_rank` / `byline_affiliation` — high or medium confidence, but rare**
+   The publish-time affiliation string explicitly states a rank, e.g. "Assistant Professor of Economics, Princeton University". This is contemporaneous evidence, not a reconstruction. In the AER 2000+ corpus only about 0.3% of author slots carry an explicit academic rank, so this source cannot carry the career layer on its own. Explicit student/postdoc phrases are medium confidence.
 
-2. **`cv_timeline` — high or medium confidence**
-   A CV or faculty page lists degree years and employment periods. The assignment is made by matching the paper's publication year to the relevant interval. Exact-year matches are high confidence; boundary years and gaps are medium.
+2. **`orcid_employment` / `orcid_education` — high, medium, or low confidence**
+   ORCID records provide self-reported, dated employment and education. An event is used only when its start/end interval covers the paper year, and only after the ORCID-to-author link passes identity validation (see below). Explicit rank titles are high confidence; generic "Professor" titles are low confidence because the title may be current rather than the rank at the paper date. Doctoral education intervals support `phd_student` at medium confidence.
 
-3. **`heuristic` — low confidence**
-   Used only when the first two are unavailable. Examples: first publication year combined with a known PhD year, or a department page that implies current but not historical rank. Heuristic assignments are always labelled as such.
+3. **`cv_employment` / `cv_education` — high or medium confidence**
+   Public CVs and faculty pages provide dated positions and degrees. The parser is section-based and conservative; events are used only after byline and ORCID evidence are absent. Exact intervals with title and institution are high confidence; single years or missing institutions are medium.
 
-4. **`unknown`**
+4. **`heuristic` — low confidence**
+   Used only when the structured sources are unavailable. Heuristic assignments are always labelled as such.
+
+5. **`unknown`**
    No assignment is stored when the evidence is insufficient. The UI shows a missing badge rather than guessing.
 
 ## Author disambiguation
@@ -54,9 +57,9 @@ The canonical author layer is rebuilt after content classification and deduplica
 - **Conflict splits** that keep distinct people separate when they share the same given/family root but have different middle initials, suffixes, ORCIDs, or a confirmed namesake pattern. Known conflicting pairs are listed explicitly; other uncertain pairs go to `author_merge_candidates` with institutions and years.
 - A `needs_review` flag for merged or conflicting clusters; the public methodology page will report the count.
 
-This is still name-based, supplemented by OpenAlex evidence. OpenAlex work authorship supplies an author ID for each matched byline. Matching aligns by byline position when the author counts agree and every name is compatible; otherwise it matches by a unique name. Of 10,782 article author slots, 10,126 (93.9%) match an OpenAlex authorship: 6,175 with high confidence and 4,188 with medium confidence. If all of a canonical author's matched authorships point to one OpenAlex ID, that ID is attached. If they point to several IDs, the author is flagged and the evidence is stored in `author_openalex_evidence`; if several canonical authors share one OpenAlex ID and never co-occur on a paper, the pair is queued as a merge candidate. Only pairs whose names are compatible are merged automatically; everything else waits for manual review.
+This is still name-based, supplemented by OpenAlex evidence. OpenAlex work authorship supplies an author ID for each matched byline. Matching aligns by byline position when the author counts agree and every name is compatible; otherwise it matches by a unique name. Of 10,782 article author slots, 10,126 (93.9%) match an OpenAlex authorship: 6,007 with high confidence and 4,119 with medium confidence. If all of a canonical author's matched authorships point to one OpenAlex ID, that ID is attached. If they point to several IDs, the author is flagged and the evidence is stored in `author_openalex_evidence`; if several canonical authors share one OpenAlex ID and never co-occur on a paper, the pair is queued as a merge candidate. Only pairs whose names are compatible are merged automatically; everything else waits for manual review.
 
-Current result: 5,892 canonical authors, 6,382 aliases, 0 pending merge candidates, 45 authors flagged for review, and 5,526 authors with an OpenAlex ID. Seven name-based candidates were resolved as splits; three resolver over-merges were split after OpenAlex review; 32 multi-ID authors were accepted as OpenAlex profile duplication; 5 remain uncertain.
+Current result: 5,892 canonical authors, 6,382 aliases, 0 pending merge candidates, and 5,526 authors with an OpenAlex ID. Seven name-based candidates were resolved as splits; three resolver over-merges were split after OpenAlex review; 32 multi-ID authors were accepted as OpenAlex profile duplication; 5 remain uncertain. 28 authors carry OpenAlex fragmentation flags. ORCID identity validation is a separate review layer, described below: 3,248 authors retain an ORCID, 2,363 with accepted identity evidence and 885 as unverified low-confidence links.
 
 ## Stable author identity
 
@@ -66,6 +69,25 @@ Stable IDs are reconciled after a rebuild by, in order: ORCID, OpenAlex ID, exac
 
 Confirmed name splits are protected by `author_separation_rules`. Each rule records the two OpenAlex IDs and the cross-group authorship pairs, so a later name-only rebuild cannot silently re-merge the two people. The kept group retains the original stable ID; each new group receives a new stable ID.
 
+## ORCID identity validation
+
+An ORCID link is not accepted merely because OpenAlex attached it to an authorship. Each link is assessed against the author's AER record:
+
+| Tier | Evidence | Career events |
+|---|---|---|
+| `verified_doi` | An ORCID work DOI matches one of the author's AER DOIs | Used; event confidence retained |
+| `verified_title` | An ORCID work title matches an AER paper title | Used; event confidence retained |
+| `verified_institution` | ORCID employment/education overlaps an AER byline institution | Used; capped at medium confidence |
+| `field_economics` | An economics department or core economics journal, with no direct AER link | Used; capped at low confidence and flagged |
+| `orcid_unverified` | No positive evidence and no contradiction | ORCID retained as a low-confidence identity link; events withheld |
+| `rejected_name` | ORCID person name conflicts with the canonical author | Rejected; events and assignments cleared |
+| `rejected_field` | Clear non-economics field signal (medicine, engineering, law, etc.) | Rejected; events and assignments cleared |
+| `rejected_career_risk` | A dated event would change a publication's stage, but no positive identity evidence exists | Rejected; events and assignments cleared |
+
+The field test counts economics and non-economics signals rather than rejecting on a single word, and it uses employment and doctoral affiliation rather than incidental paper titles. This prevents a health economist with one "medical" paper from being rejected, while rejecting a surgeon, political scientist, or computer scientist who happens to share a name. Rejected links leave the authorship-level ORCID in place as provenance, so a later validation pass can reconsider them.
+
+Result: 1,371 DOI-verified, 177 title-verified, 532 institution-verified, 283 low-confidence economics-field, 885 unverified, 146 name-conflict, 158 field-mismatch, and 11 career-risk rejections. Only the first four tiers contribute career events.
+
 ## Career assignments
 
 M3 writes `career_assignments` only where the publish-time byline supplies evidence:
@@ -73,7 +95,9 @@ M3 writes `career_assignments` only where the publish-time byline supplies evide
 - `byline_rank` — high confidence: an explicit rank extracted from the affiliation string, such as Assistant Professor, Full Professor, Research Fellow, or a non-academic title.
 - `byline_affiliation` — medium confidence: an explicit student/postdoc status such as "PhD student" or "postdoctoral fellow".
 
-The current layer assigns 669 of 10,782 article slots (6.2%): 632 non-academic, 23 full professor, 4 research fellow, 3 assistant professor, 3 associate professor, 2 lecturer/other academic, 1 emeritus, and 1 PhD student. The remaining 10,113 slots are left unknown rather than inferred. CV timelines (M4) are required to extend coverage.
+M4 extends this with ORCID and CV evidence. The current layer assigns 2,216 of 10,782 article slots (20.6%): 669 byline, 1,543 ORCID, and 4 CV-pilot assignments. By stage: 915 full professor (860 of them low-confidence generic "Professor" titles), 689 non-academic, 248 assistant professor, 216 associate professor, 41 PhD student, 36 research fellow, 32 emeritus, 26 lecturer/other academic, and 13 postdoc. The remaining 8,566 slots are left unknown rather than inferred.
+
+ORCID is the highest-yield structured source after identity validation: 3,248 of 5,892 canonical authors retain an ORCID, 2,363 have accepted identity evidence, and 2,028 identities contribute 5,773 employment/education events (4,539 with a start year). CV discovery is seeded from ORCID researcher URLs; the pilot parsed 17 CVs and 60 events, and the full CV crawl remains resumable. ORCID links that fail identity validation are withheld and flagged rather than attached.
 
 ## Publication dates and issue months
 
@@ -152,14 +176,16 @@ The 2000+ AER harvest yields **67 duplicate rows**, including the 51 legacy/mode
 - The public site will show coverage badges and a link to this methodology.
 - Any change to the inference rules will be versioned and dated.
 
-## Known limitations (post-M3)
+## Known limitations (post-M4)
 
 - **Issue months:** the 2002–2009 one-month shift is fully corrected. Every article month comes from the AEA all-issues calendar or an AEA article page (currently 4,086 and 700 respectively); the Crossref issue-metadata and AER-calendar fallbacks are no longer needed for any article. `published_day` is cleared when the month is replaced because the issue source only supports month precision; the raw Crossref date remains in `source_records`.
 - **Institution resolution:** OpenAlex resolves a publish-time institution for 10,188 of 10,782 author slots (94.5%); combined with the Crossref byline hint, 10,602 slots (98.3%) have some institution evidence. 180 slots remain missing, and Crossref byline fragments (e.g. "and Development Studies Institute") remain in the raw `institution_hint` field.
-- **Academic rank:** explicit byline rank is present on only 0.3% of author slots. The career layer depends on CV timelines.
-- **Stable author IDs:** M3 introduced `authors.stable_id` and `author_identity_ledger`. `resolve_all_authors` preserves the ledger, restores `career_assignments` by `authorship_id`, and reassigns stable IDs by ORCID, OpenAlex ID, name/year, and institution. A rebuild still requires a subsequent `m2`/`m3` pass to refresh OpenAlex links and review labels; stable IDs and separation rules survive.
-- **Author review queue:** 0 merge candidates remain pending; 7 were resolved as splits. Of the 40 multi-ID authors, 3 were confirmed over-merges and split, 32 were accepted as OpenAlex profile duplication, and 5 remain flagged as uncertain (David S Johnson, Jean Lee, Jose Maria Fernandez, Daniel Chen, André Meier). 45 authors are still flagged for review, largely name-variant merges without institution evidence.
-- **Career coverage:** the byline-only layer covers 669 of 10,782 slots (6.2%). 10,113 slots remain `unknown`; M4 CV timelines are required for meaningful coverage.
+- **Academic rank:** explicit byline rank is present on only 0.3% of author slots. ORCID and CV timelines extend coverage, but 860 of 915 full-professor assignments come from generic "Professor" titles and are low confidence.
+- **Stable author IDs:** M3 introduced `authors.stable_id` and `author_identity_ledger`. `resolve_all_authors` preserves the ledger, restores `career_assignments` by `authorship_id`, and reassigns stable IDs by ORCID, OpenAlex ID, name/year, and institution. A rebuild still requires a subsequent `m2`/`m3`/`m4` pass to refresh OpenAlex links and review labels; stable IDs and separation rules survive.
+- **Author review queue:** 0 merge candidates remain pending; 7 were resolved as splits. Of the 40 multi-ID authors, 3 were confirmed over-merges and split, 32 were accepted as OpenAlex profile duplication, and 5 remain flagged as uncertain (David S Johnson, Jean Lee, Jose Maria Fernandez, Daniel Chen, André Meier). 28 authors carry OpenAlex fragmentation flags. ORCID review is larger and separate: 885 unverified links, 283 low-confidence economics-field links, 146 person-name conflicts, 158 field mismatches, and 11 career-risk rejections.
+- **Career coverage:** byline + ORCID + CV pilot covers 2,216 of 10,782 slots (20.6%); 8,566 remain `unknown`. ORCID records are self-reported and often lack dates; the CV parser is section-based and has only been piloted on 17 documents. Full CV coverage is a resumable crawl, not a completed corpus.
+- **ORCID identity:** 146 ORCID records name a person who does not match the canonical author under the name-compatibility rule. 158 more are rejected for a clear non-economics field, and 11 would change a career stage without positive identity evidence. Their events are not attached; they need manual review or an alias update.
+- **CV corpus:** 1,088 public CV/homepage sources are discovered, but only 17 CVs have been parsed in the pilot. Raw CVs are stored only in the local ignored cache; the public database stores structured events and short snippets. See `docs/m4-validation.md` for concrete spot checks and parser fixes.
 - **JEL and topics:** JEL codes are parsed from AEA article pages; OpenAlex topics are a separate scheme. JEL coverage is reported in `data/reports/m2_quality.md` and varies by year.
 - **Abstracts:** coverage is 89.9% after OpenAlex backfill and boilerplate filtering; 481 articles still lack an abstract. Of the 1,210 OpenAlex abstracts, 377 were citation boilerplate and were removed. AEA abstracts are preferred when present.
 - **OpenAlex coverage:** 51 AER articles are not indexed by OpenAlex, mostly 2006–2007 and the newest 2026 issue.

@@ -96,6 +96,16 @@ INSTITUTION_ALIASES = {
     "ucb": {"california", "berkeley"},
     "nyu": {"new", "york"},
     "lse": {"london", "economics"},
+    "lmu": {"ludwig", "maximilians", "munchen"},
+    "sdu": {"southern", "denmark"},
+    "kth": {"royal", "technology"},
+    "caltech": {"california", "technology"},
+    "cmu": {"carnegie", "mellon"},
+    "usc": {"southern", "california"},
+    "ucsd": {"california", "san", "diego"},
+    "upenn": {"pennsylvania"},
+    "ucl": {"college", "london"},
+    "epfl": {"lausanne"},
 }
 
 

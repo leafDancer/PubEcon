@@ -15,10 +15,10 @@ EconPub makes both first-class. Every inferred field carries its evidence and co
 
 - **Journal:** American Economic Review (ISSN 0002-8282)
 - **Years:** 2000–present
-- **Status:** M3 complete — Crossref metadata classified and deduplicated; AEA issue calendar and OpenAlex enrichment done; stable author IDs, author-identity review, and byline-only career assignments added; the AEA JEL crawl is partial and resumable; CV career timelines and frontend follow
+- **Status:** M4 core complete — Crossref metadata classified and deduplicated; AEA issue calendar and OpenAlex enrichment done; stable author IDs and identity review in place; ORCID career timelines validated against AER evidence, with a conservative CV discovery/parsing layer. The AEA JEL crawl and full CV corpus are resumable; frontend follows.
 - **Not included:** pre-2000 archive, full text, or personal data such as birth dates, addresses, and emails
 
-## Current dataset (M3)
+## Current dataset (M4)
 
 | Metric | Value |
 |---|---|
@@ -34,10 +34,23 @@ EconPub makes both first-class. Every inferred field carries its evidence and co
 | Confirmed author splits | 3 |
 | Multi-ID fragmentation reviewed | 32 authors |
 | Multi-ID uncertain (flagged) | 5 authors |
-| Authors flagged for review | 45 |
+| Authors flagged for review | 1,496 (885 unverified ORCID, 283 field-low, 315 rejected, 28 OpenAlex; overlaps) |
 | Authors with OpenAlex ID | 5,526 |
+| Authors with ORCID | 3,248 (55.1%) |
+|   — accepted identity evidence | 2,363 |
+|   — unverified (events withheld) | 885 |
+|   — rejected identity | 315 |
+| ORCID identities contributing events | 2,028 |
+| ORCID career events | 5,773 (4,539 dated) |
+| CV/homepage sources discovered | 1,088 |
+| CV documents parsed (pilot) | 17 |
 | Coauthorship edges | 9,375 |
-| Career assignments (byline-only) | 669 (6.2% of slots) |
+| Career assignments (all sources) | 2,216 (20.6% of slots) |
+|   — byline | 669 |
+|   — ORCID | 1,543 |
+|   — CV pilot | 4 |
+|   — high/medium confidence | 1,342 |
+|   — low confidence | 874 |
 | Publish-time byline coverage | 99.8% |
 | Resolved institution (OpenAlex) coverage | 94.5% |
 | Any rank/title mention | 6.2% |
@@ -48,13 +61,13 @@ EconPub makes both first-class. Every inferred field carries its evidence and co
 | Duplicate records excluded | 67 |
 | Retraction notices / retracted originals | 2 / 2 |
 
-The full M2 and M3 reports are in `data/reports/m2_quality.md` and `data/reports/m3_quality.md`. The M1 independent audit and its full evidence are in `docs/audit-m1.md` and `docs/audit-m1-findings.json`.
+The M2/M3/M4 reports are in `data/reports/m2_quality.md`, `m3_quality.md`, and `m4_quality.md`. The M1 independent audit and its full evidence are in `docs/audit-m1.md` and `docs/audit-m1-findings.json`.
 
 Three findings shape the next milestones:
 
-1. **Byline rank is not enough.** Only about 0.3% of author slots carry an explicit academic rank such as "Assistant Professor"; the 6.2% "any title" figure is almost entirely non-academic affiliations. The M3 byline-only career layer covers 669 slots (6.2%) and leaves 10,113 unknown; CV timelines are essential for the rest.
-2. **Stable identity needs explicit reconciliation.** The 40 multi-OpenAlex-ID authors were reviewed: 3 were confirmed resolver over-merges and split (John W./M. Morgan, Benjamin I./R. Page, Daniel G./M. Sullivan), 32 are OpenAlex duplicate profiles, and 5 remain uncertain. Stable IDs and permanent separation rules ensure confirmed splits survive future rebuilds.
-3. **Dates need a source hierarchy.** Crossref and OpenAlex both report 2002–2009 issue months one month early. The database uses the AEA all-issues calendar and article pages for all article months; Crossref issue metadata and the AER five-issue calendar remain only as offline fallbacks.
+1. **ORCID is the highest-yield career source, but only after identity validation.** 3,248 authors retain an ORCID; 2,363 have direct evidence (matching AER DOI/title or institution) or a conservative economics-field signal, and 885 are unverified links whose events are withheld. 2,028 accepted identities contribute 5,773 events and raise career coverage from 6.2% (byline only) to 20.6% (2,216 assignments). Generic "Professor" titles are stored as full professor with **low confidence** because the title may be current rather than the rank at the paper date; explicit ranks are high confidence.
+2. **Stable identity needs explicit reconciliation.** The 40 multi-OpenAlex-ID authors were reviewed: 3 were confirmed resolver over-merges and split (John W./M. Morgan, Benjamin I./R. Page, Daniel G./M. Sullivan), 32 are OpenAlex duplicate profiles, and 5 remain uncertain. 28 authors carry OpenAlex fragmentation flags. ORCID identity validation rejects 146 person-name conflicts, 158 clear field mismatches, and 11 career-changing links without positive evidence.
+3. **CVs are the next coverage frontier.** ORCID researcher URLs yielded 1,088 public CV/homepage sources. The pilot parsed 17 CVs and extracted 60 dated events, but discovery and parsing are deliberately conservative. The full CV corpus is a resumable crawl, not an automatic claim of complete coverage.
 
 ## Data sources
 
@@ -87,13 +100,22 @@ python run.py m2 --workers 1 --delay 1.0
 
 This fixes issue months, crawls AEA article pages for JEL/abstracts, enriches with OpenAlex, links authors, and writes `data/reports/m2_quality.md`.
 
-Then run the identity and career pass:
+Then run the identity and career passes:
 
 ```powershell
 python run.py m3
+python run.py m4
 ```
 
-This assigns stable author IDs, resolves the seven namesake candidates, reviews the 40 authors with multiple OpenAlex IDs (splitting three confirmed over-merges), writes permanent separation rules, and produces byline-only career assignments in `data/reports/m3_quality.md`.
+M3 assigns stable author IDs, resolves the seven namesake candidates, reviews the 40 authors with multiple OpenAlex IDs (splitting three confirmed over-merges), writes permanent separation rules, and produces byline career assignments. M4 adds ORCID employment/education timelines, validates each ORCID link against AER evidence before using its events, and infers career stages at publication. The reports are `data/reports/m3_quality.md` and `data/reports/m4_quality.md`.
+
+The CV layer is a separate, resumable crawl:
+
+```powershell
+python run.py cvs --limit 300
+```
+
+It seeds from ORCID researcher URLs, discovers CV links, stores raw documents only in the local ignored cache, extracts dated events, and uses them only where byline/ORCID evidence is absent.
 
 Useful commands:
 
@@ -105,6 +127,9 @@ python run.py openalex          # reuse cached OpenAlex batches
 python run.py pages             # expand abbreviated page ranges
 python run.py calendar          # apply the AEA issue-month calendar
 python run.py m3                # rebuild identity review and byline careers
+python run.py m4                # fetch ORCID timelines, validate identities, assign careers
+python run.py m4 --skip-orcid   # revalidate cached ORCID links without network
+python run.py cvs --limit 300   # expand CV discovery/parsing
 python run.py report            # regenerate the report without rebuilding authors
 python -m unittest discover -s tests -v
 ```
@@ -131,25 +156,29 @@ src/econpub/
   openalex.py      DOI-keyed OpenAlex work/author/institution enrichment
   identity.py      stable author IDs, ledger, and identity events
   review.py        merge-candidate resolution, multi-ID review, author splits
-  career.py        conservative byline-only career assignments
+  career.py        byline, ORCID, and CV career-stage assignments
+  orcid.py         ORCID record harvest and employment/education events
+  cv.py            CV/homepage discovery and conservative CV parsing
   pages.py         abbreviated page-range expansion and validation
-  quality.py       coverage, provenance, and M3 identity/career reports
+  quality.py       coverage, provenance, and M2-M4 reports
   cli.py           command-line entry point
   schema.sql       database schema
 docs/
   methodology.md   public methodology and inference rules
   data-sources.md  source reconnaissance and known limitations
+  m4-validation.md  concrete ORCID/CV spot checks and parser fixes
   audit-m1.md      independent multi-agent audit and remediation status
 tests/
   test_normalize.py
   test_classify.py
   test_m2.py
   test_m3.py
+  test_m4.py
 ```
 
 ## Data model
 
-The core tables are `papers`, `authorships`, `authors`, `author_aliases`, `author_merge_candidates`, `author_openalex_evidence`, `author_split_candidates`, `author_identity_ledger`, `author_identity_events`, `author_separation_rules`, `institutions`, `authorship_institutions`, `paper_topics`, and `source_records`. `coauthorship_edges` is built from canonical authorships. `career_assignments` is populated by M3 for byline-documented stages; `career_events` remains reserved for the CV timeline layer.
+The core tables are `papers`, `authorships`, `authors`, `author_aliases`, `author_merge_candidates`, `author_openalex_evidence`, `author_split_candidates`, `author_identity_ledger`, `author_identity_events`, `author_separation_rules`, `institutions`, `authorship_institutions`, `paper_topics`, and `source_records`. `coauthorship_edges` is built from canonical authorships. `career_events` stores dated education/employment facts from ORCID and CVs; `career_assignments` stores the inferred stage at each publication with evidence type, confidence, and source URL. `author_cv_sources` records public CV/homepage provenance; raw documents are kept only in the ignored local cache.
 
 `papers.content_type` separates research articles from front matter, issue metadata, unattributed records, errata, AEA association reports/minutes, retraction notices, and duplicates. Only research articles feed the publication and network statistics; P&P articles are research articles with `is_pp = 1`. Retracted originals stay in `article` with a `retraction_status` flag and a pointer to the notice. Crossref `update-to` is the primary retraction link, with an explicit fallback pair list.
 
@@ -157,15 +186,15 @@ Author resolution is rebuildable: `authors.py` groups authorships by a middle-in
 
 `papers.abstract_source` and `papers.date_source` record provenance. `paper_topics` uses separate schemes for author-assigned JEL codes and machine-generated OpenAlex topics. `institutions` and `authorship_institutions` store resolved entities and multiple publish-time affiliations per authorship.
 
-`career_assignments` is the key table for the project's distinctive claim: each row records a publish-time stage, the evidence type, a confidence level, and a source URL.
+`career_assignments` is the key table for the project's distinctive claim: each row records a publish-time stage, the evidence type, a confidence level, and a source URL. `authors.orcid_source` records the identity tier (`verified_doi`, `verified_title`, `verified_institution`, `field_economics`, `orcid_unverified`) or rejection reason; only accepted tiers contribute ORCID events.
 
 ## Roadmap
 
 - **M1** — schema, Crossref harvest, content classification, deduplication, canonical authors, quality report ✅
 - **M2** — AEA JEL/abstract enrichment; OpenAlex DOI-keyed enrichment, author IDs, institutions, topics; fix 2002–2009 issue-month mapping; page-range validation ✅
 - **M3** — stable author IDs and identity ledger; resolve the 7 merge candidates and 40 multi-OpenAlex-ID authors; split confirmed over-merges; byline-only career assignments ✅
-- **M4** — tiered CV corpus and timeline extraction; extend career assignments beyond byline-documented slots
-- **M5** — static frontend (paper pages, author pages, network explorer, methodology page)
+- **M4** — ORCID employment/education timelines; conservative CV discovery and parsing; career assignments with evidence and confidence ✅ (CV corpus remains resumable)
+- **M5** — static frontend (paper pages, author pages, career timelines, network explorer, methodology page)
 
 ## Data ethics
 

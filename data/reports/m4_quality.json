@@ -1,0 +1,833 @@
+{
+  "generated_at": "2026-10-22T11:49:09+00:00",
+  "summary": {
+    "authors": 5892,
+    "authors_with_orcid": 3248,
+    "orcid_records": 2028,
+    "orcid_events": 5773,
+    "dated_orcid_events": 4539,
+    "authors_with_events": 2028,
+    "career_assignments": 2216,
+    "orcid_assignments": 1543,
+    "byline_assignments": 669,
+    "article_slots": 10782,
+    "orcid_name_conflicts": 146,
+    "orcid_conflicts": 0,
+    "orcid_accepted": 2363,
+    "orcid_unverified": 885,
+    "orcid_field_mismatches": 158,
+    "orcid_career_risk_rejections": 11,
+    "cv_sources": 1088,
+    "cv_parsed": 17,
+    "cv_events": 60,
+    "cv_assignments": 4,
+    "high_medium_assignments": 1342,
+    "low_assignments": 874
+  },
+  "career_events": [
+    {
+      "event_type": "employment",
+      "source_type": "orcid",
+      "confidence": "medium",
+      "n": 1694
+    },
+    {
+      "event_type": "employment",
+      "source_type": "orcid",
+      "confidence": "high",
+      "n": 1266
+    },
+    {
+      "event_type": "education",
+      "source_type": "orcid",
+      "confidence": "high",
+      "n": 1080
+    },
+    {
+      "event_type": "employment",
+      "source_type": "orcid",
+      "confidence": "low",
+      "n": 967
+    },
+    {
+      "event_type": "education",
+      "source_type": "orcid",
+      "confidence": "medium",
+      "n": 527
+    },
+    {
+      "event_type": "education",
+      "source_type": "orcid",
+      "confidence": "low",
+      "n": 239
+    },
+    {
+      "event_type": "education",
+      "source_type": "cv",
+      "confidence": "high",
+      "n": 16
+    },
+    {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "low",
+      "n": 12
+    },
+    {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "high",
+      "n": 11
+    },
+    {
+      "event_type": "education",
+      "source_type": "cv",
+      "confidence": "medium",
+      "n": 9
+    },
+    {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "medium",
+      "n": 9
+    },
+    {
+      "event_type": "education",
+      "source_type": "cv",
+      "confidence": "low",
+      "n": 3
+    }
+  ],
+  "career_assignments": [
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "full_professor",
+      "confidence": "low",
+      "n": 860
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "non_academic",
+      "confidence": "high",
+      "n": 632
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "associate_professor",
+      "confidence": "medium",
+      "n": 132
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "assistant_professor",
+      "confidence": "high",
+      "n": 120
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "assistant_professor",
+      "confidence": "medium",
+      "n": 117
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "associate_professor",
+      "confidence": "high",
+      "n": 74
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "non_academic",
+      "confidence": "medium",
+      "n": 55
+    },
+    {
+      "evidence_type": "orcid_education",
+      "stage": "phd_student",
+      "confidence": "medium",
+      "n": 39
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "emeritus",
+      "confidence": "medium",
+      "n": 31
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "full_professor",
+      "confidence": "medium",
+      "n": 26
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "full_professor",
+      "confidence": "high",
+      "n": 23
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "research_fellow",
+      "confidence": "medium",
+      "n": 16
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "research_fellow",
+      "confidence": "high",
+      "n": 15
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "lecturer_other_academic",
+      "confidence": "medium",
+      "n": 13
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "lecturer_other_academic",
+      "confidence": "high",
+      "n": 11
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "postdoc",
+      "confidence": "medium",
+      "n": 9
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "associate_professor",
+      "confidence": "low",
+      "n": 6
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "full_professor",
+      "confidence": "high",
+      "n": 6
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "assistant_professor",
+      "confidence": "low",
+      "n": 5
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "postdoc",
+      "confidence": "high",
+      "n": 4
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "research_fellow",
+      "confidence": "high",
+      "n": 4
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "assistant_professor",
+      "confidence": "high",
+      "n": 3
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "assistant_professor",
+      "confidence": "medium",
+      "n": 3
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "associate_professor",
+      "confidence": "high",
+      "n": 3
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "lecturer_other_academic",
+      "confidence": "high",
+      "n": 2
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "non_academic",
+      "confidence": "low",
+      "n": 2
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "associate_professor",
+      "confidence": "high",
+      "n": 1
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "emeritus",
+      "confidence": "high",
+      "n": 1
+    },
+    {
+      "evidence_type": "byline_rank",
+      "stage": "phd_student",
+      "confidence": "high",
+      "n": 1
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "phd_student",
+      "confidence": "medium",
+      "n": 1
+    },
+    {
+      "evidence_type": "orcid_employment",
+      "stage": "research_fellow",
+      "confidence": "low",
+      "n": 1
+    }
+  ],
+  "career_by_year": [
+    {
+      "year": 2000,
+      "slots": 318,
+      "byline": 24,
+      "orcid": 36,
+      "assigned": 60
+    },
+    {
+      "year": 2001,
+      "slots": 354,
+      "byline": 22,
+      "orcid": 28,
+      "assigned": 50
+    },
+    {
+      "year": 2002,
+      "slots": 359,
+      "byline": 23,
+      "orcid": 32,
+      "assigned": 55
+    },
+    {
+      "year": 2003,
+      "slots": 342,
+      "byline": 16,
+      "orcid": 27,
+      "assigned": 43
+    },
+    {
+      "year": 2004,
+      "slots": 341,
+      "byline": 22,
+      "orcid": 37,
+      "assigned": 59
+    },
+    {
+      "year": 2005,
+      "slots": 371,
+      "byline": 23,
+      "orcid": 46,
+      "assigned": 69
+    },
+    {
+      "year": 2006,
+      "slots": 364,
+      "byline": 25,
+      "orcid": 43,
+      "assigned": 69
+    },
+    {
+      "year": 2007,
+      "slots": 384,
+      "byline": 26,
+      "orcid": 54,
+      "assigned": 80
+    },
+    {
+      "year": 2008,
+      "slots": 394,
+      "byline": 17,
+      "orcid": 53,
+      "assigned": 72
+    },
+    {
+      "year": 2009,
+      "slots": 417,
+      "byline": 29,
+      "orcid": 50,
+      "assigned": 79
+    },
+    {
+      "year": 2010,
+      "slots": 502,
+      "byline": 35,
+      "orcid": 73,
+      "assigned": 108
+    },
+    {
+      "year": 2011,
+      "slots": 546,
+      "byline": 28,
+      "orcid": 80,
+      "assigned": 108
+    },
+    {
+      "year": 2012,
+      "slots": 563,
+      "byline": 37,
+      "orcid": 65,
+      "assigned": 102
+    },
+    {
+      "year": 2013,
+      "slots": 505,
+      "byline": 27,
+      "orcid": 80,
+      "assigned": 107
+    },
+    {
+      "year": 2014,
+      "slots": 593,
+      "byline": 45,
+      "orcid": 80,
+      "assigned": 125
+    },
+    {
+      "year": 2015,
+      "slots": 548,
+      "byline": 20,
+      "orcid": 94,
+      "assigned": 114
+    },
+    {
+      "year": 2016,
+      "slots": 614,
+      "byline": 64,
+      "orcid": 92,
+      "assigned": 156
+    },
+    {
+      "year": 2017,
+      "slots": 618,
+      "byline": 48,
+      "orcid": 113,
+      "assigned": 161
+    },
+    {
+      "year": 2018,
+      "slots": 265,
+      "byline": 19,
+      "orcid": 29,
+      "assigned": 48
+    },
+    {
+      "year": 2019,
+      "slots": 303,
+      "byline": 17,
+      "orcid": 50,
+      "assigned": 67
+    },
+    {
+      "year": 2020,
+      "slots": 302,
+      "byline": 14,
+      "orcid": 61,
+      "assigned": 75
+    },
+    {
+      "year": 2021,
+      "slots": 310,
+      "byline": 13,
+      "orcid": 63,
+      "assigned": 76
+    },
+    {
+      "year": 2022,
+      "slots": 284,
+      "byline": 15,
+      "orcid": 44,
+      "assigned": 59
+    },
+    {
+      "year": 2023,
+      "slots": 256,
+      "byline": 11,
+      "orcid": 42,
+      "assigned": 53
+    },
+    {
+      "year": 2024,
+      "slots": 313,
+      "byline": 17,
+      "orcid": 54,
+      "assigned": 72
+    },
+    {
+      "year": 2025,
+      "slots": 322,
+      "byline": 22,
+      "orcid": 53,
+      "assigned": 75
+    },
+    {
+      "year": 2026,
+      "slots": 294,
+      "byline": 10,
+      "orcid": 64,
+      "assigned": 74
+    }
+  ],
+  "examples": [
+    {
+      "canonical_name": "Aaron Chalfin",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Asst. Professor; University of Pennsylvania (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0003-4810-5146"
+    },
+    {
+      "canonical_name": "Alan Benson",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; University of Minnesota System",
+      "source_url": "https://orcid.org/0000-0003-4256-3357"
+    },
+    {
+      "canonical_name": "Alberto Bisin",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Professor; New York University (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0002-5389-0524"
+    },
+    {
+      "canonical_name": "Albrecht Glitz",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Associate Professor; Universitat Pompeu Fabra",
+      "source_url": "https://orcid.org/0000-0002-7324-6082"
+    },
+    {
+      "canonical_name": "Alexander Ljungqvist",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Stefan Persson Professor in Entrepreneurial Finance; Stockholm School of Economics (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0002-6823-7771"
+    },
+    {
+      "canonical_name": "Alicia Sasser Modestino",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Associate Professor; Northeastern University",
+      "source_url": "https://orcid.org/0000-0001-8998-3282"
+    },
+    {
+      "canonical_name": "Arya Gaduh",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Associate Professor; University of Arkansas",
+      "source_url": "https://orcid.org/0000-0001-9234-2662"
+    },
+    {
+      "canonical_name": "Berkay Özcan",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Associate Professor; London School of Economics",
+      "source_url": "https://orcid.org/0000-0003-2255-9406"
+    },
+    {
+      "canonical_name": "Bruno Caprettini",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; University of St. Gallen",
+      "source_url": "https://orcid.org/0000-0002-8393-1470"
+    },
+    {
+      "canonical_name": "Christopher Neilson",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Professor of Economics and Global Affairs; Yale University (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0001-6180-2451"
+    },
+    {
+      "canonical_name": "Cuimin Ba",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; University of Pittsburgh",
+      "source_url": "https://orcid.org/0000-0002-3595-5523"
+    },
+    {
+      "canonical_name": "Dan Zeltzer",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Associate Professor; University of California, Berkeley",
+      "source_url": "https://orcid.org/0000-0002-4140-7531"
+    },
+    {
+      "canonical_name": "Daniel Nevo",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Academic, Associate Professor, Associate Professor; Tel Aviv University",
+      "source_url": "https://orcid.org/0000-0002-9770-827X"
+    },
+    {
+      "canonical_name": "David Stillerman",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; American University",
+      "source_url": "https://orcid.org/0000-0002-5533-3908"
+    },
+    {
+      "canonical_name": "Dean Yang",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Professor; University of Michigan (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0002-5165-3816"
+    },
+    {
+      "canonical_name": "Deepak Hegde",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Professor; NYU (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0003-3888-7447"
+    },
+    {
+      "canonical_name": "Elizabeth L. Munnich",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Associate Professor; University of Louisville",
+      "source_url": "https://orcid.org/0000-0003-3149-9468"
+    },
+    {
+      "canonical_name": "Elizabeth Spelke",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Professor; Harvard University (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0002-6925-3618"
+    },
+    {
+      "canonical_name": "Emily Weisburst",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; University of California, Los Angeles",
+      "source_url": "https://orcid.org/0000-0003-0147-8850"
+    },
+    {
+      "canonical_name": "Esteban Rossi-Hansberg",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Glen A. Lloyd Distinguished Service Professor; University of Chicago (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0002-5886-1108"
+    },
+    {
+      "canonical_name": "Esther Duflo",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Lemann Foundation Professor; University of Zurich (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0001-6105-617X"
+    },
+    {
+      "canonical_name": "Gabriel Kreindler",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; Harvard University",
+      "source_url": "https://orcid.org/0000-0003-3847-7763"
+    },
+    {
+      "canonical_name": "Gastón Illanes",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; Northwestern University",
+      "source_url": "https://orcid.org/0000-0001-5101-5147"
+    },
+    {
+      "canonical_name": "Giovanni Cespa",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "low",
+      "notes": "Professor of Finance; Cass Business School (generic professor title; rank uncertain)",
+      "source_url": "https://orcid.org/0000-0003-2466-6168"
+    },
+    {
+      "canonical_name": "Giulia Tura",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; LUISS Guido Carli",
+      "source_url": "https://orcid.org/0000-0003-0639-4883"
+    },
+    {
+      "canonical_name": "Hans-Joachim Voth",
+      "published_year": 2026,
+      "stage": "full_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Full Professor; University of Zurich",
+      "source_url": "https://orcid.org/0000-0003-4518-3149"
+    },
+    {
+      "canonical_name": "Hui Ding",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; Fudan University",
+      "source_url": "https://orcid.org/0000-0002-8694-5456"
+    },
+    {
+      "canonical_name": "Iacopo Morchio",
+      "published_year": 2026,
+      "stage": "lecturer_other_academic",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Academic , Senior Lecturer; The University of Bristol",
+      "source_url": "https://orcid.org/0000-0001-9373-4131"
+    },
+    {
+      "canonical_name": "Ingrid Huitfeldt",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor (tenure-track); BI Norwegian Business School",
+      "source_url": "https://orcid.org/0000-0002-0472-2698"
+    },
+    {
+      "canonical_name": "Jason Allen",
+      "published_year": 2026,
+      "stage": "associate_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Associate Professor; University of Wisconsin–Madison",
+      "source_url": "https://orcid.org/0000-0003-2558-9061"
+    }
+  ],
+  "orcid_identity": [
+    {
+      "orcid_source": "verified_doi",
+      "orcid_match_confidence": "high",
+      "n": 1371
+    },
+    {
+      "orcid_source": "orcid_unverified",
+      "orcid_match_confidence": "low",
+      "n": 885
+    },
+    {
+      "orcid_source": "verified_institution",
+      "orcid_match_confidence": "medium",
+      "n": 532
+    },
+    {
+      "orcid_source": "field_economics",
+      "orcid_match_confidence": "low",
+      "n": 283
+    },
+    {
+      "orcid_source": "verified_title",
+      "orcid_match_confidence": "high",
+      "n": 177
+    }
+  ],
+  "orcid_review": [
+    {
+      "review_status": "orcid_unverified",
+      "n": 873
+    },
+    {
+      "review_status": "orcid_unverified_field",
+      "n": 280
+    },
+    {
+      "review_status": "orcid_field_mismatch",
+      "n": 158
+    },
+    {
+      "review_status": "orcid_name_conflict",
+      "n": 146
+    },
+    {
+      "review_status": "orcid_unverified_career_risk",
+      "n": 11
+    }
+  ],
+  "orcid_assignment_identity": [
+    {
+      "identity_confidence": "high",
+      "assignment_confidence": "high",
+      "n": 230
+    },
+    {
+      "identity_confidence": "high",
+      "assignment_confidence": "low",
+      "n": 615
+    },
+    {
+      "identity_confidence": "high",
+      "assignment_confidence": "medium",
+      "n": 251
+    },
+    {
+      "identity_confidence": "low",
+      "assignment_confidence": "low",
+      "n": 18
+    },
+    {
+      "identity_confidence": "medium",
+      "assignment_confidence": "low",
+      "n": 241
+    },
+    {
+      "identity_confidence": "medium",
+      "assignment_confidence": "medium",
+      "n": 188
+    }
+  ]
+}

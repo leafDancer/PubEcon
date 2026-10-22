@@ -205,14 +205,32 @@ These are lower-severity or overlapping findings that were not adversarially ver
 - Multi-ID review: 40 authors with multiple OpenAlex IDs were reviewed. 3 confirmed over-merges were split (John W./M. Morgan, Benjamin I./R. Page, Daniel G./M. Sullivan); 32 were accepted as OpenAlex profile duplication; 5 remain uncertain and flagged.
 - Split protection: 9 permanent `author_separation_rules` cover the OpenAlex-ID and authorship pairs, so a later author-table rebuild cannot silently re-merge the split people. A full rebuild-plus-M3 test preserves the split authors and stable IDs, and restores all 669 career assignments.
 - Career layer: 669 byline-documented assignments (6.2% of slots), all `byline_rank`/high confidence; 632 non-academic, 23 full professor, 4 research fellow, 3 assistant professor, 3 associate professor, 2 lecturer/other academic, 1 emeritus, 1 PhD student.
-- 45 authors remain flagged for review after resolving the namesake and multi-ID cases.
+- 28 authors remain flagged for OpenAlex fragmentation after resolving the namesake and multi-ID cases.
 
 **Still open (M4/P2):**
 
-- 5 multi-ID authors remain uncertain; 40 additional name-variant flags remain (45 flagged authors in total).
+- 5 multi-ID authors remain uncertain; 28 OpenAlex fragmentation flags remain.
 - 10,113 article slots have no career assignment; CV timeline extraction is M4.
 - AEA JEL crawl remains partial (698/4,786) because of rate limiting; OpenAlex topics cover 98.9% independently.
 - 51 articles are absent from OpenAlex; 481 abstracts remain missing; 180 slots lack an institution hint; one reversed page range remains.
+
+## Remediation status (M4, 2026-10-22)
+
+**Completed:**
+
+- ORCID identity: 3,248 of 5,892 canonical authors retain an ORCID after validation. 2,363 are accepted: 1,371 by matching AER DOI, 177 by matching title, 532 by institution overlap, and 283 by a low-confidence economics-field signal. 885 are unverified links whose events are withheld. 146 person-name conflicts, 158 clear field mismatches, and 11 career-risk links are rejected and cleared.
+- ORCID events: 2,028 accepted identities contribute 5,773 employment/education events, of which 4,539 have a start year. Every ORCID link is checked against the author's AER record before its events are used.
+- Career assignments: 2,216 of 10,782 article slots (20.6%) now have a stage: 669 byline, 1,543 ORCID, and 4 CV pilot. Byline evidence remains paper-specific and takes precedence; generic "Professor" titles are low confidence. 1,342 assignments are high/medium confidence and 874 are low.
+- CV layer: 1,088 public CV/homepage sources were seeded from ORCID researcher URLs. The pilot parsed 17 CVs, extracting 60 dated events and 4 assignments. Raw documents are stored only in the local ignored cache.
+- ORCID/CV provenance is explicit in `career_events` (`source_type`, `source_url`, `source_snippet`, confidence) and `career_assignments` (`evidence_type`, `career_event_id`, confidence). `authors.orcid_source` records the identity tier or rejection reason.
+
+**Still open (M5/P2):**
+
+- 8,566 article slots remain without a career assignment; full CV discovery/parsing is resumable.
+- 860 of 915 full-professor assignments are low-confidence generic "Professor" titles and need CV/rank corroboration.
+- ORCID review remains: 885 unverified links, 283 low-confidence economics-field links, 146 person-name conflicts, 158 field mismatches, and 11 career-risk rejections. 5 multi-ID authors also remain uncertain.
+- The CV parser has only been piloted on 17 documents; precision on a larger sample is not yet measured.
+- AEA JEL remains partial (698/4,786); OpenAlex topics cover 98.9% independently.
 - The 7 pending merge candidates and 47 review-flagged authors need OpenAlex/CV evidence or manual review.
 
 ## Policy decisions needed

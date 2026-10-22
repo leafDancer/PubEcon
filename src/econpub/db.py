@@ -42,6 +42,9 @@ MIGRATION_COLUMNS: dict[str, dict[str, str]] = {
     },
     "authors": {
         "stable_id": "TEXT",
+        "orcid_source": "TEXT",
+        "orcid_match_confidence": "TEXT",
+        "wikidata_id": "TEXT",
         "openalex_match_confidence": "TEXT",
         "openalex_works_count": "INTEGER",
         "openalex_cited_by_count": "INTEGER",
@@ -53,6 +56,7 @@ MIGRATION_COLUMNS: dict[str, dict[str, str]] = {
         "institution_source": "TEXT",
         "openalex_author_id": "TEXT",
         "openalex_author_name": "TEXT",
+        "openalex_orcid": "TEXT",
         "openalex_institution_id": "TEXT",
         "openalex_institution_name": "TEXT",
         "openalex_raw_affiliation": "TEXT",
@@ -63,6 +67,13 @@ MIGRATION_COLUMNS: dict[str, dict[str, str]] = {
         "evidence": "TEXT",
         "review_notes": "TEXT",
         "reviewed_at": "TEXT",
+    },
+    "career_events": {
+        "source_snippet": "TEXT",
+        "event_key": "TEXT",
+    },
+    "career_assignments": {
+        "career_event_id": "INTEGER",
     },
     "institutions": {
         "country_code": "TEXT",
@@ -94,6 +105,14 @@ def migrate_db(conn: sqlite3.Connection) -> None:
     conn.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_authors_stable "
         "ON authors(stable_id) WHERE stable_id IS NOT NULL"
+    )
+    conn.execute("DROP INDEX IF EXISTS idx_career_event_key")
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_career_event_key "
+        "ON career_events(event_key)"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_authorships_orcid ON authorships(openalex_orcid)"
     )
     conn.execute(
         "UPDATE papers SET abstract_source='crossref' "

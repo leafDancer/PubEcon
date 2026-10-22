@@ -13,8 +13,9 @@ from .aea import (
     harvest_aea,
 )
 from .authors import resolve_all_authors
-from .career import infer_byline_career
+from .career import assign_cv_careers, assign_orcid_careers, infer_byline_career
 from .classify import classify_papers
+from .cv import collect_orcid_urls, discover_cv_links, fetch_cv_documents, parse_cv_sources
 from .config import DB_PATH, LOGS_DIR, REPORTS_DIR
 from .crossref import harvest
 from .identity import ensure_identity_ledger
@@ -24,8 +25,14 @@ from .openalex import (
     enrich_openalex,
     merge_openalex_supported_authors,
 )
+from .orcid import (
+    apply_openalex_orcids,
+    assign_author_orcids,
+    fetch_orcid_records,
+    revalidate_orcid_records,
+)
 from .pages import normalize_page_ranges
-from .quality import generate_m3_report, generate_report
+from .quality import generate_m3_report, generate_m4_report, generate_report
 from .review import resolve_merge_candidates, resolve_multi_id_authors
 
 
@@ -129,6 +136,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     m3_parser.add_argument("--db", type=Path, default=DB_PATH)
 
+    m4_parser = subparsers.add_parser(
+        "m4",
+        help="Enrich ORCID employment/education timelines and infer career stages",
+    )
+    m4_parser.add_argument("--limit", type=int)
+    m4_parser.add_argument("--workers", type=int, default=4)
+    m4_parser.add_argument("--refresh", action="store_true")
+    m4_parser.add_argument("--skip-orcid", action="store_true")
+    m4_parser.add_argument("--db", type=Path, default=DB_PATH)
+
+    cvs_parser = subparsers.add_parser(
+        "cvs",
+        help="Discover public CVs/faculty pages and extract dated career events",
+    )
+    cvs_parser.add_argument("--limit", type=int)
+    cvs_parser.add_argument("--db", type=Path, default=DB_PATH)
+
     return parser
 
 
@@ -151,7 +175,7 @@ def main(argv: list[str] | None = None) -> None:
             print(f"Classification: {classification}")
             print(f"Authors: {author_stats}")
 
-        elif args.command in {"aea", "openalex", "m2", "pages", "calendar", "m3"}:
+        elif args.command in {"aea", "openalex", "m2", "pages", "calendar", "m3", "m4", "cvs"}:
             # M1 must exist before enrichment. Rebuilding authors would erase
             # OpenAlex links and review evidence, so only do it on an empty
             # author layer.
@@ -206,6 +230,38 @@ def main(argv: list[str] | None = None) -> None:
             print(f"Multi-ID review: {resolve_multi_id_authors(conn)}")
             print(f"Career: {infer_byline_career(conn)}")
             markdown_path, metrics_path = generate_m3_report(conn)
+            print(f"Report:  {markdown_path}")
+            print(f"Metrics: {metrics_path}")
+        elif args.command == "m4":
+            if conn.execute("SELECT COUNT(*) FROM authors").fetchone()[0] == 0:
+                raise RuntimeError("No authors found; run `python run.py all`, `m2`, and `m3` first")
+            print(f"Byline careers: {infer_byline_career(conn)}")
+            print(f"OpenAlex ORCIDs: {apply_openalex_orcids(conn)}")
+            print(f"Author ORCIDs: {assign_author_orcids(conn)}")
+            if not args.skip_orcid:
+                print(
+                    "ORCID:",
+                    fetch_orcid_records(
+                        conn,
+                        limit=args.limit,
+                        workers=args.workers,
+                        refresh=args.refresh,
+                    ),
+                )
+            print(f"ORCID validation: {revalidate_orcid_records(conn)}")
+            print(f"ORCID careers: {assign_orcid_careers(conn)}")
+            markdown_path, metrics_path = generate_m4_report(conn)
+            print(f"Report:  {markdown_path}")
+            print(f"Metrics: {metrics_path}")
+        elif args.command == "cvs":
+            if conn.execute("SELECT COUNT(*) FROM authors").fetchone()[0] == 0:
+                raise RuntimeError("No authors found; run `all`, `m2`, `m3`, and `m4` first")
+            print(f"CV seed URLs: {collect_orcid_urls(conn)}")
+            print(f"CV links: {discover_cv_links(conn, limit=args.limit)}")
+            print(f"CV documents: {fetch_cv_documents(conn, limit=args.limit)}")
+            print(f"CV parse: {parse_cv_sources(conn, limit=args.limit)}")
+            print(f"CV careers: {assign_cv_careers(conn)}")
+            markdown_path, metrics_path = generate_m4_report(conn)
             print(f"Report:  {markdown_path}")
             print(f"Metrics: {metrics_path}")
         elif args.command == "m2":
