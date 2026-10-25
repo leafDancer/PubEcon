@@ -153,12 +153,48 @@ def build_parser() -> argparse.ArgumentParser:
     cvs_parser.add_argument("--limit", type=int)
     cvs_parser.add_argument("--db", type=Path, default=DB_PATH)
 
+    serve_parser = subparsers.add_parser(
+        "serve",
+        help="Run the read-only JSON API for the frontend",
+    )
+    serve_parser.add_argument("--host", default="127.0.0.1")
+    serve_parser.add_argument("--port", type=int, default=8000)
+    serve_parser.add_argument("--reload", action="store_true")
+    serve_parser.add_argument("--db", type=Path, default=DB_PATH)
+
     return parser
 
 
 def main(argv: list[str] | None = None) -> None:
     args = build_parser().parse_args(argv)
     setup_logging()
+    if args.command == "serve":
+        try:
+            import uvicorn
+        except ImportError as exc:
+            raise RuntimeError(
+                "The API server needs FastAPI and Uvicorn. "
+                "Install them with: pip install -e '.[api]'"
+            ) from exc
+        from .api import create_app
+
+        if args.reload:
+            import os
+
+            os.environ["ECONPUB_DB"] = str(args.db)
+            uvicorn.run(
+                "econpub.api:app",
+                host=args.host,
+                port=args.port,
+                reload=True,
+            )
+        else:
+            uvicorn.run(
+                create_app(args.db),
+                host=args.host,
+                port=args.port,
+            )
+        return
     conn = db.connect(args.db)
     db.init_db(conn)
     try:

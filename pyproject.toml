@@ -13,7 +13,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+api = ["fastapi>=0.115", "uvicorn[standard]>=0.30"]
+dev = ["pytest>=8", "fastapi>=0.115", "uvicorn[standard]>=0.30"]
 
 [project.scripts]
 econpub = "econpub.cli:main"

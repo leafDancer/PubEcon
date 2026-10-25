@@ -16,6 +16,14 @@ data/audit_scratch_*
 *.db-wal
 *.db-shm
 
+# Frontend
+web/node_modules/
+web/dist/
+web/.vite/
+web/screenshot-*.png
+web/.env
+web/.env.local
+
 # OS
 .DS_Store
 Thumbs.db
