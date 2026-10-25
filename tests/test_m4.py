@@ -14,6 +14,7 @@ from econpub.orcid import (
     _apply_orcid_assessment,
     _assessment_score,
     _name_compatible,
+    _person_names,
     assess_orcid_identity,
     parse_orcid_record,
     upsert_orcid_events,
@@ -78,7 +79,31 @@ class ORCIDParsingTests(unittest.TestCase):
     def test_name_compatibility(self) -> None:
         self.assertTrue(_name_compatible("Daron Acemoglu", "Daron Acemoglu"))
         self.assertTrue(_name_compatible("John W. Morgan", "John Morgan"))
+        self.assertTrue(_name_compatible("Daron Acemoglu", "K. Daron Acemoglu"))
+        self.assertTrue(_name_compatible("William Darity", "William Darity Jr"))
+        self.assertTrue(_name_compatible("Bill Dupor", "William Dupor"))
+        self.assertTrue(_name_compatible("Simon Gächter", "Simon Gaechter"))
+        self.assertTrue(_name_compatible("Doug Staiger", "Douglas Staiger"))
         self.assertFalse(_name_compatible("John Smith", "Jane Smith"))
+        self.assertFalse(_name_compatible("B. Douglas Bernheim", "Bekkah Bernheim"))
+
+    def test_person_name_variants(self) -> None:
+        payload = {
+            "person": {
+                "name": {
+                    "given-names": {"value": "K."},
+                    "family-name": {"value": "Acemoglu"},
+                    "credit-name": {"value": "K. Daron Acemoglu"},
+                },
+                "other-names": {
+                    "other-name": [{"value": "Daron Acemoglu"}]
+                },
+            }
+        }
+        names = _person_names(payload)
+        self.assertIn("K. Acemoglu", names)
+        self.assertIn("K. Daron Acemoglu", names)
+        self.assertIn("Daron Acemoglu", names)
 
 
 class CareerAssignmentTests(unittest.TestCase):

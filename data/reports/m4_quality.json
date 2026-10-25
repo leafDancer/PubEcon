@@ -1,65 +1,65 @@
 {
-  "generated_at": "2026-10-22T11:49:09+00:00",
+  "generated_at": "2026-10-25T02:33:00+00:00",
   "summary": {
     "authors": 5892,
-    "authors_with_orcid": 3248,
-    "orcid_records": 2028,
-    "orcid_events": 5773,
-    "dated_orcid_events": 4539,
-    "authors_with_events": 2028,
-    "career_assignments": 2216,
-    "orcid_assignments": 1543,
+    "authors_with_orcid": 3314,
+    "orcid_records": 2067,
+    "orcid_events": 5847,
+    "dated_orcid_events": 4583,
+    "authors_with_events": 2067,
+    "career_assignments": 2264,
+    "orcid_assignments": 1591,
     "byline_assignments": 669,
     "article_slots": 10782,
-    "orcid_name_conflicts": 146,
+    "orcid_name_conflicts": 72,
     "orcid_conflicts": 0,
-    "orcid_accepted": 2363,
-    "orcid_unverified": 885,
-    "orcid_field_mismatches": 158,
-    "orcid_career_risk_rejections": 11,
+    "orcid_accepted": 2409,
+    "orcid_unverified": 905,
+    "orcid_field_mismatches": 165,
+    "orcid_career_risk_rejections": 12,
     "cv_sources": 1088,
     "cv_parsed": 17,
     "cv_events": 60,
     "cv_assignments": 4,
-    "high_medium_assignments": 1342,
-    "low_assignments": 874
+    "high_medium_assignments": 1349,
+    "low_assignments": 915
   },
   "career_events": [
     {
       "event_type": "employment",
       "source_type": "orcid",
       "confidence": "medium",
-      "n": 1694
+      "n": 1714
     },
     {
       "event_type": "employment",
       "source_type": "orcid",
       "confidence": "high",
-      "n": 1266
+      "n": 1277
     },
     {
       "event_type": "education",
       "source_type": "orcid",
       "confidence": "high",
-      "n": 1080
+      "n": 1086
     },
     {
       "event_type": "employment",
       "source_type": "orcid",
       "confidence": "low",
-      "n": 967
+      "n": 989
     },
     {
       "event_type": "education",
       "source_type": "orcid",
       "confidence": "medium",
-      "n": 527
+      "n": 533
     },
     {
       "event_type": "education",
       "source_type": "orcid",
       "confidence": "low",
-      "n": 239
+      "n": 248
     },
     {
       "event_type": "education",
@@ -103,7 +103,7 @@
       "evidence_type": "orcid_employment",
       "stage": "full_professor",
       "confidence": "low",
-      "n": 860
+      "n": 900
     },
     {
       "evidence_type": "byline_rank",
@@ -115,19 +115,19 @@
       "evidence_type": "orcid_employment",
       "stage": "associate_professor",
       "confidence": "medium",
-      "n": 132
+      "n": 134
     },
     {
       "evidence_type": "orcid_employment",
       "stage": "assistant_professor",
       "confidence": "high",
-      "n": 120
+      "n": 121
     },
     {
       "evidence_type": "orcid_employment",
       "stage": "assistant_professor",
       "confidence": "medium",
-      "n": 117
+      "n": 118
     },
     {
       "evidence_type": "orcid_employment",
@@ -145,7 +145,7 @@
       "evidence_type": "orcid_education",
       "stage": "phd_student",
       "confidence": "medium",
-      "n": 39
+      "n": 40
     },
     {
       "evidence_type": "orcid_employment",
@@ -157,7 +157,7 @@
       "evidence_type": "orcid_employment",
       "stage": "full_professor",
       "confidence": "medium",
-      "n": 26
+      "n": 27
     },
     {
       "evidence_type": "byline_rank",
@@ -181,7 +181,7 @@
       "evidence_type": "orcid_employment",
       "stage": "lecturer_other_academic",
       "confidence": "medium",
-      "n": 13
+      "n": 14
     },
     {
       "evidence_type": "orcid_employment",
@@ -274,6 +274,12 @@
       "n": 1
     },
     {
+      "evidence_type": "orcid_education",
+      "stage": "phd_student",
+      "confidence": "low",
+      "n": 1
+    },
+    {
       "evidence_type": "orcid_employment",
       "stage": "phd_student",
       "confidence": "medium",
@@ -291,29 +297,29 @@
       "year": 2000,
       "slots": 318,
       "byline": 24,
-      "orcid": 36,
-      "assigned": 60
+      "orcid": 38,
+      "assigned": 62
     },
     {
       "year": 2001,
       "slots": 354,
       "byline": 22,
-      "orcid": 28,
-      "assigned": 50
+      "orcid": 31,
+      "assigned": 53
     },
     {
       "year": 2002,
       "slots": 359,
       "byline": 23,
-      "orcid": 32,
-      "assigned": 55
+      "orcid": 33,
+      "assigned": 56
     },
     {
       "year": 2003,
       "slots": 342,
       "byline": 16,
-      "orcid": 27,
-      "assigned": 43
+      "orcid": 28,
+      "assigned": 44
     },
     {
       "year": 2004,
@@ -326,106 +332,106 @@
       "year": 2005,
       "slots": 371,
       "byline": 23,
-      "orcid": 46,
-      "assigned": 69
+      "orcid": 49,
+      "assigned": 72
     },
     {
       "year": 2006,
       "slots": 364,
       "byline": 25,
-      "orcid": 43,
-      "assigned": 69
+      "orcid": 47,
+      "assigned": 73
     },
     {
       "year": 2007,
       "slots": 384,
       "byline": 26,
-      "orcid": 54,
-      "assigned": 80
+      "orcid": 56,
+      "assigned": 82
     },
     {
       "year": 2008,
       "slots": 394,
       "byline": 17,
-      "orcid": 53,
-      "assigned": 72
+      "orcid": 55,
+      "assigned": 74
     },
     {
       "year": 2009,
       "slots": 417,
       "byline": 29,
-      "orcid": 50,
-      "assigned": 79
+      "orcid": 51,
+      "assigned": 80
     },
     {
       "year": 2010,
       "slots": 502,
       "byline": 35,
-      "orcid": 73,
-      "assigned": 108
+      "orcid": 76,
+      "assigned": 111
     },
     {
       "year": 2011,
       "slots": 546,
       "byline": 28,
-      "orcid": 80,
-      "assigned": 108
+      "orcid": 82,
+      "assigned": 110
     },
     {
       "year": 2012,
       "slots": 563,
       "byline": 37,
-      "orcid": 65,
-      "assigned": 102
+      "orcid": 70,
+      "assigned": 107
     },
     {
       "year": 2013,
       "slots": 505,
       "byline": 27,
-      "orcid": 80,
-      "assigned": 107
+      "orcid": 81,
+      "assigned": 108
     },
     {
       "year": 2014,
       "slots": 593,
       "byline": 45,
-      "orcid": 80,
-      "assigned": 125
+      "orcid": 86,
+      "assigned": 131
     },
     {
       "year": 2015,
       "slots": 548,
       "byline": 20,
-      "orcid": 94,
-      "assigned": 114
+      "orcid": 97,
+      "assigned": 117
     },
     {
       "year": 2016,
       "slots": 614,
       "byline": 64,
-      "orcid": 92,
-      "assigned": 156
+      "orcid": 94,
+      "assigned": 158
     },
     {
       "year": 2017,
       "slots": 618,
       "byline": 48,
-      "orcid": 113,
-      "assigned": 161
+      "orcid": 115,
+      "assigned": 163
     },
     {
       "year": 2018,
       "slots": 265,
       "byline": 19,
-      "orcid": 29,
-      "assigned": 48
+      "orcid": 31,
+      "assigned": 50
     },
     {
       "year": 2019,
       "slots": 303,
       "byline": 17,
-      "orcid": 50,
-      "assigned": 67
+      "orcid": 51,
+      "assigned": 68
     },
     {
       "year": 2020,
@@ -466,15 +472,15 @@
       "year": 2025,
       "slots": 322,
       "byline": 22,
-      "orcid": 53,
-      "assigned": 75
+      "orcid": 54,
+      "assigned": 76
     },
     {
       "year": 2026,
       "slots": 294,
       "byline": 10,
-      "orcid": 64,
-      "assigned": 74
+      "orcid": 65,
+      "assigned": 75
     }
   ],
   "examples": [
@@ -540,6 +546,15 @@
       "confidence": "medium",
       "notes": "Associate Professor; University of Arkansas",
       "source_url": "https://orcid.org/0000-0001-9234-2662"
+    },
+    {
+      "canonical_name": "Ben Sprung-Keyser",
+      "published_year": 2026,
+      "stage": "assistant_professor",
+      "evidence_type": "orcid_employment",
+      "confidence": "medium",
+      "notes": "Assistant Professor; University of Pennsylvania",
+      "source_url": "https://orcid.org/0000-0003-2742-0876"
     },
     {
       "canonical_name": "Berkay Özcan",
@@ -738,91 +753,82 @@
       "confidence": "medium",
       "notes": "Assistant Professor (tenure-track); BI Norwegian Business School",
       "source_url": "https://orcid.org/0000-0002-0472-2698"
-    },
-    {
-      "canonical_name": "Jason Allen",
-      "published_year": 2026,
-      "stage": "associate_professor",
-      "evidence_type": "orcid_employment",
-      "confidence": "medium",
-      "notes": "Associate Professor; University of Wisconsin–Madison",
-      "source_url": "https://orcid.org/0000-0003-2558-9061"
     }
   ],
   "orcid_identity": [
     {
       "orcid_source": "verified_doi",
       "orcid_match_confidence": "high",
-      "n": 1371
+      "n": 1397
     },
     {
       "orcid_source": "orcid_unverified",
       "orcid_match_confidence": "low",
-      "n": 885
+      "n": 905
     },
     {
       "orcid_source": "verified_institution",
       "orcid_match_confidence": "medium",
-      "n": 532
+      "n": 539
     },
     {
       "orcid_source": "field_economics",
       "orcid_match_confidence": "low",
-      "n": 283
+      "n": 292
     },
     {
       "orcid_source": "verified_title",
       "orcid_match_confidence": "high",
-      "n": 177
+      "n": 181
     }
   ],
   "orcid_review": [
     {
       "review_status": "orcid_unverified",
-      "n": 873
+      "n": 893
     },
     {
       "review_status": "orcid_unverified_field",
-      "n": 280
+      "n": 289
     },
     {
       "review_status": "orcid_field_mismatch",
-      "n": 158
+      "n": 165
     },
     {
       "review_status": "orcid_name_conflict",
-      "n": 146
+      "n": 72
     },
     {
       "review_status": "orcid_unverified_career_risk",
-      "n": 11
+      "n": 12
     }
   ],
   "orcid_assignment_identity": [
     {
       "identity_confidence": "high",
       "assignment_confidence": "high",
-      "n": 230
+      "n": 231
     },
     {
       "identity_confidence": "high",
       "assignment_confidence": "low",
-      "n": 615
+      "n": 621
     },
     {
       "identity_confidence": "high",
       "assignment_confidence": "medium",
-      "n": 251
+      "n": 257
     },
     {
       "identity_confidence": "low",
       "assignment_confidence": "low",
-      "n": 18
+      "n": 19
     },
     {
       "identity_confidence": "medium",
       "assignment_confidence": "low",
-      "n": 241
+      "n": 275
     },
     {
       "identity_confidence": "medium",

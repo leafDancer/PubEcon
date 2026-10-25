@@ -275,18 +275,80 @@ def _date_year(value: Any) -> int | None:
         return None
 
 
-def _person_name(payload: dict[str, Any]) -> str:
+_NAME_SUFFIX_RE = re.compile(r"\b(?:jr|sr|ii|iii|iv)\b\.?", re.IGNORECASE)
+_NICKNAMES = {
+    "alex": "alexander",
+    "andy": "andrew",
+    "ben": "benjamin",
+    "bill": "william",
+    "bob": "robert",
+    "dan": "daniel",
+    "dave": "david",
+    "doug": "douglas",
+    "ed": "edward",
+    "heski": "yeheskel",
+    "itzik": "yizhak",
+    "jim": "james",
+    "joe": "joseph",
+    "mike": "michael",
+    "peggy": "margaret",
+    "tom": "thomas",
+}
+
+
+def _person_names(payload: dict[str, Any]) -> list[str]:
+    """All public name variants in an ORCID record.
+
+    ORCID often stores a legal name ("K. Acemoglu") and a credit name
+    ("K. Daron Acemoglu"). A single field is not enough for identity matching.
+    """
     person = payload.get("person") or {}
     name = person.get("name") or {}
     given = ((name.get("given-names") or {}).get("value")) or ""
     family = ((name.get("family-name") or {}).get("value")) or ""
     credit = ((name.get("credit-name") or {}).get("value")) or ""
-    return clean_text(" ".join(part for part in (given, family) if part) or credit)
+    variants: list[str] = []
+    if given and family:
+        variants.append(clean_text(f"{given} {family}"))
+    if credit:
+        variants.append(clean_text(credit))
+    for other in ((person.get("other-names") or {}).get("other-name") or []):
+        value = other.get("value") if isinstance(other, dict) else other
+        if value:
+            variants.append(clean_text(str(value)))
+    expanded: list[str] = []
+    for variant in variants:
+        for part in re.split(r"\s*(?:,|\bor\b|;)\s*", variant):
+            part = clean_text(part)
+            if part:
+                expanded.append(part)
+    seen: set[str] = set()
+    result = []
+    for value in expanded:
+        key = normalize_name_part(value)
+        if key and key not in seen:
+            seen.add(key)
+            result.append(value)
+    return result
+
+
+def _person_name(payload: dict[str, Any]) -> str:
+    names = _person_names(payload)
+    return names[0] if names else ""
+
+
+def _strip_name_suffix(value: str) -> str:
+    return _NAME_SUFFIX_RE.sub(" ", value)
+
+
+def _fold_umlaut(value: str) -> str:
+    """Collapse German transliteration variants: Gaechter -> Gachter."""
+    return value.replace("ae", "a").replace("oe", "o").replace("ue", "u")
 
 
 def _name_compatible(author_name: str, orcid_name: str) -> bool:
-    author_norm = normalize_name_part(author_name)
-    orcid_norm = normalize_name_part(orcid_name)
+    author_norm = normalize_name_part(_strip_name_suffix(author_name))
+    orcid_norm = normalize_name_part(_strip_name_suffix(orcid_name))
     if not author_norm or not orcid_norm:
         return True
     if author_norm == orcid_norm:
@@ -297,17 +359,32 @@ def _name_compatible(author_name: str, orcid_name: str) -> bool:
         return False
     author_family = family_root(author_tokens[-1])
     orcid_family = family_root(orcid_tokens[-1])
-    if author_family != orcid_family:
+    if author_family != orcid_family and _fold_umlaut(author_family) != _fold_umlaut(
+        orcid_family
+    ):
         return False
     author_given = given_root(" ".join(author_tokens[:-1]))
     orcid_given = given_root(" ".join(orcid_tokens[:-1]))
     if author_given == orcid_given:
         return True
+    if _fold_umlaut(author_given) == _fold_umlaut(orcid_given):
+        return True
     if len(author_given) == 1 and orcid_given.startswith(author_given):
         return True
     if len(orcid_given) == 1 and author_given.startswith(orcid_given):
         return True
-    return False
+    if (
+        min(len(author_given), len(orcid_given)) >= 3
+        and (
+            author_given.startswith(orcid_given)
+            or orcid_given.startswith(author_given)
+        )
+    ):
+        return True
+    return bool(
+        _NICKNAMES.get(author_given) == orcid_given
+        or _NICKNAMES.get(orcid_given) == author_given
+    )
 
 
 def _institution_tokens(value: str | None) -> set[str]:
@@ -526,16 +603,21 @@ def assess_orcid_identity(
     ).fetchone()
     papers = _author_papers(conn, author_id)
     events = parse_orcid_record(payload, orcid)
-    person_name = _person_name(payload)
+    person_names = _person_names(payload)
     author_name = author["canonical_name"] if author else ""
     details: dict[str, Any] = {
         "orcid": orcid,
         "author_id": author_id,
-        "person_name": person_name,
+        "person_name": person_names[0] if person_names else None,
+        "person_names": person_names,
         "paper_count": len(papers),
         "event_count": len(events),
     }
-    if person_name and author_name and not _name_compatible(author_name, person_name):
+    if (
+        person_names
+        and author_name
+        and not any(_name_compatible(author_name, name) for name in person_names)
+    ):
         details["status"] = "rejected_name"
         details["confidence"] = None
         return details

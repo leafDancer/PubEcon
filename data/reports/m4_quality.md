@@ -1,6 +1,6 @@
 # M4 Career Evidence Report — AER 2000+
 
-Generated: 2026-10-22T11:49:09+00:00
+Generated: 2026-10-25T02:33:00+00:00
 
 Scope: **American Economic Review** (ISSN 0002-8282), 2000–present. M4 adds structured ORCID employment/education timelines and uses them to infer career stage at publication.
 
@@ -9,22 +9,22 @@ Scope: **American Economic Review** (ISSN 0002-8282), 2000–present. M4 adds st
 | Metric | Value |
 |---|---|
 | Canonical authors | 5892 |
-| Authors with ORCID | 3248 |
-|   — accepted identity evidence | 2363 |
-|   — unverified, career events withheld | 885 |
-| ORCID identities contributing events | 2028 |
-| ORCID career events | 5773 |
-| ORCID events with a start year | 4539 |
-| Career assignments (all sources) | 2216 |
+| Authors with ORCID | 3314 |
+|   — accepted identity evidence | 2409 |
+|   — unverified, career events withheld | 905 |
+| ORCID identities contributing events | 2067 |
+| ORCID career events | 5847 |
+| ORCID events with a start year | 4583 |
+| Career assignments (all sources) | 2264 |
 |   — byline assignments | 669 |
-|   — ORCID assignments | 1543 |
-| Career coverage (article slots) | 20.6% |
-|   — high/medium confidence | 1342 |
-|   — low confidence | 874 |
-| ORCID name conflicts skipped | 146 |
+|   — ORCID assignments | 1591 |
+| Career coverage (article slots) | 21.0% |
+|   — high/medium confidence | 1349 |
+|   — low confidence | 915 |
+| ORCID name conflicts skipped | 72 |
 | ORCID author conflicts | 0 |
-| ORCID field mismatches rejected | 158 |
-| ORCID career-risk rejections | 11 |
+| ORCID field mismatches rejected | 165 |
+| ORCID career-risk rejections | 12 |
 | CV/homepage sources | 1088 |
 | CV documents parsed | 17 |
 | CV career events | 60 |
@@ -36,39 +36,39 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 
 | ORCID source | Identity confidence | Authors |
 |---|---|---|
-| verified_doi | high | 1371 |
-| orcid_unverified | low | 885 |
-| verified_institution | medium | 532 |
-| field_economics | low | 283 |
-| verified_title | high | 177 |
+| verified_doi | high | 1397 |
+| orcid_unverified | low | 905 |
+| verified_institution | medium | 539 |
+| field_economics | low | 292 |
+| verified_title | high | 181 |
 
 | ORCID review status | Authors |
 |---|---|
-| orcid_unverified | 873 |
-| orcid_unverified_field | 280 |
-| orcid_field_mismatch | 158 |
-| orcid_name_conflict | 146 |
-| orcid_unverified_career_risk | 11 |
+| orcid_unverified | 893 |
+| orcid_unverified_field | 289 |
+| orcid_field_mismatch | 165 |
+| orcid_name_conflict | 72 |
+| orcid_unverified_career_risk | 12 |
 
 | ORCID identity confidence | Assignment confidence | Assignments |
 |---|---|---|
-| high | high | 230 |
-| high | low | 615 |
-| high | medium | 251 |
-| low | low | 18 |
-| medium | low | 241 |
+| high | high | 231 |
+| high | low | 621 |
+| high | medium | 257 |
+| low | low | 19 |
+| medium | low | 275 |
 | medium | medium | 188 |
 
 ## Career events by source and type
 
 | Event type | Source | Confidence | Events |
 |---|---|---|---|
-| employment | orcid | medium | 1694 |
-| employment | orcid | high | 1266 |
-| education | orcid | high | 1080 |
-| employment | orcid | low | 967 |
-| education | orcid | medium | 527 |
-| education | orcid | low | 239 |
+| employment | orcid | medium | 1714 |
+| employment | orcid | high | 1277 |
+| education | orcid | high | 1086 |
+| employment | orcid | low | 989 |
+| education | orcid | medium | 533 |
+| education | orcid | low | 248 |
 | education | cv | high | 16 |
 | employment | cv | low | 12 |
 | employment | cv | high | 11 |
@@ -80,20 +80,20 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 
 | Evidence | Stage | Confidence | Slots |
 |---|---|---|---|
-| orcid_employment | full_professor | low | 860 |
+| orcid_employment | full_professor | low | 900 |
 | byline_rank | non_academic | high | 632 |
-| orcid_employment | associate_professor | medium | 132 |
-| orcid_employment | assistant_professor | high | 120 |
-| orcid_employment | assistant_professor | medium | 117 |
+| orcid_employment | associate_professor | medium | 134 |
+| orcid_employment | assistant_professor | high | 121 |
+| orcid_employment | assistant_professor | medium | 118 |
 | orcid_employment | associate_professor | high | 74 |
 | orcid_employment | non_academic | medium | 55 |
-| orcid_education | phd_student | medium | 39 |
+| orcid_education | phd_student | medium | 40 |
 | orcid_employment | emeritus | medium | 31 |
-| orcid_employment | full_professor | medium | 26 |
+| orcid_employment | full_professor | medium | 27 |
 | byline_rank | full_professor | high | 23 |
 | orcid_employment | research_fellow | medium | 16 |
 | orcid_employment | research_fellow | high | 15 |
-| orcid_employment | lecturer_other_academic | medium | 13 |
+| orcid_employment | lecturer_other_academic | medium | 14 |
 | orcid_employment | lecturer_other_academic | high | 11 |
 | orcid_employment | postdoc | medium | 9 |
 | orcid_employment | associate_professor | low | 6 |
@@ -109,6 +109,7 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | cv_employment | associate_professor | high | 1 |
 | byline_rank | emeritus | high | 1 |
 | byline_rank | phd_student | high | 1 |
+| orcid_education | phd_student | low | 1 |
 | orcid_employment | phd_student | medium | 1 |
 | orcid_employment | research_fellow | low | 1 |
 
@@ -116,33 +117,33 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 
 | Year | Article slots | Byline | ORCID | Assigned | Coverage |
 |---|---|---|---|---|---|
-| 2000 | 318 | 24 | 36 | 60 | 18.9% |
-| 2001 | 354 | 22 | 28 | 50 | 14.1% |
-| 2002 | 359 | 23 | 32 | 55 | 15.3% |
-| 2003 | 342 | 16 | 27 | 43 | 12.6% |
+| 2000 | 318 | 24 | 38 | 62 | 19.5% |
+| 2001 | 354 | 22 | 31 | 53 | 15.0% |
+| 2002 | 359 | 23 | 33 | 56 | 15.6% |
+| 2003 | 342 | 16 | 28 | 44 | 12.9% |
 | 2004 | 341 | 22 | 37 | 59 | 17.3% |
-| 2005 | 371 | 23 | 46 | 69 | 18.6% |
-| 2006 | 364 | 25 | 43 | 69 | 19.0% |
-| 2007 | 384 | 26 | 54 | 80 | 20.8% |
-| 2008 | 394 | 17 | 53 | 72 | 18.3% |
-| 2009 | 417 | 29 | 50 | 79 | 18.9% |
-| 2010 | 502 | 35 | 73 | 108 | 21.5% |
-| 2011 | 546 | 28 | 80 | 108 | 19.8% |
-| 2012 | 563 | 37 | 65 | 102 | 18.1% |
-| 2013 | 505 | 27 | 80 | 107 | 21.2% |
-| 2014 | 593 | 45 | 80 | 125 | 21.1% |
-| 2015 | 548 | 20 | 94 | 114 | 20.8% |
-| 2016 | 614 | 64 | 92 | 156 | 25.4% |
-| 2017 | 618 | 48 | 113 | 161 | 26.1% |
-| 2018 | 265 | 19 | 29 | 48 | 18.1% |
-| 2019 | 303 | 17 | 50 | 67 | 22.1% |
+| 2005 | 371 | 23 | 49 | 72 | 19.4% |
+| 2006 | 364 | 25 | 47 | 73 | 20.1% |
+| 2007 | 384 | 26 | 56 | 82 | 21.4% |
+| 2008 | 394 | 17 | 55 | 74 | 18.8% |
+| 2009 | 417 | 29 | 51 | 80 | 19.2% |
+| 2010 | 502 | 35 | 76 | 111 | 22.1% |
+| 2011 | 546 | 28 | 82 | 110 | 20.1% |
+| 2012 | 563 | 37 | 70 | 107 | 19.0% |
+| 2013 | 505 | 27 | 81 | 108 | 21.4% |
+| 2014 | 593 | 45 | 86 | 131 | 22.1% |
+| 2015 | 548 | 20 | 97 | 117 | 21.4% |
+| 2016 | 614 | 64 | 94 | 158 | 25.7% |
+| 2017 | 618 | 48 | 115 | 163 | 26.4% |
+| 2018 | 265 | 19 | 31 | 50 | 18.9% |
+| 2019 | 303 | 17 | 51 | 68 | 22.4% |
 | 2020 | 302 | 14 | 61 | 75 | 24.8% |
 | 2021 | 310 | 13 | 63 | 76 | 24.5% |
 | 2022 | 284 | 15 | 44 | 59 | 20.8% |
 | 2023 | 256 | 11 | 42 | 53 | 20.7% |
 | 2024 | 313 | 17 | 54 | 72 | 23.0% |
-| 2025 | 322 | 22 | 53 | 75 | 23.3% |
-| 2026 | 294 | 10 | 64 | 74 | 25.2% |
+| 2025 | 322 | 22 | 54 | 76 | 23.6% |
+| 2026 | 294 | 10 | 65 | 75 | 25.5% |
 
 ## Recent ORCID-derived assignments
 
@@ -155,6 +156,7 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | Alexander Ljungqvist | 2026 | full_professor | orcid_employment | low | Stefan Persson Professor in Entrepreneurial Finance; Stockholm School of Economics (generic professor title; rank uncertain) | https://orcid.org/0000-0002-6823-7771 |
 | Alicia Sasser Modestino | 2026 | associate_professor | orcid_employment | low | Associate Professor; Northeastern University | https://orcid.org/0000-0001-8998-3282 |
 | Arya Gaduh | 2026 | associate_professor | orcid_employment | medium | Associate Professor; University of Arkansas | https://orcid.org/0000-0001-9234-2662 |
+| Ben Sprung-Keyser | 2026 | assistant_professor | orcid_employment | medium | Assistant Professor; University of Pennsylvania | https://orcid.org/0000-0003-2742-0876 |
 | Berkay Özcan | 2026 | associate_professor | orcid_employment | medium | Associate Professor; London School of Economics | https://orcid.org/0000-0003-2255-9406 |
 | Bruno Caprettini | 2026 | assistant_professor | orcid_employment | medium | Assistant Professor; University of St. Gallen | https://orcid.org/0000-0002-8393-1470 |
 | Christopher Neilson | 2026 | full_professor | orcid_employment | low | Professor of Economics and Global Affairs; Yale University (generic professor title; rank uncertain) | https://orcid.org/0000-0001-6180-2451 |
@@ -177,7 +179,6 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | Hui Ding | 2026 | assistant_professor | orcid_employment | medium | Assistant Professor; Fudan University | https://orcid.org/0000-0002-8694-5456 |
 | Iacopo Morchio | 2026 | lecturer_other_academic | orcid_employment | medium | Academic , Senior Lecturer; The University of Bristol | https://orcid.org/0000-0001-9373-4131 |
 | Ingrid Huitfeldt | 2026 | assistant_professor | orcid_employment | medium | Assistant Professor (tenure-track); BI Norwegian Business School | https://orcid.org/0000-0002-0472-2698 |
-| Jason Allen | 2026 | associate_professor | orcid_employment | medium | Associate Professor; University of Wisconsin–Madison | https://orcid.org/0000-0003-2558-9061 |
 
 ## Interpretation
 

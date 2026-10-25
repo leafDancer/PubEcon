@@ -218,17 +218,17 @@ These are lower-severity or overlapping findings that were not adversarially ver
 
 **Completed:**
 
-- ORCID identity: 3,248 of 5,892 canonical authors retain an ORCID after validation. 2,363 are accepted: 1,371 by matching AER DOI, 177 by matching title, 532 by institution overlap, and 283 by a low-confidence economics-field signal. 885 are unverified links whose events are withheld. 146 person-name conflicts, 158 clear field mismatches, and 11 career-risk links are rejected and cleared.
-- ORCID events: 2,028 accepted identities contribute 5,773 employment/education events, of which 4,539 have a start year. Every ORCID link is checked against the author's AER record before its events are used.
-- Career assignments: 2,216 of 10,782 article slots (20.6%) now have a stage: 669 byline, 1,543 ORCID, and 4 CV pilot. Byline evidence remains paper-specific and takes precedence; generic "Professor" titles are low confidence. 1,342 assignments are high/medium confidence and 874 are low.
+- ORCID identity: 3,314 of 5,892 canonical authors retain an ORCID after validation. 2,409 are accepted: 1,397 by matching AER DOI, 181 by matching title, 539 by institution overlap, and 292 by a low-confidence economics-field signal. 905 are unverified links whose events are withheld. 72 person-name conflicts, 165 clear field mismatches, and 12 career-risk links are rejected and cleared.
+- ORCID events: 2,067 accepted identities contribute 5,847 employment/education events, of which 4,583 have a start year. Every ORCID link is checked against the author's AER record before its events are used.
+- Career assignments: 2,264 of 10,782 article slots (21.0%) now have a stage: 669 byline, 1,591 ORCID, and 4 CV pilot. Byline evidence remains paper-specific and takes precedence; generic "Professor" titles are low confidence. 1,349 assignments are high/medium confidence and 915 are low.
 - CV layer: 1,088 public CV/homepage sources were seeded from ORCID researcher URLs. The pilot parsed 17 CVs, extracting 60 dated events and 4 assignments. Raw documents are stored only in the local ignored cache.
 - ORCID/CV provenance is explicit in `career_events` (`source_type`, `source_url`, `source_snippet`, confidence) and `career_assignments` (`evidence_type`, `career_event_id`, confidence). `authors.orcid_source` records the identity tier or rejection reason.
 
 **Still open (M5/P2):**
 
-- 8,566 article slots remain without a career assignment; full CV discovery/parsing is resumable.
-- 860 of 915 full-professor assignments are low-confidence generic "Professor" titles and need CV/rank corroboration.
-- ORCID review remains: 885 unverified links, 283 low-confidence economics-field links, 146 person-name conflicts, 158 field mismatches, and 11 career-risk rejections. 5 multi-ID authors also remain uncertain.
+- 8,518 article slots remain without a career assignment; full CV discovery/parsing is resumable.
+- 900 of 956 full-professor assignments are low-confidence generic "Professor" titles and need CV/rank corroboration.
+- ORCID review remains: 905 unverified links, 292 low-confidence economics-field links, 72 person-name conflicts, 165 field mismatches, and 12 career-risk rejections. 5 multi-ID authors also remain uncertain.
 - The CV parser has only been piloted on 17 documents; precision on a larger sample is not yet measured.
 - AEA JEL remains partial (698/4,786); OpenAlex topics cover 98.9% independently.
 - The 7 pending merge candidates and 47 review-flagged authors need OpenAlex/CV evidence or manual review.
