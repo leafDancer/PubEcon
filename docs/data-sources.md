@@ -52,10 +52,18 @@ The project covers **AER 2000–present**. This deliberately excludes the 1911�
 
 ## CVs and faculty pages
 
-- ORCID researcher URLs provide a seed set of public homepages and CVs: 1,088 candidate sources were discovered.
+- ORCID researcher URLs and discovered CV links provide 1,347 public sources. 626 homepages were parsed for links, 281 documents were downloaded, and 256 documents were parsed.
 - The CV layer is deliberately conservative: it follows public links, stores raw documents only in the ignored local cache, and extracts only Education/Employment sections with years and titles.
-- The pilot parsed 17 CVs and 60 dated events. CV events are used only after byline and ORCID evidence are absent.
+- The crawl extracted 1,069 dated CV events and 43 career assignments. CV events are used only after byline, ORCID, and Wayback evidence are absent. Another 70 CV links remain queued.
 - The full CV crawl is resumable; it is not presented as complete coverage.
+
+## Wayback Machine
+
+- Historical faculty and personal pages are retrieved through the Internet Archive CDX API. A snapshot near the AER paper year can show the rank that was current at the time, which current ORCID records and faculty pages cannot.
+- Candidate snapshots are tied to a paper year and stored in `author_wayback_snapshots`; raw HTML and extracted text stay in the ignored local cache.
+- The parser looks for an academic rank phrase near the author's family name and uses the paper's byline institution. It ignores non-academic titles and never assigns from a page that does not mention the author.
+- `wayback_employment` sits between ORCID and CV in the evidence hierarchy and is capped at medium confidence.
+- The current development network cannot reach `web.archive.org` (connections time out), so the pipeline has been tested with synthetic snapshots but not run against the live archive. Run it from a network with Internet Archive access before treating it as a coverage source.
 
 ## RePEc / IDEAS
 
@@ -84,8 +92,8 @@ Career facts will be stored as structured rows with source URLs. Personal data s
 - Author resolution is name-based, supplemented by OpenAlex evidence. The resolver handles middle initials, surname particles, Unicode transliteration, suffixes, and known namesakes. M3 introduced stable IDs and explicit review: 5,892 canonical authors, 7 resolved namesake candidates, 3 confirmed splits, 32 OpenAlex profile-duplication cases, and 5 uncertain multi-ID authors. 28 OpenAlex fragmentation flags remain. This is not a substitute for CV evidence.
 - Stable author IDs live in `author_identity_ledger`; `authors.author_id` remains an internal key and can change on rebuild. Confirmed splits are protected by `author_separation_rules`.
 - Affiliation strings are inconsistent, and explicit academic rank is present on only about 0.3% of author slots. OpenAlex resolves publish-time institutions for 10,188 of 10,782 slots (94.5%); combined with the Crossref byline hint, 10,602 slots (98.3%) have some institution string.
-- Career assignments cover 2,264 of 10,782 slots (21.0%): 669 byline, 1,591 ORCID, and 4 CV pilot. 8,518 slots remain unknown. 900 of the 956 full-professor assignments rely on generic "Professor" titles and are low confidence.
-- ORCID review remains substantial: 905 identities are unverified (events withheld), 292 are low-confidence economics-field matches, 72 have person-name conflicts, 165 have clear field mismatches, and 12 would change a career stage without positive identity evidence. The CV corpus is a pilot (17 parsed documents), not a complete corpus.
+- Career assignments cover 2,303 of 10,782 slots (21.4%): 669 byline, 1,591 ORCID, and 43 CV. 8,479 slots remain unknown. 908 of the 964 full-professor assignments rely on generic "Professor" titles and are low confidence.
+- ORCID review remains substantial: 905 identities are unverified (events withheld), 292 are low-confidence economics-field matches, 72 have person-name conflicts, 165 have clear field mismatches, and 12 would change a career stage without positive identity evidence. The CV corpus has 256 parsed documents but is not a complete corpus.
 - P&P articles are identified as the largest spring issue (April/May, at least 50 articles) in each year through 2017. The issue number is not stable: it is 2 in 2000–2010, 3 in 2011–2013, and 5 in 2014–2017. AEA issue metadata is used for verification where available.
 - AER's publication schedule and issue numbering changed over time; year-level analysis is safer than issue-level analysis.
 - Crossref coverage of front matter and non-research items varies. AER P&P issues also contain AEA committee reports, minutes, and Job Openings reports; these are classified as `association_report` and excluded from research-article statistics.

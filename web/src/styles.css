@@ -805,6 +805,10 @@ h3 {
   background: var(--cobalt);
 }
 
+.ep-legend-swatch.is-wayback {
+  background: var(--ochre);
+}
+
 .ep-legend-dot {
   display: inline-block;
   width: 7px;
@@ -1628,6 +1632,10 @@ h3 {
 
 .ep-timeline-bar.is-cv {
   background: var(--cobalt);
+}
+
+.ep-timeline-bar.is-wayback {
+  background: var(--ochre);
 }
 
 .ep-timeline-bar.is-other {

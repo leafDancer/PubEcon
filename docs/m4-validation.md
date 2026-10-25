@@ -36,7 +36,7 @@ OpenAlex author links are not reliable enough to use an ORCID without checking i
 
 ## Known limitations confirmed
 
-- Generic "Professor" is ambiguous. 900 of 956 full-professor assignments are low confidence for this reason.
+- Generic "Professor" is ambiguous. 908 of 964 full-professor assignments are low confidence for this reason.
 - ORCID identity validation rejects 72 person-name conflicts, 165 clear field mismatches, and 12 career-changing links without positive evidence. Another 905 links are unverified and their events are withheld.
 - The economics-field tier is low confidence by design. It is used only when the ORCID record has an economics department or core economics journal, but a same-name economist in another field can still slip through (for example, the energy economist sharing Ying Fan's name).
-- The CV pilot is small (17 parsed documents at the time of writing). The full CV crawl is resumable and must be validated on a larger sample before claiming broad CV coverage.
+- The CV corpus now has 256 parsed documents and 1,069 events, but it is still a resumable crawl, not a complete census. Seventy CV links remain queued.

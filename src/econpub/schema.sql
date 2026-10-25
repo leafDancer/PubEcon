@@ -377,6 +377,31 @@ CREATE TABLE IF NOT EXISTS author_cv_sources (
 CREATE INDEX IF NOT EXISTS idx_cv_sources_author ON author_cv_sources(author_id);
 CREATE INDEX IF NOT EXISTS idx_cv_sources_status ON author_cv_sources(status);
 
+-- Historical faculty/homepage snapshots retrieved from the Wayback Machine.
+-- Each row is one archived URL tied to one paper year for an author.
+CREATE TABLE IF NOT EXISTS author_wayback_snapshots (
+    snapshot_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    author_id         INTEGER NOT NULL,
+    source_url        TEXT NOT NULL,
+    original_url      TEXT,
+    snapshot_timestamp TEXT NOT NULL,
+    snapshot_url      TEXT NOT NULL,
+    paper_year        INTEGER,
+    status            TEXT NOT NULL DEFAULT 'candidate',
+    content_hash      TEXT,
+    local_path        TEXT,
+    fetched_at        TEXT,
+    notes             TEXT,
+    created_at        TEXT NOT NULL,
+    UNIQUE (author_id, snapshot_url, paper_year),
+    FOREIGN KEY (author_id) REFERENCES authors(author_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wayback_author
+    ON author_wayback_snapshots(author_id);
+CREATE INDEX IF NOT EXISTS idx_wayback_status
+    ON author_wayback_snapshots(status);
+
 -- The central inference table: what was this author's stage when this paper
 -- was published? Every row must carry evidence and a confidence level.
 CREATE TABLE IF NOT EXISTS career_assignments (

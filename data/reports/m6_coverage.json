@@ -1,0 +1,172 @@
+{
+  "generated_at": "2026-10-25T04:12:44+00:00",
+  "cv_summary": {
+    "sources": 1347,
+    "candidates": 70,
+    "homepages": 626,
+    "downloaded": 281,
+    "parsed": 256,
+    "failed": 377,
+    "name_mismatch": 18,
+    "cv_events": 1069,
+    "cv_assignments": 43
+  },
+  "cv_authors_with_events": 177,
+  "cv_status": [
+    {
+      "status": "homepage_fetched",
+      "n": 626
+    },
+    {
+      "status": "failed",
+      "n": 377
+    },
+    {
+      "status": "parsed",
+      "n": 256
+    },
+    {
+      "status": "candidate",
+      "n": 70
+    },
+    {
+      "status": "name_mismatch",
+      "n": 18
+    }
+  ],
+  "cv_types": [
+    {
+      "source_type": "orcid_researcher_url",
+      "status": "homepage_fetched",
+      "n": 626
+    },
+    {
+      "source_type": "orcid_researcher_url",
+      "status": "failed",
+      "n": 377
+    },
+    {
+      "source_type": "cv_link",
+      "status": "parsed",
+      "n": 255
+    },
+    {
+      "source_type": "cv_link",
+      "status": "candidate",
+      "n": 70
+    },
+    {
+      "source_type": "cv_link",
+      "status": "name_mismatch",
+      "n": 18
+    },
+    {
+      "source_type": "cv_document",
+      "status": "parsed",
+      "n": 1
+    }
+  ],
+  "cv_domains": [
+    {
+      "domain": "voices.uchicago.edu",
+      "parsed": 4,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "www.econ.uzh.ch",
+      "parsed": 3,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "lantpritchett.org",
+      "parsed": 3,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "sites.google.com",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "dalumat.ai",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "www.bsfrey.ch",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "sites.bu.edu",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "www.susannaberkouwer.com",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "blog.iese.edu",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "www.david-anthoff.com",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "personal.lse.ac.uk",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "eml.berkeley.edu",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "sites.northwestern.edu",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "koichiroito.com",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "www.tax.mpg.de",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    }
+  ],
+  "wayback_summary": {
+    "snapshots": 0,
+    "candidates": 0,
+    "fetched": 0,
+    "parsed": 0,
+    "failed": 0,
+    "empty": 0,
+    "events": 0,
+    "assignments": 0
+  },
+  "wayback_status": []
+}

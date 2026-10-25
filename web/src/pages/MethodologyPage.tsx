@@ -112,9 +112,15 @@ export default function MethodologyPage() {
                 the paper date.
               </li>
               <li>
+                <strong>Wayback faculty pages.</strong> A historical snapshot near the paper year
+                can show the rank that was current at the time. The parser looks for an academic
+                rank phrase near the author&apos;s family name, uses the paper&apos;s byline
+                institution, and caps confidence at medium.
+              </li>
+              <li>
                 <strong>CV employment and education.</strong> Public CVs and faculty pages,
                 discovered through ORCID researcher URLs, are parsed conservatively by section and
-                used only after byline and ORCID evidence.
+                used only after byline, ORCID, and Wayback evidence.
               </li>
               <li>
                 <strong>Unknown.</strong> No assignment is stored when the evidence is insufficient.

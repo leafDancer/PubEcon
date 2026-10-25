@@ -1,6 +1,6 @@
 # M4 Career Evidence Report — AER 2000+
 
-Generated: 2026-10-25T02:33:00+00:00
+Generated: 2026-10-25T04:12:44+00:00
 
 Scope: **American Economic Review** (ISSN 0002-8282), 2000–present. M4 adds structured ORCID employment/education timelines and uses them to infer career stage at publication.
 
@@ -15,20 +15,21 @@ Scope: **American Economic Review** (ISSN 0002-8282), 2000–present. M4 adds st
 | ORCID identities contributing events | 2067 |
 | ORCID career events | 5847 |
 | ORCID events with a start year | 4583 |
-| Career assignments (all sources) | 2264 |
+| Career assignments (all sources) | 2303 |
 |   — byline assignments | 669 |
 |   — ORCID assignments | 1591 |
-| Career coverage (article slots) | 21.0% |
-|   — high/medium confidence | 1349 |
-|   — low confidence | 915 |
+|   — Wayback assignments | 0 |
+| Career coverage (article slots) | 21.4% |
+|   — high/medium confidence | 1380 |
+|   — low confidence | 923 |
 | ORCID name conflicts skipped | 72 |
 | ORCID author conflicts | 0 |
 | ORCID field mismatches rejected | 165 |
 | ORCID career-risk rejections | 12 |
-| CV/homepage sources | 1088 |
-| CV documents parsed | 17 |
-| CV career events | 60 |
-| CV assignments | 4 |
+| CV/homepage sources | 1347 |
+| CV documents parsed | 256 |
+| CV career events | 1069 |
+| CV assignments | 43 |
 
 ## ORCID identity confidence
 
@@ -56,8 +57,8 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | high | low | 621 |
 | high | medium | 257 |
 | low | low | 19 |
-| medium | low | 275 |
-| medium | medium | 188 |
+| medium | low | 273 |
+| medium | medium | 190 |
 
 ## Career events by source and type
 
@@ -68,23 +69,23 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | education | orcid | high | 1086 |
 | employment | orcid | low | 989 |
 | education | orcid | medium | 533 |
+| employment | cv | medium | 319 |
 | education | orcid | low | 248 |
-| education | cv | high | 16 |
-| employment | cv | low | 12 |
-| employment | cv | high | 11 |
-| education | cv | medium | 9 |
-| employment | cv | medium | 9 |
-| education | cv | low | 3 |
+| education | cv | medium | 181 |
+| education | cv | high | 179 |
+| education | cv | low | 140 |
+| employment | cv | low | 140 |
+| employment | cv | high | 110 |
 
 ## Career assignments by evidence and stage
 
 | Evidence | Stage | Confidence | Slots |
 |---|---|---|---|
-| orcid_employment | full_professor | low | 900 |
+| orcid_employment | full_professor | low | 898 |
 | byline_rank | non_academic | high | 632 |
 | orcid_employment | associate_professor | medium | 134 |
 | orcid_employment | assistant_professor | high | 121 |
-| orcid_employment | assistant_professor | medium | 118 |
+| orcid_employment | assistant_professor | medium | 120 |
 | orcid_employment | associate_professor | high | 74 |
 | orcid_employment | non_academic | medium | 55 |
 | orcid_education | phd_student | medium | 40 |
@@ -95,61 +96,68 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | orcid_employment | research_fellow | high | 15 |
 | orcid_employment | lecturer_other_academic | medium | 14 |
 | orcid_employment | lecturer_other_academic | high | 11 |
+| cv_employment | assistant_professor | medium | 10 |
+| cv_employment | full_professor | low | 10 |
 | orcid_employment | postdoc | medium | 9 |
+| cv_employment | associate_professor | medium | 8 |
+| cv_employment | assistant_professor | high | 7 |
 | orcid_employment | associate_professor | low | 6 |
 | orcid_employment | full_professor | high | 6 |
 | orcid_employment | assistant_professor | low | 5 |
 | orcid_employment | postdoc | high | 4 |
 | byline_rank | research_fellow | high | 4 |
 | byline_rank | assistant_professor | high | 3 |
-| cv_employment | assistant_professor | medium | 3 |
 | byline_rank | associate_professor | high | 3 |
+| cv_employment | non_academic | medium | 3 |
+| cv_employment | associate_professor | high | 2 |
 | byline_rank | lecturer_other_academic | high | 2 |
 | orcid_employment | non_academic | low | 2 |
-| cv_employment | associate_professor | high | 1 |
 | byline_rank | emeritus | high | 1 |
+| cv_employment | lecturer_other_academic | medium | 1 |
 | byline_rank | phd_student | high | 1 |
+| cv_education | phd_student | medium | 1 |
 | orcid_education | phd_student | low | 1 |
 | orcid_employment | phd_student | medium | 1 |
+| cv_employment | research_fellow | high | 1 |
 | orcid_employment | research_fellow | low | 1 |
 
 ## Career coverage by publication year
 
-| Year | Article slots | Byline | ORCID | Assigned | Coverage |
-|---|---|---|---|---|---|
-| 2000 | 318 | 24 | 38 | 62 | 19.5% |
-| 2001 | 354 | 22 | 31 | 53 | 15.0% |
-| 2002 | 359 | 23 | 33 | 56 | 15.6% |
-| 2003 | 342 | 16 | 28 | 44 | 12.9% |
-| 2004 | 341 | 22 | 37 | 59 | 17.3% |
-| 2005 | 371 | 23 | 49 | 72 | 19.4% |
-| 2006 | 364 | 25 | 47 | 73 | 20.1% |
-| 2007 | 384 | 26 | 56 | 82 | 21.4% |
-| 2008 | 394 | 17 | 55 | 74 | 18.8% |
-| 2009 | 417 | 29 | 51 | 80 | 19.2% |
-| 2010 | 502 | 35 | 76 | 111 | 22.1% |
-| 2011 | 546 | 28 | 82 | 110 | 20.1% |
-| 2012 | 563 | 37 | 70 | 107 | 19.0% |
-| 2013 | 505 | 27 | 81 | 108 | 21.4% |
-| 2014 | 593 | 45 | 86 | 131 | 22.1% |
-| 2015 | 548 | 20 | 97 | 117 | 21.4% |
-| 2016 | 614 | 64 | 94 | 158 | 25.7% |
-| 2017 | 618 | 48 | 115 | 163 | 26.4% |
-| 2018 | 265 | 19 | 31 | 50 | 18.9% |
-| 2019 | 303 | 17 | 51 | 68 | 22.4% |
-| 2020 | 302 | 14 | 61 | 75 | 24.8% |
-| 2021 | 310 | 13 | 63 | 76 | 24.5% |
-| 2022 | 284 | 15 | 44 | 59 | 20.8% |
-| 2023 | 256 | 11 | 42 | 53 | 20.7% |
-| 2024 | 313 | 17 | 54 | 72 | 23.0% |
-| 2025 | 322 | 22 | 54 | 76 | 23.6% |
-| 2026 | 294 | 10 | 65 | 75 | 25.5% |
+| Year | Article slots | Byline | ORCID | Wayback | Assigned | Coverage |
+|---|---|---|---|---|---|---|
+| 2000 | 318 | 24 | 38 | 0 | 62 | 19.5% |
+| 2001 | 354 | 22 | 31 | 0 | 53 | 15.0% |
+| 2002 | 359 | 23 | 33 | 0 | 56 | 15.6% |
+| 2003 | 342 | 16 | 28 | 0 | 44 | 12.9% |
+| 2004 | 341 | 22 | 37 | 0 | 62 | 18.2% |
+| 2005 | 371 | 23 | 49 | 0 | 73 | 19.7% |
+| 2006 | 364 | 25 | 47 | 0 | 74 | 20.3% |
+| 2007 | 384 | 26 | 56 | 0 | 82 | 21.4% |
+| 2008 | 394 | 17 | 55 | 0 | 74 | 18.8% |
+| 2009 | 417 | 29 | 51 | 0 | 82 | 19.7% |
+| 2010 | 502 | 35 | 76 | 0 | 111 | 22.1% |
+| 2011 | 546 | 28 | 82 | 0 | 114 | 20.9% |
+| 2012 | 563 | 37 | 70 | 0 | 111 | 19.7% |
+| 2013 | 505 | 27 | 81 | 0 | 110 | 21.8% |
+| 2014 | 593 | 45 | 86 | 0 | 132 | 22.3% |
+| 2015 | 548 | 20 | 97 | 0 | 122 | 22.3% |
+| 2016 | 614 | 64 | 94 | 0 | 158 | 25.7% |
+| 2017 | 618 | 48 | 115 | 0 | 167 | 27.0% |
+| 2018 | 265 | 19 | 31 | 0 | 51 | 19.2% |
+| 2019 | 303 | 17 | 51 | 0 | 69 | 22.8% |
+| 2020 | 302 | 14 | 61 | 0 | 77 | 25.5% |
+| 2021 | 310 | 13 | 63 | 0 | 78 | 25.2% |
+| 2022 | 284 | 15 | 44 | 0 | 61 | 21.5% |
+| 2023 | 256 | 11 | 42 | 0 | 54 | 21.1% |
+| 2024 | 313 | 17 | 54 | 0 | 73 | 23.3% |
+| 2025 | 322 | 22 | 54 | 0 | 77 | 23.9% |
+| 2026 | 294 | 10 | 65 | 0 | 76 | 25.9% |
 
 ## Recent ORCID-derived assignments
 
 | Author | Year | Stage | Evidence | Confidence | Position | Source |
 |---|---|---|---|---|---|---|
-| Aaron Chalfin | 2026 | full_professor | orcid_employment | low | Asst. Professor; University of Pennsylvania (generic professor title; rank uncertain) | https://orcid.org/0000-0003-4810-5146 |
+| Aaron Chalfin | 2026 | assistant_professor | orcid_employment | medium | Asst. Professor; University of Pennsylvania | https://orcid.org/0000-0003-4810-5146 |
 | Alan Benson | 2026 | assistant_professor | orcid_employment | medium | Assistant Professor; University of Minnesota System | https://orcid.org/0000-0003-4256-3357 |
 | Alberto Bisin | 2026 | full_professor | orcid_employment | low | Professor; New York University (generic professor title; rank uncertain) | https://orcid.org/0000-0002-5389-0524 |
 | Albrecht Glitz | 2026 | associate_professor | orcid_employment | medium | Associate Professor; Universitat Pompeu Fabra | https://orcid.org/0000-0002-7324-6082 |

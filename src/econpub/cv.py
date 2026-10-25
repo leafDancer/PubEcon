@@ -5,7 +5,9 @@ import json
 import logging
 import re
 import subprocess
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin, urlsplit
@@ -31,19 +33,23 @@ USER_AGENT = (
 )
 MAX_BYTES = 30_000_000
 
+_THREAD_LOCAL = threading.local()
+_CLIENTS: list[httpx.Client] = []
+_CLIENT_LOCK = threading.Lock()
+
 _EDUCATION_HEADER = re.compile(
-    r"^(education|academic education|degrees|educational background)(?=\s|$|[A-Z])",
+    r"^(education|academic education|degrees|earned degrees|educational background|education and training|academic training)(?=\s|:|$|[A-Z])",
     re.IGNORECASE,
 )
 _EMPLOYMENT_HEADER = re.compile(
     r"^(academic appointments|academic positions|professional appointments|"
     r"professional experience|employment|positions held|work experience|"
-    r"appointments|experience|visiting appointments|affiliations)(?=\s|$|[A-Z])",
+    r"appointments|past appointments|current position|experience|visiting appointments|affiliations)(?=\s|:|$|[A-Z])",
     re.IGNORECASE,
 )
 _OTHER_HEADER = re.compile(
     r"^(research(?!\s+(?:fellow|scientist))|publications|working papers|"
-    r"selected publications|teaching|awards|honors|grants|service|"
+    r"selected publications|teaching|awards|honors|honorary degrees|grants|service|"
     r"professional service|referee|conferences|seminars|fields|fields of interest|"
     r"invited|presentations|media|other)\b",
     re.IGNORECASE,
@@ -55,19 +61,52 @@ _DEGREE_RE = re.compile(
 )
 _RANGE_RE = re.compile(
     r"((?:19|20)\d{2})\s*[-–—]{1,2}\s*(?:[A-Z][a-z]+\s+)?"
-    r"((?:19|20)\d{2}|present|current|now)?",
+    r"((?:19|20)\d{2}|present|current|now|\d{2})?",
     re.IGNORECASE,
 )
 _SINGLE_YEAR_RE = re.compile(r"\b((?:19|20)\d{2})\b")
 _SKIP_LINE = re.compile(
     r"\b(journal|vol\.|pp\.|doi|working paper|ssrn|nber working|http|"
-    r"editor|referee|seminar|conference|award|grant|university press)\b",
+    r"editor|referee|seminar|conference|award|grant|university press|"
+    r"course|workshop|summer school)\b",
     re.IGNORECASE,
 )
 
 
 def _hash_bytes(content: bytes) -> str:
     return hashlib.sha1(content).hexdigest()
+
+
+def _url_digest(url: str) -> str:
+    return hashlib.sha1(url.encode("utf-8")).hexdigest()
+
+
+def _load_cached_page(url: str) -> tuple[bytes, str | None, str] | None:
+    digest = _url_digest(url)
+    path = HOMEPAGES_DIR / f"{digest}.html"
+    meta_path = HOMEPAGES_DIR / f"{digest}.json"
+    if not path.exists():
+        return None
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
+        return path.read_bytes(), meta.get("content_type"), meta.get("final_url") or url
+    except (OSError, ValueError):
+        return None
+
+
+def _store_cached_page(url: str, content: bytes, content_type: str | None, final_url: str) -> str:
+    digest = _url_digest(url)
+    HOMEPAGES_DIR.mkdir(parents=True, exist_ok=True)
+    path = HOMEPAGES_DIR / f"{digest}.html"
+    path.write_bytes(content)
+    (HOMEPAGES_DIR / f"{digest}.json").write_text(
+        json.dumps(
+            {"content_type": content_type, "final_url": final_url, "source_url": url},
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    return digest
 
 
 def _normalize_document_url(url: str) -> str:
@@ -78,6 +117,17 @@ def _normalize_document_url(url: str) -> str:
             return url.replace("dl=0", "dl=1")
         if "dl=1" not in url:
             return url + ("&" if "?" in url else "?") + "dl=1"
+    if "drive.google.com/file/d/" in lower:
+        match = re.search(r"/file/d/([^/]+)", url)
+        if match:
+            return f"https://drive.google.com/uc?export=download&id={match.group(1)}"
+    if "google.com/url" in lower:
+        from urllib.parse import parse_qs
+
+        query = parse_qs(urlsplit(url).query)
+        target = (query.get("q") or [""])[0]
+        if target.startswith(("http://", "https://")):
+            return target
     return url
 
 
@@ -103,37 +153,68 @@ def _safe_url(url: str) -> bool:
     return True
 
 
+def _client() -> httpx.Client:
+    client = getattr(_THREAD_LOCAL, "client", None)
+    if client is None:
+        client = httpx.Client(
+            headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/pdf,*/*"},
+            timeout=httpx.Timeout(20.0, connect=8.0),
+            follow_redirects=True,
+        )
+        _THREAD_LOCAL.client = client
+        with _CLIENT_LOCK:
+            _CLIENTS.append(client)
+    return client
+
+
+def _close_clients() -> None:
+    with _CLIENT_LOCK:
+        for client in _CLIENTS:
+            try:
+                client.close()
+            except Exception:
+                pass
+        _CLIENTS.clear()
+
+
 def _fetch(url: str) -> tuple[bytes | None, str | None, str | None, str | None]:
     if not _safe_url(url):
         return None, None, None, "unsafe_url"
-    delay = 2.0
+    delay = 1.5
     last_error = "unknown error"
-    for attempt in range(1, 4):
+    for attempt in range(1, 3):
         try:
-            with httpx.Client(
-                headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/pdf,*/*"},
-                timeout=60.0,
-                follow_redirects=True,
-            ) as client:
-                response = client.get(url)
-                if response.status_code == 200:
-                    content = response.content
-                    if len(content) > MAX_BYTES:
-                        return None, None, None, "too_large"
-                    return content, response.headers.get("content-type"), str(response.url), None
-                if response.status_code in {403, 429, 500, 502, 503, 504} and attempt < 3:
-                    time.sleep(delay)
-                    delay = min(delay * 2, 30.0)
-                    last_error = f"http_{response.status_code}"
-                    continue
-                return None, None, None, f"http_{response.status_code}"
+            response = _client().get(url)
+            if response.status_code == 200:
+                content = response.content
+                if len(content) > MAX_BYTES:
+                    return None, None, None, "too_large"
+                return content, response.headers.get("content-type"), str(response.url), None
+            # 403s and 404s are usually permanent; do not hammer the host.
+            if response.status_code in {429, 500, 502, 503, 504} and attempt < 2:
+                time.sleep(delay)
+                delay = min(delay * 2, 20.0)
+                last_error = f"http_{response.status_code}"
+                continue
+            return None, None, None, f"http_{response.status_code}"
         except (httpx.TimeoutException, httpx.TransportError) as exc:
             last_error = str(exc)
-            if attempt < 3:
+            if attempt < 2:
                 time.sleep(delay)
-                delay = min(delay * 2, 30.0)
+                delay = min(delay * 2, 20.0)
                 continue
     return None, None, None, last_error
+
+
+def _fetch_page(url: str) -> tuple[bytes | None, str | None, str | None, str | None]:
+    """Fetch a page, retrying an old HTTP URL over HTTPS once."""
+    result = _fetch(url)
+    if result[3] and url.lower().startswith("http://"):
+        secure = "https://" + url[7:]
+        secure_result = _fetch(secure)
+        if secure_result[3] is None:
+            return secure_result
+    return result
 
 
 def _html_text_and_links(content: bytes, base_url: str) -> tuple[str, list[tuple[str, str]]]:
@@ -184,16 +265,66 @@ def _institution_names(conn) -> list[str]:
     ]
 
 
+_GENERIC_INSTITUTION_NAMES = {
+    "university",
+    "college",
+    "institute",
+    "school",
+    "bank",
+    "bureau",
+    "center",
+    "centre",
+    "foundation",
+    "agency",
+    "ministry",
+    "board",
+    "council",
+    "university of",
+    "department of",
+    "school of",
+    "college of",
+    "institute of",
+}
+
+
 def _match_institution(line: str, names: list[str]) -> str | None:
     lower = line.lower()
-    matches = [name for name in names if name.lower() in lower]
+    matches = [
+        name
+        for name in names
+        if name.lower() in lower and name.strip().lower() not in _GENERIC_INSTITUTION_NAMES
+    ]
     if matches:
         return max(matches, key=len)
+    # Prefer a named entity immediately before an institution suffix.
+    named = re.search(
+        r"\b(?:at|,)\s+([A-Z][A-Za-z&.'-]+(?:\s+[A-Z][A-Za-z&.'-]+){1,5}\s+"
+        r"(?:University|College|Institute|School|Bank|Bureau|Center|Centre|"
+        r"Foundation|Agency|Ministry|Board|Council))\b",
+        line,
+    )
+    if named:
+        return clean_text(named.group(1))[:200]
+    university_of = re.search(
+        r"(?:\bat\s+|[,;]\s*)(University of\s+[A-Z][A-Za-z&.'-]+(?:\s+[A-Z][A-Za-z&.'-]+){0,3})",
+        line,
+    )
+    if university_of:
+        return clean_text(university_of.group(1))[:200]
     # Fallback for institution names not in the OpenAlex entity table.
     cleaned = _RANGE_RE.sub("", line)
     cleaned = _SINGLE_YEAR_RE.sub("", cleaned)
     parts = [part.strip(" .;") for part in cleaned.split(",") if part.strip(" .;")]
     for part in reversed(parts):
+        if part.lower() in _GENERIC_INSTITUTION_NAMES:
+            continue
+        if re.search(
+            r"\b(?:assistant|associate|professor|lecturer|instructor|director|"
+            r"department|faculty|postdoctoral|fellow)\b",
+            part,
+            re.IGNORECASE,
+        ):
+            continue
         if re.search(
             r"\b(university|institute|bank|bureau|center|centre|school|college|"
             r"foundation|agency|ministry|board|council)\b",
@@ -211,7 +342,15 @@ def _extract_years(line: str) -> tuple[int | None, int | None, int]:
         end_text = (match.group(2) or "").lower()
         if end_text in {"present", "current", "now"} or not end_text:
             return start, None, 1
-        return start, int(end_text), 0
+        if len(end_text) == 2:
+            end = (start // 100) * 100 + int(end_text)
+            if end < start:
+                end += 100
+            return start, end, 0
+        end = int(end_text)
+        if end < start or end > 2026:
+            return start, start, 0
+        return start, end, 0
     match = _SINGLE_YEAR_RE.search(line)
     if match:
         year = int(match.group(1))
@@ -227,17 +366,24 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
     dates are optional but increase confidence.
     """
     text = text.replace("�", "-").replace("–", "-").replace("—", "-")
+    # Normalize month/year ranges such as 05/2014-07/2017 before year parsing.
+    text = re.sub(
+        r"\b\d{1,2}/((?:19|20)\d{2})\s*-\s*\d{1,2}/((?:19|20)\d{2})\b",
+        r"\1-\2",
+        text,
+    )
+    text = re.sub(r"\b\d{1,2}/((?:19|20)\d{2})\b", r"\1", text)
     # Some CMS pages render a whole CV as one run of text. Add line breaks
     # before section headers and explicit role titles.
     text = re.sub(
         r"(?=(?:Education|Employment|Publications|Teaching|Research|Awards|"
-        r"Service|Fields of Interest))",
+        r"Service|Fields of Interest|Earned Degrees|Past Appointments))",
         "\n",
         text,
     )
     text = re.sub(
-        r"(?i)(?=(?:education|academic appointments|professional appointments|"
-        r"employment|publications|teaching|research interests|research papers|"
+        r"(?i)(?=(?:education|earned degrees|academic appointments|professional appointments|"
+        r"past appointments|employment|publications|teaching|research interests|research papers|"
         r"working papers|awards|service|fields of interest)\b)",
         "\n",
         text,
@@ -499,7 +645,23 @@ def collect_orcid_urls(conn) -> dict[str, int]:
     return stats
 
 
-def discover_cv_links(conn, *, limit: int | None = None) -> dict[str, int]:
+def discover_cv_links(
+    conn,
+    *,
+    limit: int | None = None,
+    workers: int = 4,
+    refresh: bool = False,
+    retry_failed: bool = False,
+) -> dict[str, int]:
+    if retry_failed:
+        conn.execute(
+            """
+            UPDATE author_cv_sources
+            SET status='candidate', notes='retry requested'
+            WHERE status='failed' AND source_type='orcid_researcher_url'
+            """
+        )
+        conn.commit()
     rows = conn.execute(
         """
         SELECT source_id, author_id, url, notes
@@ -510,96 +672,158 @@ def discover_cv_links(conn, *, limit: int | None = None) -> dict[str, int]:
     ).fetchall()
     if limit is not None:
         rows = rows[:limit]
-    stats = {"pages": len(rows), "documents": 0, "links": 0, "failed": 0}
-    for row in rows:
-        content, content_type, final_url, error = _fetch(row["url"])
+    stats = {
+        "pages": len(rows),
+        "cached": 0,
+        "fetched": 0,
+        "documents": 0,
+        "links": 0,
+        "failed": 0,
+    }
+
+    def fetch_row(row):
+        if not refresh:
+            cached = _load_cached_page(row["url"])
+            if cached is not None:
+                content, content_type, final_url = cached
+                return row, content, content_type, final_url, "cached", None
+        content, content_type, final_url, error = _fetch_page(row["url"])
         if error or content is None:
-            stats["failed"] += 1
-            conn.execute(
-                "UPDATE author_cv_sources SET status='failed', notes=? WHERE source_id=?",
-                (error or "fetch_failed", row["source_id"]),
-            )
-            continue
-        is_pdf = "application/pdf" in (content_type or "") or row["url"].lower().endswith(
-            ".pdf"
-        )
-        if is_pdf:
-            digest = _hash_bytes(content)
-            path = DOCUMENTS_DIR / f"{digest}.pdf"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(content)
-            text = _pdf_text(path)[:300_000]
-            TEXTS_DIR.mkdir(parents=True, exist_ok=True)
-            (TEXTS_DIR / f"{digest}.txt").write_text(text, encoding="utf-8")
-            conn.execute(
-                """
-                UPDATE author_cv_sources
-                SET status='fetched', content_hash=?, local_path=?, fetched_at=?,
-                    source_type='cv_document', notes=?
-                WHERE source_id=?
-                """,
-                (
-                    digest,
-                    str(path),
-                    db.utcnow(),
-                    f"{len(text)} chars; direct PDF",
-                    row["source_id"],
-                ),
-            )
-            stats["documents"] += 1
-            continue
-        text, links = _html_text_and_links(content, final_url or row["url"])
-        candidates: list[tuple[int, str, str]] = []
-        for label, href in links:
-            low = f"{label} {href}".lower()
-            score = 0
-            if any(term in low for term in ("curriculum vitae", " cv", "cv ", "vita", "resume")):
-                score += 5
-            if href.lower().endswith(".pdf"):
-                score += 3
-            if "download" in low:
-                score += 1
-            if any(
-                term in low
-                for term in (
-                    "publication",
-                    "research",
-                    "teaching",
-                    "twitter",
-                    "linkedin",
-                    "scholar.google",
-                    "mailto",
-                )
-            ):
-                score -= 5
-            if score >= 4:
-                candidates.append((score, label, href))
-        candidates.sort(reverse=True, key=lambda item: item[0])
-        seen: set[str] = set()
-        for _score, label, href in candidates[:3]:
-            if href in seen:
-                continue
-            seen.add(href)
-            conn.execute(
-                """
-                INSERT OR IGNORE INTO author_cv_sources
-                    (author_id, url, source_type, status, notes, created_at)
-                VALUES (?, ?, 'cv_link', 'candidate', ?, ?)
-                """,
-                (row["author_id"], href, label or None, db.utcnow()),
-            )
-            stats["links"] += 1
-        conn.execute(
-            "UPDATE author_cv_sources SET status='homepage_fetched', notes=? WHERE source_id=?",
-            (f"{len(candidates)} cv-like links", row["source_id"]),
-        )
+            return row, None, None, None, "failed", error or "fetch_failed"
+        _store_cached_page(row["url"], content, content_type, final_url or row["url"])
+        return row, content, content_type, final_url or row["url"], "fetched", None
+
+    try:
+        with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+            futures = {pool.submit(fetch_row, row): row for row in rows}
+            for index, future in enumerate(as_completed(futures), start=1):
+                try:
+                    row, content, content_type, final_url, status, error = future.result()
+                except Exception as exc:
+                    row = futures[future]
+                    content = None
+                    content_type = None
+                    final_url = None
+                    status = "failed"
+                    error = f"worker_error: {exc}"
+                if status == "failed" or content is None:
+                    stats["failed"] += 1
+                    conn.execute(
+                        "UPDATE author_cv_sources SET status='failed', notes=? WHERE source_id=?",
+                        (error or "fetch_failed", row["source_id"]),
+                    )
+                else:
+                    stats[status] += 1
+                    digest = _url_digest(row["url"])
+                    is_pdf = "application/pdf" in (content_type or "") or row["url"].lower().endswith(
+                        ".pdf"
+                    )
+                    if is_pdf:
+                        path = DOCUMENTS_DIR / f"{digest}.pdf"
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_bytes(content)
+                        text = _pdf_text(path)[:300_000]
+                        TEXTS_DIR.mkdir(parents=True, exist_ok=True)
+                        (TEXTS_DIR / f"{digest}.txt").write_text(text, encoding="utf-8")
+                        conn.execute(
+                            """
+                            UPDATE author_cv_sources
+                            SET status='fetched', content_hash=?, local_path=?, fetched_at=?,
+                                source_type='cv_document', notes=?
+                            WHERE source_id=?
+                            """,
+                            (
+                                digest,
+                                str(path),
+                                db.utcnow(),
+                                f"{len(text)} chars; direct PDF",
+                                row["source_id"],
+                            ),
+                        )
+                        stats["documents"] += 1
+                    else:
+                        text, links = _html_text_and_links(content, final_url or row["url"])
+                        candidates: list[tuple[int, str, str]] = []
+                        for label, href in links:
+                            low = f"{label} {href}".lower()
+                            score = 0
+                            if any(
+                                term in low
+                                for term in ("curriculum vitae", " cv", "cv ", "vita", "resume")
+                            ):
+                                score += 5
+                            if href.lower().endswith(".pdf"):
+                                score += 3
+                            if "download" in low:
+                                score += 1
+                            if any(
+                                term in low
+                                for term in (
+                                    "publication",
+                                    "research",
+                                    "teaching",
+                                    "twitter",
+                                    "linkedin",
+                                    "scholar.google",
+                                    "mailto",
+                                )
+                            ):
+                                score -= 5
+                            if score >= 4:
+                                candidates.append((score, label, href))
+                        candidates.sort(reverse=True, key=lambda item: item[0])
+                        seen: set[str] = set()
+                        for _score, label, href in candidates[:3]:
+                            if href in seen:
+                                continue
+                            seen.add(href)
+                            conn.execute(
+                                """
+                                INSERT OR IGNORE INTO author_cv_sources
+                                    (author_id, url, source_type, status, notes, created_at)
+                                VALUES (?, ?, 'cv_link', 'candidate', ?, ?)
+                                """,
+                                (row["author_id"], href, label or None, db.utcnow()),
+                            )
+                            stats["links"] += 1
+                        conn.execute(
+                            """
+                            UPDATE author_cv_sources
+                            SET status='homepage_fetched', content_hash=?, local_path=?,
+                                fetched_at=?, notes=?
+                            WHERE source_id=?
+                            """,
+                            (
+                                digest,
+                                str(HOMEPAGES_DIR / f"{digest}.html"),
+                                db.utcnow(),
+                                f"{len(candidates)} cv-like links",
+                                row["source_id"],
+                            ),
+                        )
+                if index % 25 == 0:
+                    conn.commit()
+                    log.info(
+                        "CV discovery %s/%s (cached=%s fetched=%s links=%s failed=%s)",
+                        index,
+                        len(rows),
+                        stats["cached"],
+                        stats["fetched"],
+                        stats["links"],
+                        stats["failed"],
+                    )
         conn.commit()
-    conn.commit()
+    finally:
+        _close_clients()
     log.info("CV link discovery: %s", stats)
     return stats
 
-
-def fetch_cv_documents(conn, *, limit: int | None = None) -> dict[str, int]:
+def fetch_cv_documents(
+    conn,
+    *,
+    limit: int | None = None,
+    workers: int = 4,
+) -> dict[str, int]:
     rows = conn.execute(
         """
         SELECT source_id, author_id, url
@@ -611,18 +835,15 @@ def fetch_cv_documents(conn, *, limit: int | None = None) -> dict[str, int]:
     if limit is not None:
         rows = rows[:limit]
     stats = {"documents": len(rows), "fetched": 0, "failed": 0, "empty": 0}
-    institution_names = _institution_names(conn)
-    for row in rows:
+
+    def fetch_task(row):
         url = _normalize_document_url(row["url"])
-        content, content_type, final_url, error = _fetch(url)
+        content, content_type, final_url, error = _fetch_page(url)
         if error or content is None:
-            stats["failed"] += 1
-            conn.execute(
-                "UPDATE author_cv_sources SET status='failed', notes=? WHERE source_id=?",
-                (error or "fetch_failed", row["source_id"]),
-            )
-            continue
+            return row, None, None, None, False, error or "fetch_failed"
         is_pdf = "application/pdf" in (content_type or "") or url.lower().endswith(".pdf")
+        if is_pdf and content.lstrip()[:64].lower().startswith((b"<!doctype", b"<html")):
+            is_pdf = False
         if not is_pdf:
             text_preview, links = _html_text_and_links(content, final_url or url)
             if len(text_preview.strip()) < 500:
@@ -633,7 +854,7 @@ def fetch_cv_documents(conn, *, limit: int | None = None) -> dict[str, int]:
                         follow = href
                         break
                 if follow:
-                    content2, content_type2, final_url2, error2 = _fetch(
+                    content2, content_type2, final_url2, error2 = _fetch_page(
                         _normalize_document_url(follow)
                     )
                     if content2 is not None and not error2:
@@ -643,45 +864,75 @@ def fetch_cv_documents(conn, *, limit: int | None = None) -> dict[str, int]:
                         is_pdf = "application/pdf" in (content_type2 or "") or follow.lower().endswith(
                             ".pdf"
                         )
-        digest = _hash_bytes(content)
-        suffix = "pdf" if is_pdf else "html"
-        path = DOCUMENTS_DIR / f"{digest}.{suffix}"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(content)
-        if is_pdf:
-            text = _pdf_text(path)
-        else:
-            text, _links = _html_text_and_links(content, final_url or row["url"])
-        text = text[:300_000]
-        TEXTS_DIR.mkdir(parents=True, exist_ok=True)
-        text_path = TEXTS_DIR / f"{digest}.txt"
-        text_path.write_text(text, encoding="utf-8")
-        status = "fetched" if text.strip() else "empty"
-        if status == "empty":
-            stats["empty"] += 1
-        else:
-            stats["fetched"] += 1
-        conn.execute(
-            """
-            UPDATE author_cv_sources
-            SET status=?, content_hash=?, local_path=?, fetched_at=?,
-                notes=?
-            WHERE source_id=?
-            """,
-            (
-                status,
-                digest,
-                str(path),
-                db.utcnow(),
-                f"{len(text)} chars; {final_url or row['url']}",
-                row["source_id"],
-            ),
-        )
+        return row, content, content_type, final_url or url, is_pdf, None
+
+    try:
+        with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+            futures = {pool.submit(fetch_task, row): row for row in rows}
+            for index, future in enumerate(as_completed(futures), start=1):
+                try:
+                    row, content, _content_type, final_url, is_pdf, error = future.result()
+                except Exception as exc:
+                    row = futures[future]
+                    content = None
+                    final_url = None
+                    is_pdf = False
+                    error = f"worker_error: {exc}"
+                if error or content is None:
+                    stats["failed"] += 1
+                    conn.execute(
+                        "UPDATE author_cv_sources SET status='failed', notes=? WHERE source_id=?",
+                        (error or "fetch_failed", row["source_id"]),
+                    )
+                    continue
+                digest = _hash_bytes(content)
+                suffix = "pdf" if is_pdf else "html"
+                path = DOCUMENTS_DIR / f"{digest}.{suffix}"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+                if is_pdf:
+                    text = _pdf_text(path)
+                else:
+                    text, _links = _html_text_and_links(content, final_url or row["url"])
+                text = text[:300_000]
+                TEXTS_DIR.mkdir(parents=True, exist_ok=True)
+                (TEXTS_DIR / f"{digest}.txt").write_text(text, encoding="utf-8")
+                status = "fetched" if text.strip() else "empty"
+                if status == "empty":
+                    stats["empty"] += 1
+                else:
+                    stats["fetched"] += 1
+                conn.execute(
+                    """
+                    UPDATE author_cv_sources
+                    SET status=?, content_hash=?, local_path=?, fetched_at=?,
+                        notes=?
+                    WHERE source_id=?
+                    """,
+                    (
+                        status,
+                        digest,
+                        str(path),
+                        db.utcnow(),
+                        f"{len(text)} chars; {final_url or row['url']}",
+                        row["source_id"],
+                    ),
+                )
+                if index % 25 == 0:
+                    conn.commit()
+                    log.info(
+                        "CV document fetch %s/%s (fetched=%s failed=%s empty=%s)",
+                        index,
+                        len(rows),
+                        stats["fetched"],
+                        stats["failed"],
+                        stats["empty"],
+                    )
         conn.commit()
-    conn.commit()
+    finally:
+        _close_clients()
     log.info("CV document fetch: %s", stats)
     return stats
-
 
 def parse_cv_sources(conn, *, limit: int | None = None) -> dict[str, int]:
     rows = conn.execute(
@@ -716,6 +967,12 @@ def parse_cv_sources(conn, *, limit: int | None = None) -> dict[str, int]:
             )
             continue
         events = extract_cv_events(text, institution_names)
+        # A reparse is authoritative: remove events from an older parser pass
+        # even when the new pass finds nothing.
+        conn.execute(
+            "DELETE FROM career_events WHERE source_type='cv' AND author_id=? AND source_url=?",
+            (row["author_id"], row["url"]),
+        )
         if not events:
             stats["empty"] += 1
             conn.execute(

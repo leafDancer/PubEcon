@@ -15,7 +15,7 @@ EconPub makes both first-class. Every inferred field carries its evidence and co
 
 - **Journal:** American Economic Review (ISSN 0002-8282)
 - **Years:** 2000–present
-- **Status:** M5 frontend MVP complete — Crossref metadata classified and deduplicated; AEA issue calendar and OpenAlex enrichment done; stable author IDs and identity review in place; ORCID career timelines validated against AER evidence; a read-only API and React frontend now serve paper, author, career-timeline, network, and methodology views. The AEA JEL crawl and full CV corpus remain resumable.
+- **Status:** M5 frontend MVP and M6 coverage pass complete — Crossref metadata classified and deduplicated; AEA issue calendar and OpenAlex enrichment done; stable author IDs and identity review in place; ORCID career timelines validated against AER evidence; 256 CVs parsed into 1,069 events; a read-only API and React frontend serve paper, author, career-timeline, network, and methodology views. The AEA JEL crawl and the remaining CV queue are resumable.
 - **Not included:** pre-2000 archive, full text, or personal data such as birth dates, addresses, and emails
 
 ## Architecture
@@ -52,15 +52,15 @@ The API caps page sizes and never serializes all 5,892 authors or 9,375 coauthor
 |   — rejected identity | 249 |
 | ORCID identities contributing events | 2,067 |
 | ORCID career events | 5,847 (4,583 dated) |
-| CV/homepage sources discovered | 1,088 |
-| CV documents parsed (pilot) | 17 |
+| CV/homepage sources discovered | 1,347 |
+| CV documents parsed | 256 |
 | Coauthorship edges | 9,375 |
-| Career assignments (all sources) | 2,264 (21.0% of slots) |
+| Career assignments (all sources) | 2,303 (21.4% of slots) |
 |   — byline | 669 |
 |   — ORCID | 1,591 |
-|   — CV pilot | 4 |
-|   — high/medium confidence | 1,349 |
-|   — low confidence | 915 |
+|   — CV | 43 |
+|   — high/medium confidence | 1,380 |
+|   — low confidence | 923 |
 | Publish-time byline coverage | 99.8% |
 | Resolved institution (OpenAlex) coverage | 94.5% |
 | Any rank/title mention | 6.2% |
@@ -71,13 +71,13 @@ The API caps page sizes and never serializes all 5,892 authors or 9,375 coauthor
 | Duplicate records excluded | 67 |
 | Retraction notices / retracted originals | 2 / 2 |
 
-The M2/M3/M4 reports are in `data/reports/m2_quality.md`, `m3_quality.md`, and `m4_quality.md`. The M1 independent audit and its full evidence are in `docs/audit-m1.md` and `docs/audit-m1-findings.json`. The API and frontend are documented in `docs/m5-frontend.md`.
+The M2/M3/M4 reports are in `data/reports/m2_quality.md`, `m3_quality.md`, and `m4_quality.md`; the M6 coverage report is `data/reports/m6_coverage.md`. The M1 independent audit and its full evidence are in `docs/audit-m1.md` and `docs/audit-m1-findings.json`. The API and frontend are documented in `docs/m5-frontend.md`; coverage engineering is in `docs/m6-coverage.md`.
 
 Three findings shape the next milestones:
 
-1. **ORCID is the highest-yield career source, but only after identity validation.** 3,314 authors retain an ORCID; 2,409 have direct evidence (matching AER DOI/title or institution) or a conservative economics-field signal, and 905 are unverified links whose events are withheld. 2,067 accepted identities contribute 5,847 events and raise career coverage from 6.2% (byline only) to 21.0% (2,264 assignments). Generic "Professor" titles are stored as full professor with **low confidence** because the title may be current rather than the rank at the paper date; explicit ranks are high confidence.
+1. **ORCID is the highest-yield career source, but only after identity validation.** 3,314 authors retain an ORCID; 2,409 have direct evidence (matching AER DOI/title or institution) or a conservative economics-field signal, and 905 are unverified links whose events are withheld. 2,067 accepted identities contribute 5,847 events and raise career coverage from 6.2% (byline only) to 21.4% (2,303 assignments). Generic "Professor" titles are stored as full professor with **low confidence** because the title may be current rather than the rank at the paper date; explicit ranks are high confidence.
 2. **Stable identity needs explicit reconciliation.** The 40 multi-OpenAlex-ID authors were reviewed: 3 were confirmed resolver over-merges and split (John W./M. Morgan, Benjamin I./R. Page, Daniel G./M. Sullivan), 32 are OpenAlex duplicate profiles, and 5 remain uncertain. 28 authors carry OpenAlex fragmentation flags. ORCID identity validation rejects 72 person-name conflicts, 165 clear field mismatches, and 12 career-changing links without positive evidence.
-3. **CVs are the next coverage frontier.** ORCID researcher URLs yielded 1,088 public CV/homepage sources. The pilot parsed 17 CVs and extracted 60 dated events, but discovery and parsing are deliberately conservative. The full CV corpus is a resumable crawl, not an automatic claim of complete coverage.
+3. **CVs are the next coverage frontier.** ORCID researcher URLs and discovered CV links yielded 1,347 public sources. The crawl parsed 256 documents, extracted 1,069 dated events, and produced 43 CV assignments. Another 70 CV links remain in the resumable queue; 377 homepages were unreachable. The corpus is larger but still not complete.
 
 ## Data sources
 
@@ -164,6 +164,8 @@ python run.py m3                # rebuild identity review and byline careers
 python run.py m4                # fetch ORCID timelines, validate identities, assign careers
 python run.py m4 --skip-orcid   # revalidate cached ORCID links without network
 python run.py cvs --limit 300   # expand CV discovery/parsing
+python run.py cvs --workers 5 --skip-seed   # resume the cached CV crawl
+python run.py wayback --limit 100           # historical faculty-page snapshots
 python run.py serve             # run the read-only JSON API on port 8000
 python run.py report            # regenerate the report without rebuilding authors
 python -m unittest discover -s tests -v
@@ -193,9 +195,11 @@ src/econpub/
   review.py        merge-candidate resolution, multi-ID review, author splits
   career.py        byline, ORCID, and CV career-stage assignments
   orcid.py         ORCID record harvest and employment/education events
-  cv.py            CV/homepage discovery and conservative CV parsing
+  cv.py            CV/homepage discovery, caching, and conservative CV parsing
+  wayback.py       Wayback CDX snapshots and historical rank extraction
   pages.py         abbreviated page-range expansion and validation
   quality.py       coverage, provenance, and M2-M4 reports
+  coverage.py      M6 CV and historical-page coverage report
   api.py           read-only FastAPI service for the public frontend
   cli.py           command-line entry point
   schema.sql       database schema
@@ -208,6 +212,7 @@ docs/
   data-sources.md  source reconnaissance and known limitations
   m4-validation.md  concrete ORCID/CV spot checks and parser fixes
   m5-frontend.md   API surface, frontend routes, design system, deployment
+  m6-coverage.md   CV crawl, Wayback historical pages, coverage policy
   audit-m1.md      independent multi-agent audit and remediation status
 tests/
   test_normalize.py
@@ -238,7 +243,8 @@ Author resolution is rebuildable: `authors.py` groups authorships by a middle-in
 - **M2** — AEA JEL/abstract enrichment; OpenAlex DOI-keyed enrichment, author IDs, institutions, topics; fix 2002–2009 issue-month mapping; page-range validation ✅
 - **M3** — stable author IDs and identity ledger; resolve the 7 merge candidates and 40 multi-OpenAlex-ID authors; split confirmed over-merges; byline-only career assignments ✅
 - **M4** — ORCID employment/education timelines; conservative CV discovery and parsing; career assignments with evidence and confidence ✅ (CV corpus remains resumable)
-- **M5** — read-only FastAPI service and React frontend: paper pages, author pages, career timelines, coauthor network explorer, methodology page, and a bounded network API ✅ (deployment and corpus expansion remain)
+- **M5** — read-only FastAPI service and React frontend: paper pages, author pages, career timelines, coauthor network explorer, methodology page, and a bounded network API ✅ (deployment remains)
+- **M6** — coverage engineering: resumable CV crawl with caching/threading (256 documents parsed, 1,069 events), historical Wayback faculty-page pipeline, and evidence tests ✅ (Internet Archive was unreachable from the development network; the pipeline must be run where archive.org is accessible)
 
 ## Data ethics
 

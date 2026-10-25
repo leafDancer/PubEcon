@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T02:33:00+00:00",
+  "generated_at": "2026-10-25T04:12:44+00:00",
   "summary": {
     "authors": 5892,
     "authors_with_orcid": 3314,
@@ -7,8 +7,9 @@
     "orcid_events": 5847,
     "dated_orcid_events": 4583,
     "authors_with_events": 2067,
-    "career_assignments": 2264,
+    "career_assignments": 2303,
     "orcid_assignments": 1591,
+    "wayback_assignments": 0,
     "byline_assignments": 669,
     "article_slots": 10782,
     "orcid_name_conflicts": 72,
@@ -17,12 +18,12 @@
     "orcid_unverified": 905,
     "orcid_field_mismatches": 165,
     "orcid_career_risk_rejections": 12,
-    "cv_sources": 1088,
-    "cv_parsed": 17,
-    "cv_events": 60,
-    "cv_assignments": 4,
-    "high_medium_assignments": 1349,
-    "low_assignments": 915
+    "cv_sources": 1347,
+    "cv_parsed": 256,
+    "cv_events": 1069,
+    "cv_assignments": 43,
+    "high_medium_assignments": 1380,
+    "low_assignments": 923
   },
   "career_events": [
     {
@@ -56,6 +57,12 @@
       "n": 533
     },
     {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "medium",
+      "n": 319
+    },
+    {
       "event_type": "education",
       "source_type": "orcid",
       "confidence": "low",
@@ -64,38 +71,32 @@
     {
       "event_type": "education",
       "source_type": "cv",
-      "confidence": "high",
-      "n": 16
-    },
-    {
-      "event_type": "employment",
-      "source_type": "cv",
-      "confidence": "low",
-      "n": 12
-    },
-    {
-      "event_type": "employment",
-      "source_type": "cv",
-      "confidence": "high",
-      "n": 11
+      "confidence": "medium",
+      "n": 181
     },
     {
       "event_type": "education",
       "source_type": "cv",
-      "confidence": "medium",
-      "n": 9
-    },
-    {
-      "event_type": "employment",
-      "source_type": "cv",
-      "confidence": "medium",
-      "n": 9
+      "confidence": "high",
+      "n": 179
     },
     {
       "event_type": "education",
       "source_type": "cv",
       "confidence": "low",
-      "n": 3
+      "n": 140
+    },
+    {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "low",
+      "n": 140
+    },
+    {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "high",
+      "n": 110
     }
   ],
   "career_assignments": [
@@ -103,7 +104,7 @@
       "evidence_type": "orcid_employment",
       "stage": "full_professor",
       "confidence": "low",
-      "n": 900
+      "n": 898
     },
     {
       "evidence_type": "byline_rank",
@@ -127,7 +128,7 @@
       "evidence_type": "orcid_employment",
       "stage": "assistant_professor",
       "confidence": "medium",
-      "n": 118
+      "n": 120
     },
     {
       "evidence_type": "orcid_employment",
@@ -190,10 +191,34 @@
       "n": 11
     },
     {
+      "evidence_type": "cv_employment",
+      "stage": "assistant_professor",
+      "confidence": "medium",
+      "n": 10
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "full_professor",
+      "confidence": "low",
+      "n": 10
+    },
+    {
       "evidence_type": "orcid_employment",
       "stage": "postdoc",
       "confidence": "medium",
       "n": 9
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "associate_professor",
+      "confidence": "medium",
+      "n": 8
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "assistant_professor",
+      "confidence": "high",
+      "n": 7
     },
     {
       "evidence_type": "orcid_employment",
@@ -232,16 +257,22 @@
       "n": 3
     },
     {
-      "evidence_type": "cv_employment",
-      "stage": "assistant_professor",
-      "confidence": "medium",
-      "n": 3
-    },
-    {
       "evidence_type": "byline_rank",
       "stage": "associate_professor",
       "confidence": "high",
       "n": 3
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "non_academic",
+      "confidence": "medium",
+      "n": 3
+    },
+    {
+      "evidence_type": "cv_employment",
+      "stage": "associate_professor",
+      "confidence": "high",
+      "n": 2
     },
     {
       "evidence_type": "byline_rank",
@@ -256,21 +287,27 @@
       "n": 2
     },
     {
-      "evidence_type": "cv_employment",
-      "stage": "associate_professor",
-      "confidence": "high",
-      "n": 1
-    },
-    {
       "evidence_type": "byline_rank",
       "stage": "emeritus",
       "confidence": "high",
       "n": 1
     },
     {
+      "evidence_type": "cv_employment",
+      "stage": "lecturer_other_academic",
+      "confidence": "medium",
+      "n": 1
+    },
+    {
       "evidence_type": "byline_rank",
       "stage": "phd_student",
       "confidence": "high",
+      "n": 1
+    },
+    {
+      "evidence_type": "cv_education",
+      "stage": "phd_student",
+      "confidence": "medium",
       "n": 1
     },
     {
@@ -286,6 +323,12 @@
       "n": 1
     },
     {
+      "evidence_type": "cv_employment",
+      "stage": "research_fellow",
+      "confidence": "high",
+      "n": 1
+    },
+    {
       "evidence_type": "orcid_employment",
       "stage": "research_fellow",
       "confidence": "low",
@@ -298,6 +341,7 @@
       "slots": 318,
       "byline": 24,
       "orcid": 38,
+      "wayback": 0,
       "assigned": 62
     },
     {
@@ -305,6 +349,7 @@
       "slots": 354,
       "byline": 22,
       "orcid": 31,
+      "wayback": 0,
       "assigned": 53
     },
     {
@@ -312,6 +357,7 @@
       "slots": 359,
       "byline": 23,
       "orcid": 33,
+      "wayback": 0,
       "assigned": 56
     },
     {
@@ -319,6 +365,7 @@
       "slots": 342,
       "byline": 16,
       "orcid": 28,
+      "wayback": 0,
       "assigned": 44
     },
     {
@@ -326,27 +373,31 @@
       "slots": 341,
       "byline": 22,
       "orcid": 37,
-      "assigned": 59
+      "wayback": 0,
+      "assigned": 62
     },
     {
       "year": 2005,
       "slots": 371,
       "byline": 23,
       "orcid": 49,
-      "assigned": 72
+      "wayback": 0,
+      "assigned": 73
     },
     {
       "year": 2006,
       "slots": 364,
       "byline": 25,
       "orcid": 47,
-      "assigned": 73
+      "wayback": 0,
+      "assigned": 74
     },
     {
       "year": 2007,
       "slots": 384,
       "byline": 26,
       "orcid": 56,
+      "wayback": 0,
       "assigned": 82
     },
     {
@@ -354,6 +405,7 @@
       "slots": 394,
       "byline": 17,
       "orcid": 55,
+      "wayback": 0,
       "assigned": 74
     },
     {
@@ -361,13 +413,15 @@
       "slots": 417,
       "byline": 29,
       "orcid": 51,
-      "assigned": 80
+      "wayback": 0,
+      "assigned": 82
     },
     {
       "year": 2010,
       "slots": 502,
       "byline": 35,
       "orcid": 76,
+      "wayback": 0,
       "assigned": 111
     },
     {
@@ -375,41 +429,47 @@
       "slots": 546,
       "byline": 28,
       "orcid": 82,
-      "assigned": 110
+      "wayback": 0,
+      "assigned": 114
     },
     {
       "year": 2012,
       "slots": 563,
       "byline": 37,
       "orcid": 70,
-      "assigned": 107
+      "wayback": 0,
+      "assigned": 111
     },
     {
       "year": 2013,
       "slots": 505,
       "byline": 27,
       "orcid": 81,
-      "assigned": 108
+      "wayback": 0,
+      "assigned": 110
     },
     {
       "year": 2014,
       "slots": 593,
       "byline": 45,
       "orcid": 86,
-      "assigned": 131
+      "wayback": 0,
+      "assigned": 132
     },
     {
       "year": 2015,
       "slots": 548,
       "byline": 20,
       "orcid": 97,
-      "assigned": 117
+      "wayback": 0,
+      "assigned": 122
     },
     {
       "year": 2016,
       "slots": 614,
       "byline": 64,
       "orcid": 94,
+      "wayback": 0,
       "assigned": 158
     },
     {
@@ -417,80 +477,90 @@
       "slots": 618,
       "byline": 48,
       "orcid": 115,
-      "assigned": 163
+      "wayback": 0,
+      "assigned": 167
     },
     {
       "year": 2018,
       "slots": 265,
       "byline": 19,
       "orcid": 31,
-      "assigned": 50
+      "wayback": 0,
+      "assigned": 51
     },
     {
       "year": 2019,
       "slots": 303,
       "byline": 17,
       "orcid": 51,
-      "assigned": 68
+      "wayback": 0,
+      "assigned": 69
     },
     {
       "year": 2020,
       "slots": 302,
       "byline": 14,
       "orcid": 61,
-      "assigned": 75
+      "wayback": 0,
+      "assigned": 77
     },
     {
       "year": 2021,
       "slots": 310,
       "byline": 13,
       "orcid": 63,
-      "assigned": 76
+      "wayback": 0,
+      "assigned": 78
     },
     {
       "year": 2022,
       "slots": 284,
       "byline": 15,
       "orcid": 44,
-      "assigned": 59
+      "wayback": 0,
+      "assigned": 61
     },
     {
       "year": 2023,
       "slots": 256,
       "byline": 11,
       "orcid": 42,
-      "assigned": 53
+      "wayback": 0,
+      "assigned": 54
     },
     {
       "year": 2024,
       "slots": 313,
       "byline": 17,
       "orcid": 54,
-      "assigned": 72
+      "wayback": 0,
+      "assigned": 73
     },
     {
       "year": 2025,
       "slots": 322,
       "byline": 22,
       "orcid": 54,
-      "assigned": 76
+      "wayback": 0,
+      "assigned": 77
     },
     {
       "year": 2026,
       "slots": 294,
       "byline": 10,
       "orcid": 65,
-      "assigned": 75
+      "wayback": 0,
+      "assigned": 76
     }
   ],
   "examples": [
     {
       "canonical_name": "Aaron Chalfin",
       "published_year": 2026,
-      "stage": "full_professor",
+      "stage": "assistant_professor",
       "evidence_type": "orcid_employment",
-      "confidence": "low",
-      "notes": "Asst. Professor; University of Pennsylvania (generic professor title; rank uncertain)",
+      "confidence": "medium",
+      "notes": "Asst. Professor; University of Pennsylvania",
       "source_url": "https://orcid.org/0000-0003-4810-5146"
     },
     {
@@ -828,12 +898,12 @@
     {
       "identity_confidence": "medium",
       "assignment_confidence": "low",
-      "n": 275
+      "n": 273
     },
     {
       "identity_confidence": "medium",
       "assignment_confidence": "medium",
-      "n": 188
+      "n": 190
     }
   ]
 }

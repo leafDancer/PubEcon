@@ -34,8 +34,8 @@ ROLE_PATTERNS: list[tuple[re.Pattern[str], str, str]] = [
         "high",
     ),
     (re.compile(r"\bpost-?doc(?:toral)?\b", re.IGNORECASE), "postdoc", "high"),
-    (re.compile(r"\bassistant\s+(?:professor|prof\.?)\b", re.IGNORECASE), "assistant_professor", "high"),
-    (re.compile(r"\bassociate\s+(?:professor|prof\.?)\b", re.IGNORECASE), "associate_professor", "high"),
+    (re.compile(r"\b(?:assistant|asst\.?)\s+(?:professor|prof\.?)\b", re.IGNORECASE), "assistant_professor", "high"),
+    (re.compile(r"\b(?:associate|assoc\.?)\s+(?:professor|prof\.?)\b", re.IGNORECASE), "associate_professor", "high"),
     (re.compile(r"\bfull\s+professor\b", re.IGNORECASE), "full_professor", "high"),
     (re.compile(r"\bchair\s+professor\b", re.IGNORECASE), "full_professor", "high"),
     (re.compile(r"\b(?:senior\s+)?lecturer\b|\breader\b|\binstructor\b", re.IGNORECASE), "lecturer_other_academic", "high"),
@@ -276,6 +276,28 @@ def assign_orcid_careers(conn: sqlite3.Connection) -> dict[str, Any]:
     )
 
 
+def assign_wayback_careers(conn: sqlite3.Connection) -> dict[str, Any]:
+    """Assign stages from point-in-time faculty/homepage snapshots.
+
+    Wayback evidence is contemporaneous with the paper year but noisier than
+    an explicit byline or a validated ORCID interval, so it sits between ORCID
+    and CV evidence and caps out at medium confidence.
+    """
+    return _assign_structured_careers(
+        conn,
+        source_type="wayback",
+        employment_evidence="wayback_employment",
+        education_evidence="wayback_education",
+        skip_types=(
+            "byline_rank",
+            "byline_affiliation",
+            "orcid_employment",
+            "orcid_education",
+        ),
+        replace_types=("cv_employment", "cv_education"),
+    )
+
+
 def assign_cv_careers(conn: sqlite3.Connection) -> dict[str, Any]:
     return _assign_structured_careers(
         conn,
@@ -287,6 +309,8 @@ def assign_cv_careers(conn: sqlite3.Connection) -> dict[str, Any]:
             "byline_affiliation",
             "orcid_employment",
             "orcid_education",
+            "wayback_employment",
+            "wayback_education",
         ),
     )
 

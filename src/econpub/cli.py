@@ -17,6 +17,7 @@ from .career import assign_cv_careers, assign_orcid_careers, infer_byline_career
 from .classify import classify_papers
 from .cv import collect_orcid_urls, discover_cv_links, fetch_cv_documents, parse_cv_sources
 from .config import DB_PATH, LOGS_DIR, REPORTS_DIR
+from .coverage import generate_m6_report
 from .crossref import harvest
 from .identity import ensure_identity_ledger
 from .openalex import (
@@ -151,7 +152,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="Discover public CVs/faculty pages and extract dated career events",
     )
     cvs_parser.add_argument("--limit", type=int)
+    cvs_parser.add_argument("--workers", type=int, default=4)
+    cvs_parser.add_argument("--refresh", action="store_true")
+    cvs_parser.add_argument("--retry-failed", action="store_true")
+    cvs_parser.add_argument("--skip-seed", action="store_true")
+    cvs_parser.add_argument("--skip-discover", action="store_true")
+    cvs_parser.add_argument("--skip-fetch", action="store_true")
+    cvs_parser.add_argument("--skip-parse", action="store_true")
+    cvs_parser.add_argument("--skip-careers", action="store_true")
     cvs_parser.add_argument("--db", type=Path, default=DB_PATH)
+
+    wayback_parser = subparsers.add_parser(
+        "wayback",
+        help="Collect archive.org faculty-page snapshots and infer historical ranks",
+    )
+    wayback_parser.add_argument("--limit", type=int, default=250)
+    wayback_parser.add_argument("--max-years", type=int, default=3)
+    wayback_parser.add_argument("--workers", type=int, default=3)
+    wayback_parser.add_argument("--skip-collect", action="store_true")
+    wayback_parser.add_argument("--skip-fetch", action="store_true")
+    wayback_parser.add_argument("--skip-parse", action="store_true")
+    wayback_parser.add_argument("--db", type=Path, default=DB_PATH)
 
     serve_parser = subparsers.add_parser(
         "serve",
@@ -292,14 +313,52 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "cvs":
             if conn.execute("SELECT COUNT(*) FROM authors").fetchone()[0] == 0:
                 raise RuntimeError("No authors found; run `all`, `m2`, `m3`, and `m4` first")
-            print(f"CV seed URLs: {collect_orcid_urls(conn)}")
-            print(f"CV links: {discover_cv_links(conn, limit=args.limit)}")
-            print(f"CV documents: {fetch_cv_documents(conn, limit=args.limit)}")
-            print(f"CV parse: {parse_cv_sources(conn, limit=args.limit)}")
-            print(f"CV careers: {assign_cv_careers(conn)}")
+            if not args.skip_seed:
+                print(f"CV seed URLs: {collect_orcid_urls(conn)}")
+            if not args.skip_discover:
+                print(
+                    "CV links:",
+                    discover_cv_links(
+                        conn,
+                        limit=args.limit,
+                        workers=args.workers,
+                        refresh=args.refresh,
+                        retry_failed=args.retry_failed,
+                    ),
+                )
+            if not args.skip_fetch:
+                print(f"CV documents: {fetch_cv_documents(conn, limit=args.limit, workers=args.workers)}")
+            if not args.skip_parse:
+                print(f"CV parse: {parse_cv_sources(conn, limit=args.limit)}")
+            if not args.skip_careers:
+                print(f"CV careers: {assign_cv_careers(conn)}")
             markdown_path, metrics_path = generate_m4_report(conn)
             print(f"Report:  {markdown_path}")
             print(f"Metrics: {metrics_path}")
+            coverage_path, coverage_metrics = generate_m6_report(conn)
+            print(f"Coverage: {coverage_path}")
+            print(f"Coverage metrics: {coverage_metrics}")
+        elif args.command == "wayback":
+            from .wayback import run_wayback
+
+            print(
+                "Wayback:",
+                run_wayback(
+                    conn,
+                    limit=args.limit,
+                    max_years=args.max_years,
+                    workers=args.workers,
+                    skip_collect=args.skip_collect,
+                    skip_fetch=args.skip_fetch,
+                    skip_parse=args.skip_parse,
+                ),
+            )
+            markdown_path, metrics_path = generate_m4_report(conn)
+            print(f"Report:  {markdown_path}")
+            print(f"Metrics: {metrics_path}")
+            coverage_path, coverage_metrics = generate_m6_report(conn)
+            print(f"Coverage: {coverage_path}")
+            print(f"Coverage metrics: {coverage_metrics}")
         elif args.command == "m2":
             resume = args.resume or not args.refresh
             print(f"Page ranges: {normalize_page_ranges(conn)}")

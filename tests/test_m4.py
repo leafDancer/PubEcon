@@ -511,6 +511,31 @@ class CVExtractionTests(unittest.TestCase):
         self.assertEqual(len(education), 2)
         self.assertEqual(education[0]["start_year"], 2010)
 
+    def test_colon_headers_and_short_end_years(self) -> None:
+        text = """
+        EDUCATION:
+        Ph.D. in Economics, Example University, 2010-2015
+        EMPLOYMENT:
+        Assistant Professor, Example University, 2015-22
+        """
+        events = extract_cv_events(text, ["Example University"])
+        employment = [event for event in events if event["event_type"] == "employment"]
+        self.assertEqual(len(employment), 1)
+        self.assertEqual(employment[0]["start_year"], 2015)
+        self.assertEqual(employment[0]["end_year"], 2022)
+
+    def test_honorary_degrees_are_not_education_history(self) -> None:
+        text = """
+        EARNED DEGREES
+        Ph.D., Example University, 2015
+        HONORARY DEGREES
+        Doctor of Economics, Example College, 2020
+        """
+        events = extract_cv_events(text, ["Example University", "Example College"])
+        education = [event for event in events if event["event_type"] == "education"]
+        self.assertEqual(len(education), 1)
+        self.assertIn("Ph.D.", education[0]["title"])
+
 
 if __name__ == "__main__":
     unittest.main()

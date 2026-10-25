@@ -992,6 +992,8 @@ def generate_m4_report(conn, path: Path | None = None) -> tuple[Path, Path]:
             (SELECT COUNT(*) FROM career_assignments
                 WHERE evidence_type LIKE 'orcid%') AS orcid_assignments,
             (SELECT COUNT(*) FROM career_assignments
+                WHERE evidence_type LIKE 'wayback%') AS wayback_assignments,
+            (SELECT COUNT(*) FROM career_assignments
                 WHERE evidence_type IN ('byline_rank','byline_affiliation')) AS byline_assignments,
             (SELECT COUNT(*) FROM authorships a
                 JOIN papers p ON p.paper_id=a.paper_id
@@ -1047,6 +1049,7 @@ def generate_m4_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                SUM(CASE WHEN ca.evidence_type IN ('byline_rank','byline_affiliation')
                         THEN 1 ELSE 0 END) AS byline,
                SUM(CASE WHEN ca.evidence_type LIKE 'orcid%' THEN 1 ELSE 0 END) AS orcid,
+               SUM(CASE WHEN ca.evidence_type LIKE 'wayback%' THEN 1 ELSE 0 END) AS wayback,
                COUNT(ca.assignment_id) AS assigned
         FROM authorships a
         JOIN papers p ON p.paper_id=a.paper_id
@@ -1065,6 +1068,7 @@ def generate_m4_report(conn, path: Path | None = None) -> tuple[Path, Path]:
         JOIN authors a ON a.author_id=ca.author_id
         JOIN papers p ON p.paper_id=ca.paper_id
         WHERE ca.evidence_type LIKE 'orcid%' OR ca.evidence_type LIKE 'cv%'
+           OR ca.evidence_type LIKE 'wayback%'
         ORDER BY p.published_year DESC, a.canonical_name
         LIMIT 30
         """
@@ -1133,6 +1137,7 @@ def generate_m4_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                 ("Career assignments (all sources)", summary["career_assignments"]),
                 ("  — byline assignments", summary["byline_assignments"]),
                 ("  — ORCID assignments", summary["orcid_assignments"]),
+                ("  — Wayback assignments", summary["wayback_assignments"]),
                 (
                     "Career coverage (article slots)",
                     _pct(summary["career_assignments"], summary["article_slots"]),
@@ -1220,13 +1225,14 @@ def generate_m4_report(conn, path: Path | None = None) -> tuple[Path, Path]:
     lines.append("")
     lines.append(
         _table(
-            ["Year", "Article slots", "Byline", "ORCID", "Assigned", "Coverage"],
+            ["Year", "Article slots", "Byline", "ORCID", "Wayback", "Assigned", "Coverage"],
             [
                 (
                     row["year"],
                     row["slots"],
                     row["byline"],
-                    row["orcid"],
+                    row["orcid"] or 0,
+                    row["wayback"] or 0,
                     row["assigned"],
                     _pct(row["assigned"], row["slots"]),
                 )

@@ -10,6 +10,7 @@ function eventLabel(event: CareerEvent): string {
 
 function eventSourceClass(event: CareerEvent): string {
   if (event.source_type === 'orcid') return 'is-orcid'
+  if (event.source_type === 'wayback') return 'is-wayback'
   if (event.source_type === 'cv') return 'is-cv'
   return 'is-other'
 }
@@ -54,6 +55,7 @@ export default function CareerTimeline({ author }: { author: AuthorDetail }) {
         <div className="ep-legend ep-legend-stack">
           <span className="ep-legend">
             <span className="ep-legend-swatch is-orcid" /> ORCID
+            <span className="ep-legend-swatch is-wayback" /> Historical page
             <span className="ep-legend-swatch is-cv" /> CV
           </span>
           <span className="ep-legend">
