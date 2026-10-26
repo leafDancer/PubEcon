@@ -42,6 +42,70 @@ _SUSPECT_BACKFILL_NAME = re.compile(
     r"\b(?:we\s+thank|thanks|acknowledg(?:e)?ment|anonymous|editor)\b", re.IGNORECASE
 )
 
+
+def _backfill_tokens(name: str | None) -> list[str]:
+    return [token.lower() for token in re.findall(r"[^\W\d_]+", name or "", re.UNICODE)]
+
+
+def _backfill_token_matches(left: str, right: str) -> bool:
+    return (
+        left == right
+        or (len(left) == 1 and right.startswith(left))
+        or (len(right) == 1 and left.startswith(right))
+    )
+
+
+def _backfill_compact(value: str | None) -> str:
+    return "".join(re.findall(r"[^\W\d_]+", value or "", re.UNICODE)).lower()
+
+
+def _backfill_name_quality(value: str | None) -> tuple[int, int, int]:
+    tokens = _backfill_tokens(value)
+    single_letters = sum(1 for token in tokens if len(token) == 1)
+    return (single_letters, -len(tokens), -len(_backfill_compact(value)))
+
+
+def _backfill_same_person(left: str | None, right: str | None) -> bool:
+    """Detect repeated/abbreviated names within one OpenAlex byline.
+
+    OpenAlex sometimes lists the same author twice: once in full and once as an
+    initial or a bare given name. This is only used to collapse a single work's
+    backfilled byline, never to merge canonical authors across works.
+    """
+    left_tokens = _backfill_tokens(left)
+    right_tokens = _backfill_tokens(right)
+    if not left_tokens or not right_tokens:
+        return False
+    if left_tokens == right_tokens:
+        return True
+    if _backfill_compact(left) == _backfill_compact(right):
+        # Handles PDF/OpenAlex whitespace corruption such as "J Eremy T. F Ox"
+        # versus "Jeremy T. Fox".
+        return True
+    left_family = left_tokens[-1]
+    right_family = right_tokens[-1]
+    if family_root(left_family) == family_root(right_family):
+        left_given = left_tokens[:-1]
+        right_given = right_tokens[:-1]
+        if not left_given or not right_given:
+            return False
+        smaller, larger = (
+            (left_given, right_given)
+            if len(left_given) <= len(right_given)
+            else (right_given, left_given)
+        )
+        if len(smaller) < len(larger) and all(
+            any(_backfill_token_matches(token, other) for other in larger)
+            for token in smaller
+        ):
+            return True
+    if len(left_tokens) == 1 and left_tokens[0] in right_tokens[:-1]:
+        return True
+    if len(right_tokens) == 1 and right_tokens[0] in left_tokens[:-1]:
+        return True
+    return False
+
+
 OPENALEX_SELECT = [
     "id",
     "doi",
@@ -454,13 +518,16 @@ def _apply_work(
         # Some publishers (notably Econometrica 2008–2014) deposit works
         # without author metadata. OpenAlex often has the byline; use it as a
         # bibliographic supplement while keeping the provenance explicit.
-        names = [clean_text(oa.get("author_name")) for oa in work["authorships"]]
+        backfill_authorships = list(work["authorships"])
+        names = [
+            clean_text(oa.get("author_name")) for oa in backfill_authorships
+        ]
         if len(names) > MAX_BACKFILL_AUTHORS or any(
             _SUSPECT_BACKFILL_NAME.search(name) for name in names
         ):
             stats["authorships_skipped"] += 1
             return
-        for order, oa in enumerate(work["authorships"], start=1):
+        for order, oa in enumerate(backfill_authorships, start=1):
             display = clean_text(oa.get("author_name"))
             parts = display.split()
             given = " ".join(parts[:-1]) if len(parts) > 1 else None
@@ -999,6 +1066,34 @@ def _suffix_key(value: str | None) -> str:
     return "".join(char for char in (value or "").lower() if char.isalnum())
 
 
+def _given_tokens(value: str | None) -> list[str]:
+    return re.findall(r"[^\W\d_]+", value or "", re.UNICODE)
+
+
+def _given_initials_compatible(left: str | None, right: str | None) -> bool:
+    """Match ``N. G.`` to ``N. Gregory`` when every token is an initial.
+
+    OpenAlex sometimes stores a shortened given name for the same profile.
+    This is only used alongside an identical OpenAlex author ID and family
+    name, so it does not open the door to unconstrained name matching.
+    """
+    left_tokens = _given_tokens(left)
+    right_tokens = _given_tokens(right)
+    if not left_tokens or len(left_tokens) != len(right_tokens):
+        return False
+    for left_token, right_token in zip(left_tokens, right_tokens):
+        left_key = left_token.lower()
+        right_key = right_token.lower()
+        if left_key == right_key:
+            continue
+        if len(left_key) == 1 and right_key.startswith(left_key):
+            continue
+        if len(right_key) == 1 and left_key.startswith(right_key):
+            continue
+        return False
+    return True
+
+
 def _names_compatible_for_merge(left: sqlite3.Row, right: sqlite3.Row) -> bool:
     if left["suffix"] and right["suffix"] and _suffix_key(left["suffix"]) != _suffix_key(
         right["suffix"]
@@ -1018,6 +1113,8 @@ def _names_compatible_for_merge(left: sqlite3.Row, right: sqlite3.Row) -> bool:
         return False
     left_given = clean_text(left["given_name"]) or " ".join(left_full.split()[:-1])
     right_given = clean_text(right["given_name"]) or " ".join(right_full.split()[:-1])
+    if _given_initials_compatible(left_given, right_given):
+        return True
     left_root = given_root(left_given)
     right_root = given_root(right_given)
     if left_root == right_root:
@@ -1027,6 +1124,113 @@ def _names_compatible_for_merge(left: sqlite3.Row, right: sqlite3.Row) -> bool:
     if len(right_root) == 1 and left_root.startswith(right_root):
         return True
     return False
+
+
+def dedupe_backfilled_authorships(conn) -> dict[str, int]:
+    """Collapse repeated/abbreviated names inside OpenAlex backfilled bylines.
+
+    A fresh enrichment pass now dedupes before inserting. This repair pass
+    handles databases built before that guard existed.
+    """
+    paper_ids = [
+        row[0]
+        for row in conn.execute(
+            "SELECT DISTINCT paper_id FROM authorships "
+            "WHERE openalex_match_method='openalex_backfill'"
+        )
+    ]
+    removed = 0
+    changed_papers = 0
+    for paper_id in paper_ids:
+        rows = conn.execute(
+            """
+            SELECT s.authorship_id, s.author_order, s.full_name, s.author_id,
+                   (SELECT COUNT(*) FROM authorships x WHERE x.author_id=s.author_id)
+                       AS author_papers
+            FROM authorships s WHERE s.paper_id=? ORDER BY s.author_order
+            """,
+            (paper_id,),
+        ).fetchall()
+        clusters: list[dict[str, Any]] = []
+        for row in rows:
+            match = next(
+                (
+                    cluster
+                    for cluster in clusters
+                    if _backfill_same_person(
+                        row["full_name"], cluster["best"]["full_name"]
+                    )
+                ),
+                None,
+            )
+            if match is None:
+                clusters.append(
+                    {"best": row, "rows": [row], "min_order": row["author_order"]}
+                )
+                continue
+            match["rows"].append(row)
+            match["min_order"] = min(match["min_order"], row["author_order"])
+            row_quality = (
+                -int(row["author_papers"] or 0),
+                *_backfill_name_quality(row["full_name"]),
+            )
+            best_quality = (
+                -int(match["best"]["author_papers"] or 0),
+                *_backfill_name_quality(match["best"]["full_name"]),
+            )
+            if row_quality < best_quality:
+                match["best"] = row
+        drop = [
+            int(row["authorship_id"])
+            for cluster in clusters
+            for row in cluster["rows"]
+            if row["authorship_id"] != cluster["best"]["authorship_id"]
+        ]
+        if not drop:
+            continue
+        conn.executemany(
+            "DELETE FROM authorships WHERE authorship_id=?",
+            [(authorship_id,) for authorship_id in drop],
+        )
+        # Break the (paper_id, author_order) uniqueness constraint before
+        # assigning the final order.
+        remaining = conn.execute(
+            "SELECT authorship_id, author_order FROM authorships "
+            "WHERE paper_id=? ORDER BY author_order",
+            (paper_id,),
+        ).fetchall()
+        for row in remaining:
+            conn.execute(
+                "UPDATE authorships SET author_order=? WHERE authorship_id=?",
+                (-row["author_order"], row["authorship_id"]),
+            )
+        desired_order = {
+            cluster["best"]["authorship_id"]: cluster["min_order"]
+            for cluster in clusters
+        }
+        remaining = conn.execute(
+            "SELECT authorship_id, author_order FROM authorships "
+            "WHERE paper_id=? ORDER BY author_order",
+            (paper_id,),
+        ).fetchall()
+        remaining.sort(
+            key=lambda row: (
+                desired_order.get(row["authorship_id"], -row["author_order"]),
+                row["authorship_id"],
+            )
+        )
+        for order, row in enumerate(remaining, start=1):
+            conn.execute(
+                "UPDATE authorships SET author_order=? WHERE authorship_id=?",
+                (order, row["authorship_id"]),
+            )
+        removed += len(drop)
+        changed_papers += 1
+    edges = _rebuild_coauthorship(conn) if removed else 0
+    conn.commit()
+    stats = {"papers_changed": changed_papers, "authorships_removed": removed, "edges": edges}
+    log.info("Backfilled-byline dedupe: %s", stats)
+    return stats
 
 
 def merge_openalex_supported_authors(conn) -> dict[str, int]:

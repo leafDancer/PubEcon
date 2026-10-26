@@ -1,0 +1,45 @@
+name: Correction or takedown
+description: Report a wrong record, identity link, career assignment, or privacy issue.
+title: "[correction] "
+labels: ["correction"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of request
+      options:
+        - Bibliographic correction
+        - Author identity merge or split
+        - Career-stage correction
+        - Affiliation correction
+        - Privacy or takedown
+    validations:
+      required: true
+  - type: input
+    id: record
+    attributes:
+      label: DOI or stable author ID
+      description: For example 10.1257/aer.20211820 or aer-a-000932.
+    validations:
+      required: true
+  - type: input
+    id: field
+    attributes:
+      label: Field that is wrong
+      description: The paper, author, affiliation, or career field at issue.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Correct value and evidence
+      description: State the corrected value and include a public evidence URL.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: I have not included private documents, birth dates, home addresses, phone numbers, or emails.
+          required: true

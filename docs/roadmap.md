@@ -86,8 +86,9 @@ The multi-journal data foundation is in progress:
   - **ECMA 2008–2014 deposits omit authors** for 388 articles. OpenAlex
     recovered 359 of them, raising ECMA from 1,382 to 1,741 articles and from
     3,058 to 3,858 author slots. The remaining 29 stay `unattributed`.
-- The combined research-article base is now **25,237 author slots**
-  (AER 10,782 plus 14,455 in the four new journals), about 2.3× AER.
+- The pilot research-article base was **25,237 author slots** (AER 10,782 plus
+  14,455 in the four new journals), about 2.3× AER; the final deduplicated build
+  has 25,205 slots.
 - Three identity-layer edge cases surfaced and were fixed: an ORCID can no
   longer be assigned to two components split by a namesake rule, a merge
   candidate whose author was already merged in the same pass is left pending
@@ -99,29 +100,32 @@ The multi-journal data foundation is in progress:
   Merging identities across journals is therefore the main value of M7.2, not
   a cosmetic deduplication step.
 
-### Combined top-five pilot (2026-10-26)
+### Combined top-five build (v1.0)
 
-A separate `top5.db` was built from cached Crossref pages with all five
-journals, OpenAlex enrichment, author resolution, and OpenAlex-supported
-merges. It is a validation build, not the served database.
+`top5.db` is built from cached Crossref pages with all five journals, OpenAlex
+enrichment, author resolution, OpenAlex-supported merges, and the byline/ORCID/CV
+career layers. It is the served database.
 
 | Journal | Research articles | Author slots | Abstracts |
 |---|---|---|---|
 | AER | 4,787 | 10,786 | 4,305 |
-| RES | 1,748 | 4,034 | 1,716 |
-| ECMA | 1,740 | 3,830 | 1,621 |
+| RES | 1,749 | 4,037 | 1,717 |
+| ECMA | 1,740 | 3,820 | 1,621 |
 | JPE | 1,500 | 3,477 | 1,329 |
 | QJE | 1,181 | 3,085 | 1,164 |
-| **Total** | **10,956** | **25,212** | **10,135** |
+| **Total** | **10,957** | **25,205** | **10,136** |
 
-- OpenAlex backfilled **801** authorships, including 12 AER articles that
-  lacked Crossref authors and 359 ECMA articles. A later administrative cleanup
-  moved 11 AER society records out of the article count, leaving 4,787 AER
-  research articles in the combined database.
-- The combined identity layer has **10,051 active canonical authors** and
-  **24,146** coauthorship edges.
-- Cross-journal reach is large: **3,335** authors appear in at least two
-  journals, **1,496** in at least three, and **178** in all five.
+- OpenAlex backfilled **762** authorships across 358 ECMA articles and 12 AER
+  articles; 30 ECMA articles remain `unattributed`. A later administrative
+  cleanup moved 11 AER society records out of the article count, leaving 4,787
+  AER research articles in the combined database.
+- The combined identity layer has **10,042 active canonical authors**,
+  **19,728 distinct coauthor ties**, and **24,108 author–paper edge records**.
+- Cross-journal reach is large: **3,336** authors appear in at least two
+  journals, **1,497** in at least three, and **179** in all five.
+- Career coverage is **4,961 of 25,205 slots (19.7%)**: 958 byline, 3,899
+  ORCID, and 104 CV assignments. The CV crawl parsed 438 documents and 1,895
+  events; 777 sources remain failed or unreachable.
 - All three AER namesake pairs survive the from-scratch rebuild
   (Page/Sullivan/Morgan). The first pass still merged John W./M. Morgan through
   a 2009 byline without an OpenAlex ID, so the resolver now splits any component
@@ -130,37 +134,30 @@ merges. It is a validation build, not the served database.
   compatibility, and year proximity. Ambiguous bylines stay in their own review
   component. This is a general fix, not a special case for Morgan.
 
-### M7.3 pilot: ORCID career layer (2026-10-26)
+### M7.3 career layer (v1.0)
 
-The combined database now has an ORCID career layer:
+The combined database has a byline + ORCID + CV career layer:
 
-- **5,988** ORCID identifiers were read (3,583 already cached, 2,403 fetched
-  in this run; 2 failed with HTTP 409). **3,499** records parsed into **9,803**
-  dated events.
-- Identity tiers: 2,376 verified by DOI, 346 by title, 899 by institution, 454
-  by economics-field signal, 1,439 unverified (events withheld), 150 rejected
-  for name conflict, 294 for field mismatch, and 28 for career risk.
-- **4,001 of 25,212 author slots (15.9%)** receive an ORCID career stage,
-  plus **106** CV assignments (438 parsed documents, 1,895 events), for
-  **4,107 total assignments (16.3%)**. Confidence: 506 high, 1,143 medium, and
-  2,278 low from ORCID, plus 18 high, 58 medium, and 30 low from CV.
+- **5,952** ORCID identity rows are recorded across the tier table: 2,376
+  verified by DOI, 345 by title, 899 by institution, 451 by
+  economics-field signal, 1,420 unverified (events withheld), 148 rejected for
+  name conflict, 272 for field mismatch, and 27 for career risk, plus 14
+  OpenAlex-work-authorship links.
+- **4,961 of 25,205 author slots (19.7%)** receive a career stage: 958 byline,
+  3,899 ORCID, and 104 CV assignments.
+- The CV crawl parsed 438 documents into 1,895 events and 104 assignments; the
+  queue is empty and 777 sources failed or were unreachable.
 
 | Journal | Slots | Assigned | Coverage | High/medium |
 |---|---|---|---|---|
-| AER | 10,786 | 1,713 | 15.9% | 768 |
-| RES | 4,034 | 722 | 17.9% | 332 |
-| ECMA | 3,830 | 611 | 16.0% | 244 |
-| JPE | 3,477 | 634 | 18.2% | 269 |
-| QJE | 3,085 | 427 | 13.8% | 182 |
+| AER | 10,786 | 2,316 | 21.5% | 1,387 |
+| RES | 4,037 | 845 | 20.9% | 456 |
+| ECMA | 3,820 | 668 | 17.5% | 302 |
+| JPE | 3,477 | 636 | 18.3% | 271 |
+| QJE | 3,085 | 496 | 16.1% | 253 |
 
-This is an **ORCID plus CV** layer for the combined database. The CV crawl has
-parsed 438 documents into 1,895 events and 106 assignments; the queue is empty
-and 777 sources failed or were unreachable. The separate AER database still reaches
-21.4% because it also has byline rank (669 slots) and a fuller CV corpus.
-New-journal authors have no byline rank data, so their coverage is lower and
-remains visibly missing rather than imputed. Coverage rises from about 11% for
-2000 papers to about 21% for 2026 papers, tracking the period ORCID records
-describe best.
+Coverage differs by journal because byline rank/affiliation and ORCID match
+rates differ. It remains visibly missing rather than imputed.
 
 ### M7.4 progress
 
@@ -262,9 +259,9 @@ journals it covers.
 |---|---|
 | M7.1 data foundation | Complete for all five journals; per-journal pilots and combined build done |
 | M7.2 identity and enrichment | Complete; cross-journal reach validated, namesake splits preserved, OpenAlex missing-bylines recovered |
-| M7.3 career layer | ORCID complete; CV crawl queue empty (438 parsed documents, 106 assignments; 777 failed sources remain visible) |
-| M7.4 API and frontend | Complete, including journal-scoped networks; top-five database is the default when present |
-| M7.5 validation and release | Random 12-per-journal article sample done; per-journal error rates, a public correction workflow, and the final deployment remain |
+| M7.3 career layer | Byline complete; ORCID complete; CV crawl queue empty (438 parsed documents, 104 assignments; 777 failed sources remain visible) |
+| M7.4 API and frontend | Complete, including journal-scoped networks; the top-five database is the default served dataset |
+| M7.5 validation and release | Data/code v1.0 complete; release manifest and privacy scrub added. Per-journal error rates are not estimated; license, correction contact, and deployment remain release decisions |
 
 ## Risks and controls
 

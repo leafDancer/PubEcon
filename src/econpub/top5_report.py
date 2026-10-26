@@ -105,7 +105,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
         conn.execute(
             """
             SELECT orcid_source, COUNT(*) AS n
-            FROM authors WHERE orcid IS NOT NULL
+            FROM authors WHERE orcid_source IS NOT NULL
             GROUP BY orcid_source ORDER BY n DESC
             """
         )
@@ -189,7 +189,13 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                 SELECT 1 FROM authorships s JOIN papers p ON p.paper_id=s.paper_id
                 WHERE s.author_id=a.author_id AND p.content_type='article'
                   AND p.is_duplicate=0)) AS authors,
-            (SELECT COUNT(*) FROM coauthorship_edges) AS edges,
+            (SELECT COUNT(*) FROM (
+                SELECT DISTINCT
+                    CASE WHEN author_a_id < author_b_id THEN author_a_id ELSE author_b_id END,
+                    CASE WHEN author_a_id < author_b_id THEN author_b_id ELSE author_a_id END
+                FROM coauthorship_edges
+            )) AS ties,
+            (SELECT COUNT(*) FROM coauthorship_edges) AS edge_records,
             (SELECT COUNT(*) FROM career_assignments) AS assignments,
             (SELECT COUNT(*) FROM authors WHERE needs_review=1) AS needs_review,
             (SELECT COUNT(*) FROM author_separation_rules) AS separation_rules
@@ -237,7 +243,8 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                 ("Research articles", totals["articles"]),
                 ("Author slots", totals["slots"]),
                 ("Canonical authors", totals["authors"]),
-                ("Coauthorship edges", totals["edges"]),
+                ("Coauthor ties (unique pairs)", totals["ties"]),
+                ("Coauthor edge records", totals["edge_records"]),
                 ("Career assignments", totals["assignments"]),
                 ("Authors flagged for review", totals["needs_review"]),
                 ("Separation rules", totals["separation_rules"]),
@@ -348,8 +355,9 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
     )
     lines.append("")
     lines.append(
-        "Career evidence is ORCID and CV only for the new journals. AER also has "
-        "byline rank evidence. Unknown slots are not imputed."
+        "Career evidence combines publish-time byline rank or affiliation, ORCID, "
+        "and CV events. Coverage differs by journal and by source; unknown slots "
+        "are not imputed."
     )
     lines.append("")
     lines.append("## CV coverage")

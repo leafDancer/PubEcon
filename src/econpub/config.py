@@ -5,10 +5,13 @@ from dataclasses import dataclass
 from pathlib import Path
 
 PACKAGE_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = PACKAGE_DIR.parents[1]
+_REPO_ROOT = PACKAGE_DIR.parents[1]
+# Editable checkouts keep data beside the repository. A wheel install has no
+# repository, so use the working directory unless ECONPUB_DATA_DIR is set.
+PROJECT_ROOT = _REPO_ROOT if (_REPO_ROOT / "pyproject.toml").exists() else Path.cwd()
 SRC_DIR = PACKAGE_DIR.parent
 
-DATA_DIR = PROJECT_ROOT / "data"
+DATA_DIR = Path(os.environ.get("ECONPUB_DATA_DIR", PROJECT_ROOT / "data")).expanduser().resolve()
 RAW_DIR = DATA_DIR / "raw"
 CURATED_DIR = DATA_DIR / "curated"
 REPORTS_DIR = DATA_DIR / "reports"

@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from .authors import resolve_all_authors
-from .career import assign_cv_careers, assign_orcid_careers
+from .authors import _rebuild_coauthorship, resolve_all_authors
+from .career import assign_cv_careers, assign_orcid_careers, infer_byline_career
 from .classify import classify_papers
 from .config import DB_PATH, JOURNALS
 from .crossref import harvest
@@ -19,6 +19,7 @@ from .identity import ensure_identity_ledger
 from .openalex import (
     apply_author_links,
     clean_openalex_abstracts,
+    dedupe_backfilled_authorships,
     enrich_openalex,
     merge_openalex_supported_authors,
 )
@@ -28,6 +29,8 @@ from .orcid import (
     fetch_orcid_records,
     revalidate_orcid_records,
 )
+from .network_report import generate_network_stats
+from .privacy import sanitize_affiliations, sanitize_career_events
 from .review import resolve_merge_candidates, resolve_multi_id_authors
 from .top5_report import generate_top5_report
 
@@ -87,6 +90,7 @@ def build_top5(
     skip_openalex: bool = False,
     skip_orcid: bool = False,
     run_cv: bool = False,
+    run_network_stats: bool = True,
     workers: int = 4,
     batch_size: int = 50,
 ) -> dict[str, Any]:
@@ -97,15 +101,25 @@ def build_top5(
     ORCID refreshes still update validation and assignments.
     """
     stats: dict[str, Any] = {}
+    can_rebuild = not _has_career_events(conn)
+    if not can_rebuild and (not skip_harvest or not skip_openalex):
+        raise RuntimeError(
+            "This database already has career events, which are author-keyed. "
+            "Re-harvesting or re-running OpenAlex can create authorships with no "
+            "author and leave the author/edge layer stale. Rebuild from a fresh "
+            "database, or pass --skip-harvest --skip-openalex to refresh only "
+            "the career/report layers."
+        )
     if not skip_harvest:
         for code in JOURNALS:
             stats[f"harvest_{code}"] = harvest(conn, journal=code, resume=True)
 
     stats["classify"] = classify_papers(conn)
     stats["separation_rules"] = _copy_separation_rules(conn)
-    can_rebuild = not _has_career_events(conn)
     if can_rebuild:
         stats["authors"] = resolve_all_authors(conn)
+    else:
+        stats["edges_after_classify"] = _rebuild_coauthorship(conn)
 
     if not skip_openalex:
         openalex_stats = enrich_openalex(conn, batch_size=batch_size, resume=True)
@@ -117,13 +131,18 @@ def build_top5(
             # not create ghost authors.
             stats["classify_after_backfill"] = classify_papers(conn)
             stats["authors_after_backfill"] = resolve_all_authors(conn)
+    stats["backfill_dedupe"] = dedupe_backfilled_authorships(conn)
 
     ensure_identity_ledger(conn)
     stats["author_links"] = apply_author_links(conn)
     stats["merges"] = merge_openalex_supported_authors(conn)
     stats["author_links_post_merge"] = apply_author_links(conn)
+    # Re-linking can create new shared-OpenAlex-ID candidates; run the narrow
+    # merge pass once more before recording unresolved candidates.
+    stats["merges_post_link"] = merge_openalex_supported_authors(conn)
     stats["merge_candidates"] = resolve_merge_candidates(conn)
     stats["multi_id"] = resolve_multi_id_authors(conn)
+    stats["byline_careers"] = infer_byline_career(conn)
 
     if not skip_orcid:
         stats["openalex_orcids"] = apply_openalex_orcids(conn)
@@ -139,6 +158,14 @@ def build_top5(
         stats["cv_fetch"] = fetch_cv_documents(conn, workers=workers)
         stats["cv_parse"] = parse_cv_sources(conn)
         stats["cv_careers"] = assign_cv_careers(conn)
+
+    stats["privacy"] = sanitize_career_events(conn)
+    stats["privacy_affiliations"] = sanitize_affiliations(conn)
+
+    if run_network_stats:
+        stats_path, stats_json = generate_network_stats(conn)
+        stats["network_stats"] = str(stats_path)
+        stats["network_stats_json"] = str(stats_json)
 
     markdown_path, metrics_path = generate_top5_report(conn)
     stats["report"] = str(markdown_path)

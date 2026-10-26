@@ -33,9 +33,9 @@ classified in its own pilot database before the combined build.
 ## Crossref metadata gaps
 
 - **ECMA 2008–2014** deposits omit authors for 388 articles (DOI prefix
-  `10.3982/ecta`). OpenAlex recovered 359 bylines (801 author slots). The
-  remaining 30 stay `unattributed`; they are visible in the report rather than
-  dropped.
+  `10.3982/ecta`). OpenAlex recovered 358 bylines (762 author slots after
+  byline deduplication). The remaining 30 stay `unattributed`; they are visible
+  in the report rather than dropped.
 - **AER** had 49 `unattributed` records before the combined build. OpenAlex
   recovered 12 AER bylines. A later administrative cleanup moved 11 AER society
   records out of the article count, so the combined AER figure is 4,787. The
@@ -83,9 +83,12 @@ backfill. A fresh `top5` build applies the guard automatically.
 The combined build was resolved from scratch, then OpenAlex-supported merges
 were applied. Known risks were checked explicitly:
 
-- **Cross-journal reach.** 3,337 authors appear in at least two journals, 1,496
-  in at least three, and 178 in all five. Daron Acemoglu has 82 papers across
+- **Cross-journal reach.** 3,336 authors appear in at least two journals, 1,497
+  in at least three, and 179 in all five. Daron Acemoglu has 82 papers across
   all five; John List has 50. This is consistent with their known records.
+  Five shared-OpenAlex-ID candidates (Mankiw, Ünver, Paserman, and the
+  duplicate Bernheim candidate) were resolved by the second merge pass; 0 merge
+  candidates remain pending.
 - **Namesake pairs.** The three AER splits survive the rebuild:
   - Benjamin I. Page (`A5089044770`) and Benjamin R. Page (`A5002652442`).
   - Daniel G. Sullivan (`A5060507064`) and Daniel M. Sullivan (`A5021617351`).
@@ -97,27 +100,27 @@ were applied. Known risks were checked explicitly:
   sides of a separation rule, anchors on the OpenAlex IDs, and assigns unlinked
   bylines by institution, name compatibility, and year proximity. Ambiguous
   bylines stay in a review component.
-- **ORCID validation.** 5,988 identifiers were read; 4,075 reached an accepted
-  tier (DOI, title, institution, or economics field), 1,439 remain unverified
-  with events withheld, and 472 were rejected for name, field, or career risk.
-  The top-five corpus gives ORCID validation more papers to compare against,
-  but it also produces more same-name candidates; the rejection rules are
-  unchanged.
+- **ORCID validation.** 5,493 authors retain an ORCID: 4,071 reached an
+  accepted tier (2,376 DOI, 345 title, 899 institution, 451 economics field),
+  1,420 remain unverified with events withheld, 14 are OpenAlex-work-authorship
+  links, and 447 were rejected for name, field, or career risk. The top-five
+  corpus gives ORCID validation more papers to compare against, but it also
+  produces more same-name candidates; the rejection rules are unchanged.
 
 ## Career coverage
 
-The combined pilot has ORCID plus a CV layer: 4,107 of 25,212 slots (16.3%)
-receive a stage. Per journal: AER 15.9%, RES 17.9%, ECMA 16.0%, JPE 18.2%, QJE
-13.8%. The CV crawl parsed 438 documents into 1,895 events and 106 assignments;
-the queue is empty and 777 sources failed or were unreachable. The AER baseline
-remains at 21.4% because it also has byline rank and a fuller CV corpus. New
-journals have no byline rank field in Crossref, so their coverage is
-structurally lower; no heuristic fills the gap.
+The combined dataset has byline, ORCID, and CV evidence: 4,961 of 25,205 slots
+(19.7%) receive a stage (958 byline, 3,899 ORCID, 104 CV). Per journal: AER
+21.5%, RES 20.9%, ECMA 17.5%, JPE 18.3%, QJE 16.1%. The CV crawl parsed 438
+documents into 1,895 events and 104 assignments; the queue is empty and 777
+sources failed or were unreachable. All journals now carry byline evidence;
+coverage differs because the byline rank/affiliation fields and ORCID match
+rates differ. No heuristic fills the gap.
 
 ## Still unverified
 
-- A random, manually coded sample of article types for each journal, with a
-  published error rate. The current checks are targeted, not random.
+- Per-journal article-type error rates. The 12-per-journal sample is a targeted
+  sanity check, not a precision estimate; no error rate is published.
 - Comments, replies, and short notes: these are kept as research articles.
   Whether to expose them as a separate type is a product decision that needs a
   per-journal count.

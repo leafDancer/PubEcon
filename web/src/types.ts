@@ -59,11 +59,14 @@ export interface Overview {
     authors: number
     authorships: number
     coauthorship_edges: number
+    coauthorship_edge_records: number
     career_assignments: number
     abstracts: number
     orcid_authors: number
     orcid_accepted: number
     orcid_unverified: number
+    orcid_other: number
+    orcid_rejected: number
     cv_sources: number
   }
   coverage: Record<'career' | 'abstract' | 'orcid' | 'dated', number>
@@ -296,6 +299,7 @@ export interface PathPaper {
 export interface PathStep {
   from: string
   to: string
+  shared_papers?: number
   papers: PathPaper[]
 }
 

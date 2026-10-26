@@ -268,6 +268,11 @@ export default function PathPage() {
                         <strong>
                           {from} ↔ {to}
                         </strong>
+                        {step.shared_papers ? (
+                          <small className="ep-path-step-count">
+                            {step.papers.length} of {step.shared_papers} shared papers
+                          </small>
+                        ) : null}
                       </div>
                       <ul className="ep-path-papers">
                         {step.papers.map((paper) => (

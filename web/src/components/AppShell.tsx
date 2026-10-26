@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { api } from '../api'
 import { formatNumber, useApi } from '../lib'
 
@@ -14,9 +15,17 @@ const nav = [
 
 export default function AppShell() {
   const { data } = useApi(() => api.overview(), [])
+  const location = useLocation()
   const journals = data?.dataset.journals ?? []
-  const isMulti = journals.length > 1
+  const isMulti = journals.length !== 1
   const scopeLabel = isMulti ? 'Top 5' : journals[0]?.code ?? 'AER'
+
+  useEffect(() => {
+    if (!location.hash) return
+    const target = document.getElementById(location.hash.slice(1))
+    if (target) requestAnimationFrame(() => target.scrollIntoView())
+  }, [location.pathname, location.hash])
+
   return (
     <div className="ep-shell">
       <a className="ep-skip" href="#main">

@@ -6,7 +6,7 @@
   --ink: #15201b;
   --ink-soft: #2d3b34;
   --muted: #5d6b63;
-  --faint: #89958d;
+  --faint: #5f6b63;
   --line: #cbd4cc;
   --line-strong: #aebbb2;
   --pine: #214f3f;
@@ -2045,6 +2045,10 @@ h3 {
   color: var(--ink);
 }
 
+.ep-method-body {
+  min-width: 0;
+}
+
 .ep-method-body section {
   margin-bottom: 48px;
   padding-top: 18px;
@@ -2700,6 +2704,12 @@ h3 {
   align-items: baseline;
   gap: 10px;
   margin-bottom: 6px;
+}
+
+.ep-path-step-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .ep-path-step-index {

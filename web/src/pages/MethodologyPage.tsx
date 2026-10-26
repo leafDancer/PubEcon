@@ -307,9 +307,11 @@ export default function MethodologyPage() {
             <h2>Corrections and privacy</h2>
             <p>
               CV data is reduced to structured degree and employment facts with a source URL. Raw
-              CV documents are kept only in the project&apos;s local cache; the public database does
-              not redistribute them. A correction and takedown process will be available before
-              public launch.
+              CV documents and raw CV lines are kept out of the public database, and birth dates,
+              home addresses, phone numbers, and emails are not published. Corrections and takedowns
+              follow a documented process: report the DOI or stable author ID, the field that is
+              wrong, the corrected value, and a public evidence URL through the repository&apos;s
+              GitHub Issues tracker.
             </p>
             <p>
               <Link className="ep-text-link" to="/papers">

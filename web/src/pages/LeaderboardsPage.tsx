@@ -177,6 +177,7 @@ export default function LeaderboardsPage() {
                       <th scope="col">Pair</th>
                       <th scope="col">Shared papers</th>
                       <th scope="col">Years</th>
+                      <th scope="col">Evidence</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -191,6 +192,18 @@ export default function LeaderboardsPage() {
                         <td className="ep-num">{pair.shared_papers}</td>
                         <td className="ep-num">
                           {pair.first_year ?? '—'}–{pair.last_year ?? '—'}
+                        </td>
+                        <td>
+                          {pair.papers.slice(0, 3).map((paper) => (
+                            <div key={paper.doi}>
+                              <Link to={`/papers/${paper.doi}`}>{paper.title}</Link>
+                            </div>
+                          ))}
+                          {pair.shared_papers > pair.papers.length ? (
+                            <small>
+                              +{pair.shared_papers - pair.papers.length} more not shown
+                            </small>
+                          ) : null}
                         </td>
                       </tr>
                     ))}

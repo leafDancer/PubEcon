@@ -63,6 +63,12 @@ function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) 
                 {pair.a.institution ?? 'Institution not resolved'} /{' '}
                 {pair.b.institution ?? 'Institution not resolved'} · {pair.first_year ?? '—'}–
                 {pair.last_year ?? '—'}
+                {pair.papers[0] ? (
+                  <>
+                    {' '}
+                    · <Link to={`/papers/${pair.papers[0].doi}`}>{pair.papers[0].title}</Link>
+                  </>
+                ) : null}
               </small>
             </div>
             <span className="ep-rank-value">
@@ -409,7 +415,9 @@ export default function OverviewPage() {
               </button>
             ))}
           </div>
-          {rankings.data ? (
+          {rankings.error ? (
+            <ErrorState message={rankings.error} />
+          ) : rankings.data ? (
             <RankingList tab={rankingTab} data={rankings.data} />
           ) : (
             <p className="ep-empty-inline">Loading rankings</p>
@@ -502,7 +510,7 @@ export default function OverviewPage() {
             <strong>Browse the record</strong>
             <span>
               Filter {formatNumber(data.counts.papers)} research articles across the five journals
-              by journal, year, and topic.
+              by journal, year, and article type.
             </span>
             <small>Browse the papers →</small>
           </Link>

@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-10-26T14:58:51+00:00",
+  "generated_at": "2026-10-26T15:49:16+00:00",
   "scopes": [
     {
-      "nodes": 9503,
-      "edges": 19767,
-      "components": 706,
-      "largest_component": 7480,
+      "nodes": 9494,
+      "edges": 19728,
+      "components": 708,
+      "largest_component": 7466,
       "component_sizes": [
-        7480,
+        7466,
         16,
         11,
         11,
@@ -18,13 +18,13 @@
         9,
         8
       ],
-      "average_degree": 4.16,
-      "average_path_length": 6.5744,
+      "average_degree": 4.156,
+      "average_path_length": 6.5801,
       "diameter": 18,
-      "average_clustering": 0.6788,
-      "pairs": 27971460,
+      "average_clustering": 0.6785,
+      "pairs": 27866845,
       "scope": "ALL",
-      "generated_at": "2026-10-26T14:58:51+00:00"
+      "generated_at": "2026-10-26T15:49:16+00:00"
     },
     {
       "nodes": 5463,
@@ -49,15 +49,15 @@
       "average_clustering": 0.7394,
       "pairs": 4683330,
       "scope": "AER",
-      "generated_at": "2026-10-26T14:58:51+00:00"
+      "generated_at": "2026-10-26T15:49:16+00:00"
     },
     {
-      "nodes": 2176,
-      "edges": 2901,
-      "components": 389,
-      "largest_component": 858,
+      "nodes": 2170,
+      "edges": 2875,
+      "components": 390,
+      "largest_component": 849,
       "component_sizes": [
-        858,
+        849,
         20,
         16,
         14,
@@ -68,13 +68,13 @@
         13,
         10
       ],
-      "average_degree": 2.666,
-      "average_path_length": 9.7086,
+      "average_degree": 2.65,
+      "average_path_length": 9.6938,
       "diameter": 24,
-      "average_clustering": 0.7635,
-      "pairs": 367653,
+      "average_clustering": 0.7623,
+      "pairs": 359976,
       "scope": "ECMA",
-      "generated_at": "2026-10-26T14:58:51+00:00"
+      "generated_at": "2026-10-26T15:49:16+00:00"
     },
     {
       "nodes": 2318,
@@ -99,7 +99,7 @@
       "average_clustering": 0.8199,
       "pairs": 89253,
       "scope": "JPE",
-      "generated_at": "2026-10-26T14:58:51+00:00"
+      "generated_at": "2026-10-26T15:49:16+00:00"
     },
     {
       "nodes": 1957,
@@ -124,12 +124,12 @@
       "average_clustering": 0.8125,
       "pairs": 509545,
       "scope": "QJE",
-      "generated_at": "2026-10-26T14:58:51+00:00"
+      "generated_at": "2026-10-26T15:49:16+00:00"
     },
     {
-      "nodes": 2683,
-      "edges": 3404,
-      "components": 536,
+      "nodes": 2684,
+      "edges": 3407,
+      "components": 535,
       "largest_component": 564,
       "component_sizes": [
         564,
@@ -143,13 +143,13 @@
         23,
         19
       ],
-      "average_degree": 2.537,
+      "average_degree": 2.539,
       "average_path_length": 10.4646,
       "diameter": 26,
-      "average_clustering": 0.7962,
+      "average_clustering": 0.7961,
       "pairs": 158766,
       "scope": "RES",
-      "generated_at": "2026-10-26T14:58:51+00:00"
+      "generated_at": "2026-10-26T15:49:16+00:00"
     }
   ]
 }

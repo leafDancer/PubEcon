@@ -24,7 +24,7 @@ AEA, OpenAlex, and author CVs all have usable coverage.
 - Abstracts are present for many research articles. Subject fields are not consistently populated; JEL codes come from AEA pages instead.
 - Crossref rate limits can return HTTP 429 under bursts. The harvester uses a contact address, sequential requests, and exponential backoff, and caches every raw page.
 - **JPE deposits no abstracts** in the records observed here; OpenAlex is the only abstract source for JPE.
-- **ECMA 2008–2014 deposits omit authors** for 388 articles (DOI prefix `10.3982/ecta`). OpenAlex work authorship recovered 359 of them; the remaining 29 are stored as `unattributed`.
+- **ECMA 2008–2014 deposits omit authors** for 388 articles (DOI prefix `10.3982/ecta`). OpenAlex work authorship recovered 358 of them (762 author slots after byline deduplication); the remaining 30 are stored as `unattributed`.
 - JPE back-cover teasers, turnaround-time tables, and mastheads are deposited as `journal-article` records; the classifier moves them to front matter by title and page evidence.
 
 ## AEA website (AER only)
@@ -49,25 +49,25 @@ journals do not use the AEA platform.
 - OpenAlex abstracts are useful (1,210 records filled), but some are actually AEA page descriptions ("Title by Authors. Published in volume ... of American Economic Review"). 377 were filtered as boilerplate, leaving 833 usable abstracts.
 - OpenAlex topics are stored under `scheme='openalex_topic'` and are not treated as equivalent to JEL codes.
 - Author profiles carry useful ORCIDs and citation counts, but `affiliations` is noisy: Markus Brunnermeier's profile lists dozens of institutions that are clearly coauthor affiliations, not his employment history.
-- OpenAlex work authorship supplies author IDs and publish-time institution IDs. 5,526 of 5,892 canonical authors receive an OpenAlex link; 40 authors had more than one OpenAlex ID and were reviewed in M3 (3 splits, 32 duplicate-profile cases, 5 uncertain).
-- **Missing-byline backfill.** When a publisher deposit has no authors at all, OpenAlex work authorship may supply the byline. Created rows carry `openalex_match_method='openalex_backfill'`, `openalex_author_name`, the raw affiliation, and `institution_source='openalex'`. Crossref authors are never replaced when present. In the top-five pilot this recovered 359 of 388 Econometrica articles from 2008–2014 whose Crossref deposits omit authors; the remaining 29 stay `unattributed`.
+- OpenAlex work authorship supplies author IDs and publish-time institution IDs. 9,159 of 10,042 active canonical authors receive an OpenAlex link; 131 authors carry OpenAlex fragmentation flags, and the reviewed multi-ID cases are recorded in the identity ledger.
+- **Missing-byline backfill.** When a publisher deposit has no authors at all, OpenAlex work authorship may supply the byline. Created rows carry `openalex_match_method='openalex_backfill'`, `openalex_author_name`, the raw affiliation, and `institution_source='openalex'`. Crossref authors are never replaced when present, and repeated or abbreviated names within one backfilled byline are collapsed after author resolution. In the top-five build this recovered 358 of 388 Econometrica articles from 2008–2014 whose Crossref deposits omit authors; the remaining 30 stay `unattributed`.
 - **Decision:** use OpenAlex only as DOI-keyed enrichment, never as the primary paper record or as a career timeline.
 
 ## ORCID
 
 - ORCID public records (`https://pub.orcid.org/v3.0/<id>/record`) provide self-reported employment and education with start/end dates, organization names, role titles, and degree names.
-- 3,314 of 5,892 canonical authors retain an ORCID after validation, largely obtained from OpenAlex work authorship (the Crossref deposit itself supplies only one ORCID).
+- 5,493 of 10,042 active canonical authors retain an ORCID after validation, largely obtained from OpenAlex work authorship (the Crossref deposit itself supplies very few ORCIDs).
 - Unlike OpenAlex author profiles, ORCID records are self-reported and therefore useful for a dated timeline. But an ORCID link is only as good as the identity match: common names and OpenAlex profile merging produce wrong links (e.g. an economist matched to a surgeon's ORCID).
-- Identity is validated before events are used. A matching AER DOI (1,397 authors) or a matching work title (181) is high confidence; an overlap with an AER byline institution (539) is medium confidence; an economics-department or core-economics-journal signal with no direct AER link (292) is low confidence.
-- Records with no positive identity evidence but no contradiction (905) are retained as low-confidence identity links; their employment/education events are withheld. Records whose person name conflicts (72), whose field is clearly non-economics (165), or whose events would change a career stage without positive identity evidence (12) are rejected.
-- 2,067 accepted ORCID identities contribute 5,847 employment/education events, of which 4,583 have a start year.
+- Identity is validated before events are used. A matching top-five DOI (2,376 authors) or a matching work title (345) is high confidence; an overlap with a top-five byline institution (899) is medium confidence; an economics-department or core-economics-journal signal with no direct top-five link (451) is low confidence.
+- Records with no positive identity evidence but no contradiction (1,420) are retained as low-confidence identity links; their employment/education events are withheld. Records whose person name conflicts (148), whose field is clearly non-economics (272), or whose events would change a career stage without positive identity evidence (27) are rejected. Fourteen additional authors carry an OpenAlex-work-authorship ORCID tier.
+- 3,497 authors with ORCID events contribute 9,796 employment/education events, of which 7,688 have a start year.
 - ORCID data is not complete or uniformly dated. Many records list a current title with an old start year; generic "Professor" is therefore treated as full professor with low confidence.
 
 ## CVs and faculty pages
 
-- ORCID researcher URLs and discovered CV links provide 1,362 public sources. 633 homepages were parsed for links, 294 documents were downloaded, and 268 documents were parsed.
-- The CV layer is deliberately conservative: it follows public links, stores raw documents only in the ignored local cache, and extracts only Education/Employment sections with years and titles.
-- The crawl extracted 1,129 dated CV events and 45 career assignments. CV events are used only after byline, ORCID, and Wayback evidence are absent. The queue is empty; 370 homepages and 72 CV documents remain unreachable.
+- ORCID researcher URLs and discovered CV links provide 2,278 public sources. 438 documents were parsed, producing 1,895 structured events and 104 career assignments.
+- The CV layer is deliberately conservative: it follows public links, stores raw documents only in the ignored local cache, and extracts only Education/Employment facts with years and titles. Raw CV lines are not written to the database; `source_snippet` is a normalized JSON fact summary.
+- CV events are used only after byline, ORCID, and Wayback evidence are absent. The queue is empty; 777 sources remain failed or unreachable.
 - The full CV crawl is resumable; it is not presented as complete coverage.
 
 ## Wayback Machine
@@ -102,11 +102,11 @@ Career facts will be stored as structured rows with source URLs. Personal data s
 
 ## Known limitations
 
-- Author resolution is name-based, supplemented by OpenAlex evidence. The resolver handles middle initials, surname particles, Unicode transliteration, suffixes, and known namesakes. M3 introduced stable IDs and explicit review: 5,892 canonical authors, 7 resolved namesake candidates, 3 confirmed splits, 32 OpenAlex profile-duplication cases, and 5 uncertain multi-ID authors. 28 OpenAlex fragmentation flags remain. This is not a substitute for CV evidence.
+- Author resolution is name-based, supplemented by OpenAlex evidence. The resolver handles middle initials, surname particles, Unicode transliteration, suffixes, and known namesakes. The combined build uses stable IDs and explicit review: 10,042 active canonical authors, 38 candidate pairs resolved as splits, 3 confirmed over-merges, and 131 OpenAlex fragmentation flags. This is not a substitute for CV evidence.
 - Stable author IDs live in `author_identity_ledger`; `authors.author_id` remains an internal key and can change on rebuild. Confirmed splits are protected by `author_separation_rules`.
-- Affiliation strings are inconsistent, and explicit academic rank is present on only about 0.3% of author slots. OpenAlex resolves publish-time institutions for 10,188 of 10,782 slots (94.5%); combined with the Crossref byline hint, 10,602 slots (98.3%) have some institution string.
-- Career assignments cover 2,305 of 10,782 slots (21.4%): 669 byline, 1,591 ORCID, and 45 CV. 8,477 slots remain unknown. 909 of the 965 full-professor assignments rely on generic "Professor" titles and are low confidence.
-- ORCID review remains substantial: 905 identities are unverified (events withheld), 292 are low-confidence economics-field matches, 72 have person-name conflicts, 165 have clear field mismatches, and 12 would change a career stage without positive identity evidence. The CV corpus has 268 parsed documents but is not a complete corpus.
+- Affiliation strings are inconsistent. OpenAlex resolves publish-time institutions for 22,915 of 25,205 slots (90.9%); combined with the Crossref byline hint, 23,614 slots (93.7%) have some institution string.
+- Career assignments cover 4,961 of 25,205 slots (19.7%): 958 byline, 3,899 ORCID, and 104 CV. 20,244 slots remain unknown. 2,249 of the 2,359 full-professor assignments rely on generic "Professor" titles and are low confidence.
+- ORCID review remains substantial: 1,420 identities are unverified (events withheld), 451 are low-confidence economics-field matches, 148 have person-name conflicts, 272 have clear field mismatches, and 27 would change a career stage without positive identity evidence. The CV corpus has 438 parsed documents but is not a complete corpus.
 - P&P articles are identified as the largest spring issue (April/May, at least 50 articles) in each year through 2017. The issue number is not stable: it is 2 in 2000–2010, 3 in 2011–2013, and 5 in 2014–2017. AEA issue metadata is used for verification where available.
 - AER's publication schedule and issue numbering changed over time; year-level analysis is safer than issue-level analysis.
 - Crossref coverage of front matter and non-research items varies. AER P&P issues also contain AEA committee reports, minutes, and Job Openings reports; these are classified as `association_report` and excluded from research-article statistics.

@@ -27,3 +27,7 @@ web/.env.local
 # OS
 .DS_Store
 Thumbs.db
+
+# Python build artifacts
+build/
+dist/

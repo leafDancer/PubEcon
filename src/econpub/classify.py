@@ -103,7 +103,13 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
         UPDATE papers
         SET content_type='retraction_notice', retraction_status='notice'
         WHERE content_type='article'
-          AND LOWER(COALESCE(title,'')) LIKE '%retraction%'
+          AND (
+              LOWER(COALESCE(title,'')) LIKE '%: retraction'
+              OR LOWER(COALESCE(title,'')) LIKE 'retraction of%'
+              OR LOWER(COALESCE(title,'')) LIKE 'retraction notice%'
+              OR LOWER(COALESCE(title,'')) LIKE '% retraction notice%'
+              OR LOWER(COALESCE(title,'')) LIKE 'retraction:%'
+          )
           AND LOWER(COALESCE(title,'')) NOT LIKE 'retracted by the authors%'
         """
     )

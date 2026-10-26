@@ -63,6 +63,17 @@ export function confidenceRank(confidence: string | null | undefined): number {
   return confidence === 'high' ? 0 : confidence === 'medium' ? 1 : confidence === 'low' ? 2 : 3
 }
 
+export function safeInt(
+  value: string | null | undefined,
+  fallback: number,
+  min = Number.MIN_SAFE_INTEGER,
+  max = Number.MAX_SAFE_INTEGER,
+): number {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return fallback
+  return Math.min(max, Math.max(min, Math.trunc(parsed)))
+}
+
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) return '—'
   return new Intl.NumberFormat('en-US').format(value)

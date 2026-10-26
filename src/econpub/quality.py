@@ -58,6 +58,12 @@ def generate_report(conn, path: Path | None = None) -> tuple[Path, Path]:
             (SELECT COUNT(*) FROM author_aliases) AS author_aliases,
             (SELECT COUNT(*) FROM author_merge_candidates WHERE status='pending') AS merge_candidates,
             (SELECT COUNT(*) FROM coauthorship_edges) AS coauthorship_edges,
+            (SELECT COUNT(*) FROM (
+                SELECT DISTINCT
+                    CASE WHEN author_a_id < author_b_id THEN author_a_id ELSE author_b_id END,
+                    CASE WHEN author_a_id < author_b_id THEN author_b_id ELSE author_a_id END
+                FROM coauthorship_edges
+            )) AS coauthorship_ties,
             (SELECT COUNT(*) FROM authorships a
                 JOIN papers p ON p.paper_id = a.paper_id
                 WHERE p.content_type='article'
@@ -377,7 +383,8 @@ def generate_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                 ("Authors flagged for review", summary["authors_needs_review"]),
                 ("Author aliases", summary["author_aliases"]),
                 ("Pending merge candidates", summary["merge_candidates"]),
-                ("Coauthorship edges", summary["coauthorship_edges"]),
+                ("Coauthor ties (unique pairs)", summary["coauthorship_ties"]),
+                ("Coauthor edge records", summary["coauthorship_edges"]),
                 ("Affiliation coverage (author slots)", _pct(summary["with_affiliation"], authorships)),
                 ("Any rank/title mention", _pct(summary["with_rank"], authorships)),
                 ("Academic byline rank coverage", _pct(summary["with_academic_rank"], authorships)),

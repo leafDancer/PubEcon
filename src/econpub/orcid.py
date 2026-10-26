@@ -607,10 +607,10 @@ def assess_orcid_identity(
     """Classify an ORCID-to-author link by the strength of its evidence.
 
     Tiers, strongest first:
-      verified_doi          an ORCID work DOI matches one of the author's AER DOIs
-      verified_title        an ORCID work title matches an AER paper title
-      verified_institution  ORCID employment/education overlaps an AER institution
-      field_economics       an economics field signal but no direct AER link
+      verified_doi          an ORCID work DOI matches one of the author's paper DOIs
+      verified_title        an ORCID work title matches a paper title
+      verified_institution  ORCID employment/education overlaps a byline institution
+      field_economics       an economics field signal but no direct paper link
       unverified            no positive evidence, but no contradiction either
       rejected_name         the ORCID person name conflicts with the author
       rejected_field        the ORCID record is in a clearly different field

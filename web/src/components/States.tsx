@@ -21,7 +21,7 @@ export function ErrorState({ message, children }: { message: string; children?: 
         <p className="ep-state-hint">Check the identifier or return to the index.</p>
       ) : (
         <p className="ep-state-hint">
-          Start the API with <code>python run.py serve</code>, then reload this page.
+          Try again, or return to the index and choose another record.
         </p>
       )}
       {children}

@@ -1,6 +1,6 @@
 # Top-five dataset report
 
-Generated 2026-10-26T14:58:50+00:00.
+Generated 2026-10-26T15:50:04+00:00.
 
 Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica*, 2000–present. AER includes Papers & Proceedings through 2017. Counts are research articles unless stated otherwise.
 
@@ -9,12 +9,13 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 | Metric | Value |
 |---|---|
 | Crossref records | 13443 |
-| Research articles | 10956 |
-| Author slots | 25212 |
-| Canonical authors | 10051 |
-| Coauthorship edges | 24146 |
-| Career assignments | 4107 |
-| Authors flagged for review | 2454 |
+| Research articles | 10957 |
+| Author slots | 25205 |
+| Canonical authors | 10042 |
+| Coauthor ties (unique pairs) | 19728 |
+| Coauthor edge records | 24108 |
+| Career assignments | 4961 |
+| Authors flagged for review | 2451 |
 | Separation rules | 3 |
 
 ## Inventory by journal
@@ -24,7 +25,7 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 | AER | 5498 | 4787 | 67 | 17 | 223 | 370 | 0 | 0 | 2 | 4305 |
 | QJE | 1368 | 1181 | 55 | 10 | 87 | 0 | 0 | 0 | 0 | 1164 |
 | JPE | 2143 | 1500 | 1 | 15 | 592 | 0 | 0 | 1 | 0 | 1329 |
-| RES | 1832 | 1748 | 8 | 35 | 19 | 0 | 0 | 0 | 0 | 1716 |
+| RES | 1832 | 1749 | 8 | 35 | 19 | 0 | 0 | 0 | 0 | 1717 |
 | ECMA | 2602 | 1740 | 25 | 28 | 570 | 180 | 6 | 0 | 30 | 1621 |
 
 ## Metadata coverage by journal
@@ -32,10 +33,10 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 | Journal | OpenAlex work coverage | Resolved institution | Accepted ORCID authors |
 |---|---|---|---|
 | AER | 99.0% | 98.3% | 41.5% |
-| QJE | 98.6% | 89.5% | 38.4% |
+| QJE | 98.6% | 89.5% | 38.5% |
 | JPE | 99.6% | 88.6% | 43.1% |
 | RES | 98.6% | 95.1% | 44.1% |
-| ECMA | 96.0% | 87.0% | 41.1% |
+| ECMA | 96.0% | 87.1% | 41.2% |
 
 OpenAlex work coverage is DOI-keyed. Resolved institution includes an OpenAlex institution or a non-empty Crossref byline hint, so it is an upper bound on usable institution evidence. Accepted ORCID authors exclude unverified and rejected links.
 
@@ -43,13 +44,13 @@ OpenAlex work coverage is DOI-keyed. Resolved institution includes an OpenAlex i
 
 | Journal | Slots | Assigned | Coverage | High/medium |
 |---|---|---|---|---|
-| AER | 10786 | 1713 | 15.9% | 768 |
-| QJE | 3085 | 427 | 13.8% | 182 |
-| JPE | 3477 | 634 | 18.2% | 269 |
-| RES | 4034 | 722 | 17.9% | 332 |
-| ECMA | 3830 | 611 | 16.0% | 244 |
+| AER | 10786 | 2316 | 21.5% | 1387 |
+| QJE | 3085 | 496 | 16.1% | 253 |
+| JPE | 3477 | 636 | 18.3% | 271 |
+| RES | 4037 | 845 | 20.9% | 456 |
+| ECMA | 3820 | 668 | 17.5% | 302 |
 
-Career evidence is ORCID and CV only for the new journals. AER also has byline rank evidence. Unknown slots are not imputed.
+Career evidence combines publish-time byline rank or affiliation, ORCID, and CV events. Coverage differs by journal and by source; unknown slots are not imputed.
 
 ## CV coverage
 
@@ -61,7 +62,7 @@ Career evidence is ORCID and CV only for the new journals. AER also has byline r
 |   — failed | 777 |
 | Authors with CV events | 310 |
 | CV career events | 1895 |
-| CV career assignments | 106 |
+| CV career assignments | 104 |
 
 The CV crawl is resumable. A non-zero candidate count is a visible queue, not a claim that no CV exists.
 
@@ -69,25 +70,26 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 
 | Evidence | Confidence | Assignments |
 |---|---|---|
-| orcid_employment | low | 2278 |
-| orcid_employment | medium | 1143 |
-| orcid_employment | high | 506 |
+| orcid_employment | low | 2259 |
+| orcid_employment | medium | 1062 |
+| byline_rank | high | 958 |
+| orcid_employment | high | 505 |
 | orcid_education | medium | 70 |
-| cv_employment | medium | 56 |
+| cv_employment | medium | 54 |
 | cv_employment | low | 30 |
 | cv_employment | high | 18 |
-| orcid_education | low | 4 |
+| orcid_education | low | 3 |
 | cv_education | medium | 2 |
 
 ## Cross-journal reach
 
 | Journals per author | Authors |
 |---|---|
-| 1 | 6716 |
+| 1 | 6706 |
 | 2 | 1839 |
 | 3 | 864 |
 | 4 | 454 |
-| 5 | 178 |
+| 5 | 179 |
 
 | Author | Journals | Papers |
 |---|---|---|
@@ -113,11 +115,13 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 | verified_institution | 899 |
 | field_economics | 451 |
 | verified_title | 345 |
-| openalex_work_authorship | 2 |
+| rejected_field | 272 |
+| rejected_name | 148 |
+| rejected_career_risk | 27 |
+| openalex_work_authorship | 14 |
 
 | Merge candidate status | Pairs |
 |---|---|
-| pending | 5 |
 | resolved_split | 38 |
 
 | Review status | Authors |
@@ -126,10 +130,10 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 | orcid_unverified_field | 441 |
 | orcid_field_mismatch | 256 |
 | unspecified | 145 |
-| orcid_name_conflict | 142 |
+| orcid_name_conflict | 141 |
 | openalex_fragmentation | 46 |
 | orcid_unverified_career_risk | 23 |
-| orcid_conflict | 9 |
+| orcid_conflict | 7 |
 | namesake_resolved | 7 |
 | manual_review | 3 |
 

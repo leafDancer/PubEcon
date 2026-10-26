@@ -1,3 +1,3 @@
-"""EconPub: an AER publication database and coauthor network."""
+"""EconPub: a top-five economics journal database and coauthor network."""
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"

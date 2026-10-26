@@ -19,6 +19,7 @@ from . import db
 from .career import classify_role
 from .config import MAILTO, RAW_DIR
 from .normalize import clean_text, normalize_name_part, normalize_orcid
+from .privacy import sanitize_career_events, strip_personal_info, structured_snippet
 
 log = logging.getLogger(__name__)
 
@@ -465,7 +466,7 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
     events: list[dict[str, Any]] = []
     seen: set[tuple[Any, ...]] = set()
     for raw_line in lines:
-        line = re.sub(r"\s+", " ", raw_line).strip()
+        line = strip_personal_info(re.sub(r"\s+", " ", raw_line))
         if not line or len(line) < 5:
             continue
         education_header = _EDUCATION_HEADER.match(line)
@@ -511,7 +512,9 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
                     "end_year": end_year,
                     "is_current": 0,
                     "confidence": confidence,
-                    "source_snippet": line[:500],
+                    "source_snippet": structured_snippet(
+                        "education", title, institution, start_year, end_year, 0
+                    ),
                 }
             )
             continue
@@ -537,7 +540,9 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
                 "end_year": end_year,
                 "is_current": is_current,
                 "confidence": confidence,
-                "source_snippet": line[:500],
+                "source_snippet": structured_snippet(
+                    "employment", title, institution, start_year, end_year, is_current
+                ),
             }
         )
     return events
@@ -1087,5 +1092,6 @@ def parse_cv_sources(conn, *, limit: int | None = None) -> dict[str, int]:
         )
         conn.commit()
     conn.commit()
+    stats["privacy"] = sanitize_career_events(conn)
     log.info("CV parse: %s", stats)
     return stats

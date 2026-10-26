@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { api } from '../api'
 import NetworkGraph from '../components/NetworkGraph'
 import { ErrorState, LoadingState } from '../components/States'
-import { formatNumber, stageLabel, useApi, useDebounced } from '../lib'
+import { formatNumber, safeInt, stageLabel, useApi, useDebounced } from '../lib'
 
 const PRESETS = [
   { label: 'All years', from: 2000, to: 2026 },
@@ -16,10 +16,10 @@ export default function NetworkPage() {
   const [params, setParams] = useSearchParams()
   const focus = params.get('focus') ?? ''
   const journal = params.get('journal') ?? 'all'
-  const yearFrom = Number(params.get('year_from') ?? 2000)
-  const yearTo = Number(params.get('year_to') ?? 2026)
-  const limit = Number(params.get('limit') ?? 120)
-  const minPapers = Number(params.get('min_papers') ?? 2)
+  const yearFrom = safeInt(params.get('year_from'), 2000, 2000, 2026)
+  const yearTo = safeInt(params.get('year_to'), 2026, 2000, 2026)
+  const limit = safeInt(params.get('limit'), 120, 10, 400)
+  const minPapers = safeInt(params.get('min_papers'), 2, 1, 8)
   const [searchQ, setSearchQ] = useState('')
   const debouncedSearch = useDebounced(searchQ, 220)
 
@@ -75,6 +75,16 @@ export default function NetworkPage() {
         </p>
       </header>
 
+      {stats.data && (
+        <p className="ep-network-note">
+          These statistics describe the full {journal === 'all' ? 'five-journal' : journal} graph
+          over all years, not the filtered graph below. Cached{' '}
+          {stats.data.generated_at
+            ? new Date(stats.data.generated_at).toLocaleDateString()
+            : 'at build time'}
+          .
+        </p>
+      )}
       {stats.data && (
         <section className="ep-network-stats" aria-label="Network statistics">
           <div>
@@ -177,7 +187,7 @@ export default function NetworkPage() {
             </label>
           </>
         )}
-        <div className="ep-field ep-field-search ep-network-focus">
+        <label className="ep-field ep-field-search ep-network-focus">
           <span>Focus on an author</span>
           <input
             type="search"
@@ -203,7 +213,7 @@ export default function NetworkPage() {
               ))}
             </ul>
           )}
-        </div>
+        </label>
       </section>
 
       {focus && (
@@ -249,7 +259,10 @@ export default function NetworkPage() {
             <div className="ep-section-heading">
               <div>
                 <h2>Authors in this view</h2>
-                <p>Ranked by papers in the selected range. Node colour carries confidence.</p>
+                <p>
+                  Top {Math.min(30, graph.data.nodes.length)} of {graph.data.nodes.length} authors
+                  in view, ranked by papers in the selected range. Node colour carries confidence.
+                </p>
               </div>
             </div>
             <div className="ep-table-wrap">

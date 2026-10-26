@@ -1,6 +1,6 @@
 # EconPub
 
-An open, methodologically documented database of publications in the top five economics journals — the *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica* — with a coauthor network and publish-time career-stage inference.
+A public, methodologically documented database of publications in the top five economics journals — the *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica* — with a coauthor network and publish-time career-stage inference.
 
 ## Why this exists
 
@@ -11,12 +11,12 @@ Existing economics publication sites are strong on citation counts and journal r
 
 EconPub makes both first-class. Every inferred field carries its evidence and confidence, so the result is inspectable rather than a black box.
 
-## Scope (v0.2)
+## Scope (v1.0)
 
 - **Journals:** AER (0002-8282), QJE (0033-5533), JPE (0022-3808), RES (0034-6527), Econometrica (0012-9682)
 - **Years:** 2000–present
-- **Status:** The combined top-five pilot is built: 13,443 Crossref records classified and deduplicated by journal, OpenAlex DOI enrichment and missing-byline recovery, 10,965 canonical authors, 24,478 coauthorship edges, ORCID career validation, and journal-aware API/frontend views. The AER-only dataset remains the validated baseline for the committed M1–M6 reports; the top-five pilot still needs per-journal validation, CV coverage, and the final switch of the served database.
-- **Not included:** pre-2000 archive, full text, or personal data such as birth dates, addresses, and emails
+- **Status:** The combined top-five dataset is built: 13,443 Crossref records classified and deduplicated by journal, OpenAlex DOI enrichment and missing-byline recovery, 10,042 active canonical authors, 19,728 distinct coauthor ties (24,108 author–paper edge records), ORCID and CV career validation, and journal-aware API/frontend views. The top-five database is the default served dataset; the AER-only reports remain as a historical baseline. Per-journal validation limits are documented rather than converted into a precision claim.
+- **Not included:** pre-2000 archive, full text, or personal data such as birth dates, home addresses, phone numbers, and emails.
 - **Plan:** `docs/roadmap.md` tracks the M7 phases, acceptance criteria, and risks.
 
 ## Architecture
@@ -27,22 +27,22 @@ The browser never downloads the database. A read-only FastAPI service exposes pa
 React (web/)  ->  FastAPI /api (src/econpub/api.py)  ->  SQLite mode=ro
 ```
 
-The API caps page sizes and never serializes the full author table: the AER baseline has 5,892 authors and 9,375 coauthorship edges; the top-five pilot has 10,065 authors and 24,478 edges. Network views are explicit ranked samples, and the response reports what was truncated. See `docs/m5-frontend.md` for routes, endpoints, design tokens, and deployment notes.
+The API caps page sizes and never serializes the full author table: the top-five dataset has 10,042 active authors, 19,728 distinct coauthor ties, and 24,108 author–paper edge records; the AER baseline has 5,892 authors and 8,238 distinct ties. Network views are explicit ranked samples, and the response reports what was truncated. See `docs/m5-frontend.md` for routes, endpoints, design tokens, and deployment notes.
 
-## Top-five pilot dataset (M7)
+## Top-five dataset (v1.0)
 
 | Journal | Research articles | Author slots | Abstracts |
 |---|---|---|---|
 | AER | 4,787 | 10,786 | 4,305 |
-| RES | 1,748 | 4,034 | 1,716 |
-| ECMA | 1,740 | 3,830 | 1,621 |
+| RES | 1,749 | 4,037 | 1,717 |
+| ECMA | 1,740 | 3,820 | 1,621 |
 | JPE | 1,500 | 3,477 | 1,329 |
 | QJE | 1,181 | 3,085 | 1,164 |
-| **Total** | **10,956** | **25,212** | **10,135** |
+| **Total** | **10,957** | **25,205** | **10,136** |
 
-The combined pilot has 10,051 active canonical authors and 24,146 coauthorship edges. 3,335 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. In the largest connected component (7,480 authors), the average shortest coauthorship path is 6.57 steps and the diameter is 18; journal-scoped averages range from 7.10 (QJE) to 10.74 (JPE). The overview shows the top five of seven leaderboards; a dedicated Leaderboards page exposes up to 100 rows for assistant-professor output, the five-journal club, most coauthors, strongest recurring pairs, largest teams, longest careers, and institutions. A connection finder returns shortest paths with paper evidence, and portals link to the network, methodology, and paper index. Career coverage is 4,107 assignments (16.3% of slots): ORCID plus a CV layer of 438 parsed documents, 1,895 events, and 106 CV assignments. The CV queue is empty; 777 sources failed or were unreachable and remain visible for audit. The AER baseline remains higher because it also has byline rank and a fuller CV corpus. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
+The combined dataset has 10,042 active canonical authors, 19,728 distinct coauthor ties, and 24,108 author–paper edge records. 3,336 authors appear in at least two journals, 1,497 in at least three, and 179 in all five. In the largest connected component (7,466 authors), the average shortest coauthorship path is 6.58 steps and the diameter is 18; journal-scoped averages range from 7.10 (QJE) to 10.74 (JPE). The overview shows the top five of seven leaderboards; a dedicated Leaderboards page exposes up to 100 rows for assistant-professor output, the five-journal club, most coauthors, strongest recurring pairs, largest teams, longest careers, and institutions. A connection finder returns shortest paths with paper evidence, and portals link to the network, methodology, and paper index. Career coverage is 4,961 assignments (19.7% of slots): 958 publish-time byline, 3,899 ORCID, and 104 CV assignments. The CV layer parsed 438 documents into 1,895 events; the queue is empty, and 777 sources failed or were unreachable and remain visible for audit. See `data/reports/top5_quality.md`, `data/reports/network_stats.md`, and `docs/roadmap.md`.
 
-## AER baseline dataset (M4)
+## AER baseline dataset (M4, historical)
 
 | Metric | Value |
 |---|---|
@@ -107,6 +107,16 @@ OpenAlex is never used as the primary record. Its author affiliation history mix
 
 ## Quick start
 
+Install the package and its API/CV extras first:
+
+```powershell
+pip install -e ".[api]"
+```
+
+The product itself is the combined top-five database; the commands below build
+the AER baseline first, then the combined dataset. A fresh clone can run the
+top-five build directly (see “Build the combined top-five database”).
+
 ```powershell
 python run.py all
 ```
@@ -140,7 +150,7 @@ The CV layer is a separate, resumable crawl:
 python run.py cvs --limit 300
 ```
 
-It seeds from ORCID researcher URLs, discovers CV links, stores raw documents only in the local ignored cache, extracts dated events, and uses them only where byline/ORCID evidence is absent.
+It seeds from ORCID researcher URLs, discovers CV links, stores raw documents only in the local ignored cache, extracts dated events, and uses them only where byline/ORCID evidence is absent. PDF text uses the optional system `pdftotext -layout` when available and falls back to the declared `pypdf` dependency.
 
 ### Build the combined top-five database
 
@@ -153,14 +163,16 @@ python run.py top5 --db data/curated/top5.db --cv
 
 The `top5` command harvests all five journals, classifies and deduplicates by
 journal, rebuilds canonical authors, enriches with OpenAlex (including missing-
-byline recovery), validates ORCID links, assigns ORCID career stages, optionally runs the CV
-crawl (`--cv`), and writes `data/reports/top5_quality.md` and `.json`. The
-pipeline is resumable: Crossref pages and OpenAlex/ORCID payloads are cached
-under `data/raw/`. The CV crawl is the slowest stage and can take hours; omit
-`--cv` to build the bibliographic and ORCID layers first. Use
-`--skip-harvest`, `--skip-openalex`, or `--skip-orcid` to refresh one layer; if
-career events already exist, the author table is not rebuilt because those
-events are author-keyed. For a full rebuild, start from a fresh database.
+byline recovery), validates ORCID links, assigns byline and ORCID career stages,
+optionally runs the CV crawl (`--cv`), computes the cached network statistics,
+and writes `data/reports/top5_quality.md` and `.json`. The pipeline is
+resumable: Crossref pages and OpenAlex/ORCID payloads are cached under
+`data/raw/`. The CV crawl is the slowest stage and can take hours; omit `--cv`
+to build the bibliographic and ORCID layers first. Use `--skip-network-stats`
+to skip the exact all-pairs statistics. Because career events are author-keyed,
+a database that already has them refuses a harvest/OpenAlex refresh; rebuild
+from a fresh database, or pass `--skip-harvest --skip-openalex` to refresh only
+the career/report layers.
 
 ### Run the public interface
 
@@ -205,10 +217,17 @@ python run.py cvs --workers 5 --skip-seed   # resume the cached CV crawl
 python run.py wayback --limit 100           # historical faculty-page snapshots
 python run.py top5-report --db data/curated/top5.db      # per-journal quality report
 python run.py network-stats --db data/curated/top5.db     # cached path-length/diameter statistics
+python run.py privacy --db data/curated/top5.db           # scrub personal data from legacy rows
+python run.py release-manifest --db data/curated/top5.db  # checksums and counts for a release
 python run.py serve             # run the read-only JSON API on port 8000
 python run.py report            # regenerate the report without rebuilding authors
 python -m unittest discover -s tests -v
 ```
+
+The pure unit tests run on a fresh clone. The API integration tests require a
+curated database and skip when `data/curated/econpub.db` or `top5.db` is absent;
+`tests/test_top5.py` exercises the combined dataset when it is available. The
+release manifest records the exact database bytes used for a release.
 
 `report` is read-only with respect to the author layer. Rebuilding authors is done by `harvest`/`all`; stable IDs and separation rules survive, but rerun `m2`/`m3` to refresh OpenAlex links and review labels.
 
@@ -241,6 +260,9 @@ src/econpub/
   coverage.py      M6 CV and historical-page coverage report
   top5_build.py    combined top-five harvest, identity, ORCID, and report pipeline
   top5_report.py   per-journal inventory, coverage, identity, and missingness report
+  network_report.py exact coauthor-network statistics and cached report
+  privacy.py       personal-data scrub for career events and affiliations
+  release.py       release manifest, checksums, and reproducibility metadata
   api.py           read-only FastAPI service for the public frontend
   cli.py           command-line entry point
   schema.sql       database schema
@@ -256,6 +278,8 @@ docs/
   m6-coverage.md   CV crawl, Wayback historical pages, coverage policy
   roadmap.md       top-five expansion phases, acceptance criteria, and risks
   top5-validation.md  per-journal ingest, identity, and coverage checks
+  corrections.md   correction and takedown workflow
+  release.md       v1.0 release checklist, manifest, and open gates
   audit-m1.md      independent multi-agent audit and remediation status
 tests/
   test_normalize.py
@@ -296,8 +320,12 @@ Author resolution is rebuildable: `authors.py` groups authorships by a middle-in
 - Only bibliographic metadata and short excerpts are stored; no full text.
 - CV-derived data is limited to structured degree/employment facts with a source URL.
 - Missing data is shown as missing, not silently imputed.
-- A takedown/correction process will be added before public launch.
+- Corrections and takedowns follow `docs/corrections.md`; a public intake channel must be configured at deployment.
 
 ## License
 
-To be decided before public release. Code and data may need different licenses because the underlying sources have different terms.
+- **Code:** MIT; see `LICENSE`.
+- **Database compilation:** CC BY 4.0; see `DATA_LICENSE.md`.
+- **Third-party material:** Crossref/OpenAlex/ORCID metadata, publisher
+  abstracts, titles, and author names remain subject to their source terms and
+  are not relicensed by EconPub. No full text is redistributed.

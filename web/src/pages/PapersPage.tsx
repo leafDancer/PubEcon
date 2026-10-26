@@ -4,7 +4,7 @@ import { api } from '../api'
 import PaperRow from '../components/PaperRow'
 import Pagination from '../components/Pagination'
 import { EmptyState, ErrorState, LoadingState } from '../components/States'
-import { formatNumber, useApi, useDebounced } from '../lib'
+import { formatNumber, safeInt, useApi, useDebounced } from '../lib'
 
 const YEARS = Array.from({ length: 27 }, (_, index) => 2000 + index)
 
@@ -12,14 +12,18 @@ export default function PapersPage() {
   const [params, setParams] = useSearchParams()
   const qParam = params.get('q') ?? ''
   const journal = params.get('journal') ?? 'all'
-  const yearFrom = Number(params.get('year_from') ?? 2000)
-  const yearTo = Number(params.get('year_to') ?? 2026)
+  const yearFrom = safeInt(params.get('year_from'), 2000, 2000, 2026)
+  const yearTo = safeInt(params.get('year_to'), 2026, 2000, 2026)
   const pp = params.get('pp') ?? 'all'
   const sort = params.get('sort') ?? 'year_desc'
-  const page = Math.max(1, Number(params.get('page') ?? 1))
+  const page = safeInt(params.get('page'), 1, 1)
 
   const [qInput, setQInput] = useState(qParam)
   const debouncedQ = useDebounced(qInput, 260)
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [page])
 
   useEffect(() => {
     if (debouncedQ !== qParam) {

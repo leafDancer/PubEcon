@@ -4,7 +4,7 @@ import { api } from '../api'
 import AuthorRow from '../components/AuthorRow'
 import Pagination from '../components/Pagination'
 import { EmptyState, ErrorState, LoadingState } from '../components/States'
-import { formatNumber, STAGE_LABELS, STAGE_ORDER, useApi, useDebounced } from '../lib'
+import { formatNumber, safeInt, STAGE_LABELS, STAGE_ORDER, useApi, useDebounced } from '../lib'
 
 const YEARS = Array.from({ length: 27 }, (_, index) => 2000 + index)
 
@@ -13,12 +13,16 @@ export default function AuthorsPage() {
   const qParam = params.get('q') ?? ''
   const stage = params.get('stage') ?? 'all'
   const journal = params.get('journal') ?? 'all'
-  const yearFrom = Number(params.get('year_from') ?? 2000)
-  const yearTo = Number(params.get('year_to') ?? 2026)
+  const yearFrom = safeInt(params.get('year_from'), 2000, 2000, 2026)
+  const yearTo = safeInt(params.get('year_to'), 2026, 2000, 2026)
   const sort = params.get('sort') ?? 'papers'
-  const page = Math.max(1, Number(params.get('page') ?? 1))
+  const page = safeInt(params.get('page'), 1, 1)
   const [qInput, setQInput] = useState(qParam)
   const debouncedQ = useDebounced(qInput, 260)
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [page])
 
   function update(values: Record<string, string | number | null>) {
     const next = new URLSearchParams(params)
@@ -100,7 +104,7 @@ export default function AuthorsPage() {
         <label className="ep-field">
           <span>Stage</span>
           <select value={stage} onChange={(event) => update({ stage: event.target.value })}>
-            <option value="all">Any known stage</option>
+            <option value="all">All authors</option>
             {STAGE_ORDER.filter((value) => value in STAGE_LABELS).map((value) => (
               <option key={value} value={value}>
                 {STAGE_LABELS[value]}

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -13,9 +12,11 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .config import DB_PATH, JOURNALS, START_YEAR
+from . import __version__
+from .config import DB_PATH, JOURNALS, START_YEAR, TOP5_DB
 from .network import build_graph, edge_papers, graph_counts, shortest_path
 from .normalize import normalize_doi
+from .privacy import strip_personal_info
 
 STAGE_ORDER = [
     "phd_student",
@@ -31,18 +32,12 @@ STAGE_ORDER = [
 
 CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2}
 
-_EMAIL_SUFFIX = re.compile(r"\s*\(email:\s*\)\s*", re.IGNORECASE)
-
-
 def _utcnow() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _clean(value: Any) -> str | None:
-    if value is None:
-        return None
-    text = _EMAIL_SUFFIX.sub("", str(value)).strip().strip(",;")
-    return text or None
+    return strip_personal_info(value)
 
 
 def _pct(part: int | float, total: int | float) -> float:
@@ -52,7 +47,8 @@ def _pct(part: int | float, total: int | float) -> float:
 def _db_path(value: Path | str | None = None) -> Path:
     if value is not None:
         return Path(value)
-    return Path(os.environ.get("ECONPUB_DB", DB_PATH))
+    default = TOP5_DB if TOP5_DB.exists() else DB_PATH
+    return Path(os.environ.get("ECONPUB_DB", default))
 
 
 def _ro_connect(database: Path) -> sqlite3.Connection:
@@ -182,7 +178,13 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
                   AND p.is_duplicate=0)) AS authors,
             (SELECT COUNT(*) FROM authorships s JOIN papers p ON p.paper_id=s.paper_id
                 WHERE p.content_type='article' AND p.is_duplicate=0) AS authorships,
-            (SELECT COUNT(*) FROM coauthorship_edges) AS coauthorship_edges,
+            (SELECT COUNT(*) FROM (
+                SELECT DISTINCT
+                    CASE WHEN author_a_id < author_b_id THEN author_a_id ELSE author_b_id END,
+                    CASE WHEN author_a_id < author_b_id THEN author_b_id ELSE author_a_id END
+                FROM coauthorship_edges
+            )) AS coauthorship_edges,
+            (SELECT COUNT(*) FROM coauthorship_edges) AS coauthorship_edge_records,
             (SELECT COUNT(*) FROM career_assignments) AS career_assignments,
             (SELECT COUNT(*) FROM papers WHERE content_type='article' AND is_duplicate=0
                 AND abstract IS NOT NULL AND abstract<>'') AS abstracts,
@@ -190,6 +192,9 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
             (SELECT COUNT(*) FROM authors WHERE orcid_source IN
                 ('verified_doi','verified_title','verified_institution','field_economics')) AS orcid_accepted,
             (SELECT COUNT(*) FROM authors WHERE orcid_source='orcid_unverified') AS orcid_unverified,
+            (SELECT COUNT(*) FROM authors WHERE orcid IS NOT NULL
+                AND orcid_source='openalex_work_authorship') AS orcid_other,
+            (SELECT COUNT(*) FROM authors WHERE orcid_source LIKE 'rejected%') AS orcid_rejected,
             (SELECT COUNT(*) FROM author_cv_sources) AS cv_sources,
             (SELECT COUNT(*) FROM papers WHERE content_type='article' AND is_duplicate=0
                 AND published_year IS NOT NULL) AS dated_papers
@@ -263,12 +268,13 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
         dict(row)
         for row in conn.execute(
             """
-            SELECT i.display_name, i.country, COUNT(*) AS slots
+            SELECT i.display_name, i.country, COUNT(DISTINCT ai.authorship_id) AS slots
             FROM authorship_institutions ai
             JOIN institutions i ON i.institution_id=ai.institution_id
             JOIN authorships s ON s.authorship_id=ai.authorship_id
             JOIN papers p ON p.paper_id=s.paper_id
-            WHERE p.content_type='article' AND p.is_duplicate=0
+            WHERE ai.is_primary=1
+              AND p.content_type='article' AND p.is_duplicate=0
             GROUP BY i.institution_id
             ORDER BY slots DESC, i.display_name
             LIMIT 12
@@ -338,11 +344,14 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
             "authors": counts["authors"],
             "authorships": counts["authorships"],
             "coauthorship_edges": counts["coauthorship_edges"],
+            "coauthorship_edge_records": counts["coauthorship_edge_records"],
             "career_assignments": counts["career_assignments"],
             "abstracts": counts["abstracts"],
             "orcid_authors": counts["orcid_authors"],
             "orcid_accepted": counts["orcid_accepted"],
             "orcid_unverified": counts["orcid_unverified"],
+            "orcid_other": counts["orcid_other"],
+            "orcid_rejected": counts["orcid_rejected"],
             "cv_sources": counts["cv_sources"],
         },
         "coverage": {
@@ -400,6 +409,26 @@ def _top_authors(conn: sqlite3.Connection, limit: int = 10) -> list[dict[str, An
 
 
 def _recent_papers(conn: sqlite3.Connection, limit: int = 6) -> list[dict[str, Any]]:
+    # Take the newest paper from each journal explicitly, then fill from the
+    # global stream. Looking only at a global top-N window can miss a journal
+    # whose most recent issue is older than the others.
+    selected: list[sqlite3.Row] = []
+    used: set[int] = set()
+    for code in sorted(JOURNALS):
+        row = conn.execute(
+            f"""
+            SELECT {_paper_columns()}
+            FROM papers p
+            WHERE p.content_type='article' AND p.is_duplicate=0
+              AND COALESCE(p.journal_code,'AER')=?
+            ORDER BY p.published_year DESC, p.published_month DESC, p.doi DESC
+            LIMIT 1
+            """,
+            (code,),
+        ).fetchone()
+        if row is not None:
+            selected.append(row)
+            used.add(int(row["paper_id"]))
     rows = conn.execute(
         f"""
         SELECT {_paper_columns()}
@@ -410,21 +439,6 @@ def _recent_papers(conn: sqlite3.Connection, limit: int = 6) -> list[dict[str, A
         """,
         (limit * 20,),
     ).fetchall()
-    # Diversify the front page by journal: the newest row overall is usually
-    # AER simply because it has the most papers, which would make a
-    # multi-journal record look AER-only.
-    selected: list[sqlite3.Row] = []
-    used: set[int] = set()
-    seen_journals: set[str] = set()
-    for row in rows:
-        journal = row["journal_code"] or "AER"
-        if journal in seen_journals:
-            continue
-        selected.append(row)
-        used.add(int(row["paper_id"]))
-        seen_journals.add(journal)
-        if len(selected) == limit:
-            break
     for row in rows:
         if len(selected) >= limit:
             break
@@ -440,6 +454,7 @@ def _recent_papers(conn: sqlite3.Connection, limit: int = 6) -> list[dict[str, A
         ),
         reverse=True,
     )
+    selected = selected[:limit]
     authors = _paper_authors(conn, [int(row["paper_id"]) for row in selected])
     items = []
     for row in selected:
@@ -854,10 +869,6 @@ def _author_list_query(
         params.append(year_to)
     where_sql = " AND ".join(where) if where else "1=1"
 
-    total = conn.execute(
-        f"SELECT COUNT(*) FROM authors a WHERE {where_sql}", params
-    ).fetchone()[0]
-
     year_clause = ""
     paper_params: list[Any] = []
     if journal:
@@ -869,6 +880,23 @@ def _author_list_query(
     if year_to is not None:
         year_clause += " AND p.published_year<=?"
         paper_params.append(year_to)
+
+    total = conn.execute(
+        f"""
+        SELECT COUNT(*) FROM (
+            SELECT a.author_id
+            FROM authors a
+            JOIN authorships s ON s.author_id=a.author_id
+            JOIN papers p ON p.paper_id=s.paper_id
+                AND p.content_type='article' AND p.is_duplicate=0 {year_clause}
+            WHERE {where_sql}
+            GROUP BY a.author_id
+        )
+        """,
+        [*paper_params, *params],
+    ).fetchone()[0]
+    pages = (total + page_size - 1) // page_size
+    page = max(1, min(page, pages or 1))
 
     sort_sql = {
         "papers": "papers DESC, a.canonical_name",
@@ -952,6 +980,10 @@ def _author_detail(conn: sqlite3.Connection, stable_id: str) -> dict[str, Any]:
         """,
         (author_id,),
     ).fetchone()
+    if not stats["papers"]:
+        # Orphan author rows can remain after a namesake split or a byline
+        # dedupe; they are not part of the public record.
+        raise HTTPException(status_code=404, detail="Author not found")
 
     papers = conn.execute(
         """
@@ -971,7 +1003,7 @@ def _author_detail(conn: sqlite3.Connection, stable_id: str) -> dict[str, Any]:
     events = conn.execute(
         """
         SELECT event_type, title, institution, start_year, end_year, is_current,
-               source_type, confidence, source_url, source_snippet
+               source_type, confidence, source_url
         FROM career_events
         WHERE author_id=?
         ORDER BY (start_year IS NULL), start_year DESC, event_type
@@ -1044,7 +1076,20 @@ def _author_detail(conn: sqlite3.Connection, stable_id: str) -> dict[str, Any]:
         "institution": _clean(author["openalex_last_institution_name"]),
         "openalex_works_count": author["openalex_works_count"],
         "openalex_cited_by_count": author["openalex_cited_by_count"],
-        "career_events": [dict(row) for row in events],
+        "career_events": [
+            {
+                "event_type": row["event_type"],
+                "title": _clean(row["title"]),
+                "institution": _clean(row["institution"]),
+                "start_year": row["start_year"],
+                "end_year": row["end_year"],
+                "is_current": row["is_current"],
+                "source_type": row["source_type"],
+                "confidence": row["confidence"],
+                "source_url": row["source_url"],
+            }
+            for row in events
+        ],
         "paper_list": [
             {
                 "doi": row["doi"],
@@ -1106,8 +1151,11 @@ def _paper_detail(conn: sqlite3.Connection, doi: str) -> dict[str, Any]:
             authorship_ids,
         ).fetchall()
         for row in rows:
+            item = dict(row)
+            item["raw_name"] = _clean(item.get("raw_name"))
+            item["display_name"] = _clean(item.get("display_name"))
             institutions_by_authorship.setdefault(int(row["authorship_id"]), []).append(
-                dict(row)
+                item
             )
     # _paper_authors keeps the public shape; reattach authorship-level institutions.
     for author, row in zip(authors, author_rows):
@@ -1611,17 +1659,43 @@ def _author_path(
     ]
     steps = []
     for left, right in zip(path, path[1:]):
+        papers = edge_papers(
+            conn,
+            left,
+            right,
+            journal=journal,
+            limit=papers_per_step,
+        )
+        shared = conn.execute(
+            """
+            SELECT COUNT(DISTINCT e.paper_id)
+            FROM coauthorship_edges e
+            JOIN papers p ON p.paper_id=e.paper_id
+            WHERE ((e.author_a_id=? AND e.author_b_id=?)
+                OR (e.author_a_id=? AND e.author_b_id=?))
+              AND p.content_type='article' AND p.is_duplicate=0
+            """,
+            (left, right, right, left),
+        ).fetchone()[0]
+        if journal:
+            shared = conn.execute(
+                """
+                SELECT COUNT(DISTINCT e.paper_id)
+                FROM coauthorship_edges e
+                JOIN papers p ON p.paper_id=e.paper_id
+                WHERE ((e.author_a_id=? AND e.author_b_id=?)
+                    OR (e.author_a_id=? AND e.author_b_id=?))
+                  AND p.content_type='article' AND p.is_duplicate=0
+                  AND p.journal_code=?
+                """,
+                (left, right, right, left, journal),
+            ).fetchone()[0]
         steps.append(
             {
                 "from": id_map[left],
                 "to": id_map[right],
-                "papers": edge_papers(
-                    conn,
-                    left,
-                    right,
-                    journal=journal,
-                    limit=papers_per_step,
-                ),
+                "shared_papers": shared,
+                "papers": papers,
             }
         )
     return {
@@ -1659,7 +1733,7 @@ def create_app(
     ]
     app = FastAPI(
         title="EconPub API",
-        version="0.1.0",
+        version=__version__,
         description="Read-only API for the top five economics journals, 2000+.",
     )
     app.add_middleware(
@@ -1701,7 +1775,7 @@ def create_app(
             ).fetchone()[0]
         return {
             "status": "ok",
-            "database": str(db_path),
+            "database": db_path.name,
             "papers": count,
             "generated_at": _utcnow(),
         }

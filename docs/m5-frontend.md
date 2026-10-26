@@ -12,7 +12,7 @@ Browser
         |
         |  SQLite mode=ro
         v
-  data/curated/econpub.db
+  data/curated/top5.db (default when present)
 ```
 
 The API is read-only. It opens the database with `mode=ro`, sets `PRAGMA query_only=ON`, and exposes paginated or bounded views. The frontend uses URL parameters for shareable filters and pages.
@@ -44,7 +44,7 @@ On the API side, allow the frontend origin:
 
 ```powershell
 $env:ECONPUB_CORS_ORIGINS="https://econpub.example.org"
-$env:ECONPUB_DB="D:\data	op5.db"
+$env:ECONPUB_DB="D:/data/top5.db"
 uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 ```
 
@@ -52,8 +52,8 @@ uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 
 | Route | Purpose |
 |---|---|
-| `GET /api/health` | Liveness and database path |
-| `GET /api/overview` | Landing-page counts, per-journal inventory and coverage, yearly series, stages, institutions, recent and most-cited papers |
+| `GET /api/health` | Liveness and database filename |
+| `GET /api/overview` | Landing-page counts, per-journal inventory and coverage, yearly series, stages, institutions, and most-papers ranking |
 | `GET /api/stats` | Same statistical payload without the landing-page framing |
 | `GET /api/papers` | Paginated paper index; filters `q`, `journal`, `year_from`, `year_to`, `is_pp`, `sort` |
 | `GET /api/papers/{doi}` | Paper detail: authorships, career assignments, institutions, JEL, OpenAlex topics, provenance |
@@ -65,13 +65,13 @@ uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 | `GET /api/rankings` | Bounded leaderboards: assistant-professor output, five-journal authors, most coauthors, strongest pairs, largest teams, longest careers, and institutions |
 | `GET /api/path` | Shortest coauthorship path between two stable IDs (`from`, `to`), with the shared papers at each step |
 
-Pagination is capped at 100 rows. The network endpoint is always a filtered sample; it never serializes all 5,892 authors or 9,375 edges. The response includes `meta.truncated` and `meta.total_authors` so the UI can say what is missing.
+Pagination is capped at 100 rows. The network endpoint is always a filtered sample; it never serializes all 10,042 authors or 19,728 distinct ties. The response includes `meta.truncated` and `meta.total_authors` so the UI can say what is missing.
 
 ## Frontend routes
 
 | Route | View |
 |---|---|
-| `/` | Overview: year ruler, summary counts, career-stage mix, network sample, recent and most-cited papers |
+| `/` | Overview: year ruler, summary counts, career-stage mix, network sample, most-papers ranking, and top-five leaderboards |
 | `/papers` | Searchable, filterable paper index |
 | `/papers/{doi}` | Paper page with abstract, byline, career-at-publication table, JEL, topics, citations |
 | `/authors` | Searchable author index with stage and coverage filters |

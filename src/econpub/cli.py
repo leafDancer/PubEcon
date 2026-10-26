@@ -99,13 +99,27 @@ def build_parser() -> argparse.ArgumentParser:
     top5_parser = subparsers.add_parser(
         "top5-report", help="Generate the combined top-five quality report"
     )
-    top5_parser.add_argument("--db", type=Path, default=DB_PATH)
+    top5_parser.add_argument("--db", type=Path, default=TOP5_DB)
 
     network_stats_parser = subparsers.add_parser(
         "network-stats", help="Compute and cache coauthor-network statistics"
     )
     network_stats_parser.add_argument("--journal", choices=sorted(JOURNALS))
     network_stats_parser.add_argument("--db", type=Path, default=TOP5_DB)
+
+    release_parser = subparsers.add_parser(
+        "release-manifest", help="Write checksums and counts for a versioned dataset release"
+    )
+    release_parser.add_argument("--db", type=Path, default=TOP5_DB)
+    release_parser.add_argument(
+        "--artifact", type=Path, help="Optional archive/asset to hash alongside the database"
+    )
+    release_parser.add_argument("--output-dir", type=Path)
+
+    privacy_parser = subparsers.add_parser(
+        "privacy", help="Scrub personal details from career-event records"
+    )
+    privacy_parser.add_argument("--db", type=Path, default=TOP5_DB)
 
     all_parser = subparsers.add_parser("all", help="Harvest, then generate the report")
     all_parser.add_argument("--journal", choices=sorted(JOURNALS), default=DEFAULT_JOURNAL)
@@ -125,6 +139,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--cv",
         action="store_true",
         help="Run the resumable CV crawl after ORCID (can take hours)",
+    )
+    top5_build_parser.add_argument(
+        "--skip-network-stats",
+        action="store_true",
+        help="Skip the exact all-pairs network statistics (the Network page will lack cached stats)",
     )
     top5_build_parser.add_argument("--workers", type=int, default=4)
     top5_build_parser.add_argument("--batch-size", type=int, default=50)
@@ -282,6 +301,7 @@ def main(argv: list[str] | None = None) -> None:
                     skip_openalex=args.skip_openalex,
                     skip_orcid=args.skip_orcid,
                     run_cv=args.cv,
+                    run_network_stats=not args.skip_network_stats,
                     workers=args.workers,
                     batch_size=args.batch_size,
                 ),
@@ -480,6 +500,21 @@ def main(argv: list[str] | None = None) -> None:
             )
             print(f"Report:  {markdown_path}")
             print(f"Metrics: {metrics_path}")
+        if args.command == "release-manifest":
+            from .release import generate_release_manifest
+
+            markdown_path, metrics_path = generate_release_manifest(
+                args.db,
+                artifact=args.artifact,
+                output_dir=args.output_dir,
+            )
+            print(f"Manifest: {markdown_path}")
+            print(f"Metrics:  {metrics_path}")
+        if args.command == "privacy":
+            from .privacy import sanitize_affiliations, sanitize_career_events
+
+            print(f"Career events: {sanitize_career_events(conn)}")
+            print(f"Affiliations: {sanitize_affiliations(conn)}")
         if args.command in {"m2", "report", "all"}:
             report_path = REPORTS_DIR / ("m2_quality.md" if args.command == "m2" else "m1_quality.md")
             markdown_path, metrics_path = generate_report(conn, path=report_path)

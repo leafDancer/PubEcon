@@ -1,0 +1,158 @@
+{
+  "product": "EconPub",
+  "version": "1.0.0",
+  "generated_at": "2026-10-26T15:52:57+00:00",
+  "git_commit": "5a6cfd7b63fc5f4ee6dea13186a2ad123c153499",
+  "database": {
+    "path": "data\\curated\\top5.db",
+    "bytes": 549416960,
+    "sha256": "2c5f89c05b096dd16d743af5dec952bfafd33f714dd932681cab1dd01d77ba62"
+  },
+  "artifact": null,
+  "counts": {
+    "papers_total": 13443,
+    "research_articles": 10957,
+    "authorships": 25205,
+    "active_authors": 10042,
+    "coauthorship_edge_records": 24108,
+    "coauthor_ties": 19728,
+    "career_assignments": 4961
+  },
+  "journals": [
+    {
+      "code": "AER",
+      "name": "American Economic Review",
+      "articles": 4787,
+      "authorships": 10786,
+      "assignments": 2316
+    },
+    {
+      "code": "RES",
+      "name": "Review of Economic Studies",
+      "articles": 1749,
+      "authorships": 4037,
+      "assignments": 845
+    },
+    {
+      "code": "ECMA",
+      "name": "Econometrica",
+      "articles": 1740,
+      "authorships": 3820,
+      "assignments": 668
+    },
+    {
+      "code": "JPE",
+      "name": "Journal of Political Economy",
+      "articles": 1500,
+      "authorships": 3477,
+      "assignments": 636
+    },
+    {
+      "code": "QJE",
+      "name": "Quarterly Journal of Economics",
+      "articles": 1181,
+      "authorships": 3085,
+      "assignments": 496
+    }
+  ],
+  "tables": {
+    "author_aliases": 12554,
+    "author_cv_sources": 2278,
+    "author_identity_events": 36793,
+    "author_identity_ledger": 11008,
+    "author_merge_candidates": 38,
+    "author_openalex_evidence": 9427,
+    "author_separation_rules": 3,
+    "author_split_candidates": 301,
+    "author_wayback_snapshots": 0,
+    "authors": 10062,
+    "authorship_institutions": 32449,
+    "authorships": 25909,
+    "career_assignments": 4961,
+    "career_events": 11691,
+    "coauthorship_edges": 24108,
+    "harvest_runs": 8,
+    "institutions": 2655,
+    "network_statistics": 6,
+    "paper_topics": 32508,
+    "papers": 13443,
+    "source_records": 27801
+  },
+  "raw_cache": {
+    "path": "D:\\Research\\econ-pub-database\\data\\raw",
+    "files": 10416,
+    "bytes": 946112311
+  },
+  "reports": [
+    {
+      "name": "m1_quality.json",
+      "bytes": 30125,
+      "sha256": "7b727f84824940aa22cc0a204a4352dae26197a842bebc52d50d951f626524a0"
+    },
+    {
+      "name": "m1_quality.md",
+      "bytes": 17073,
+      "sha256": "29b77be90d2e307bd429d23354961add9338e0dd1ff5c06f91b256b5a7372a7b"
+    },
+    {
+      "name": "m2_quality.json",
+      "bytes": 33738,
+      "sha256": "013aec0a0a42e003bfba0dc0fbd3320493dccdfaadff30ad117dc5ec0c560f7c"
+    },
+    {
+      "name": "m2_quality.md",
+      "bytes": 19255,
+      "sha256": "643d6f450afbb176ba0a3e08638f7a357860426d178eb33d434e7d90987b4833"
+    },
+    {
+      "name": "m3_quality.json",
+      "bytes": 50804,
+      "sha256": "ecdf413330ba8cf4af0e4f4c3ca466b5d13c94e0494b933ba90b946148b26605"
+    },
+    {
+      "name": "m3_quality.md",
+      "bytes": 14945,
+      "sha256": "fdaa0c011e4b01bdd121a3c4bff145d1141ca9325061993b8dd897933ac1f91b"
+    },
+    {
+      "name": "m4_quality.json",
+      "bytes": 23471,
+      "sha256": "90cb8862bbcc520fd219a002b0839c416583c3f52f5c239af390121497ecaf75"
+    },
+    {
+      "name": "m4_quality.md",
+      "bytes": 13271,
+      "sha256": "231ce3d92e2e555d7dc1efee61ac71304239dd473ea0c79a80c2624cf6e99812"
+    },
+    {
+      "name": "m6_coverage.json",
+      "bytes": 3097,
+      "sha256": "e5f82a2c789ce4d6d071b5f5e9b00cfcacf678132fd191ffde760ddbd0e90adc"
+    },
+    {
+      "name": "m6_coverage.md",
+      "bytes": 2461,
+      "sha256": "c7411f73c6a6bb1f6c664e4c3b1a039937b6ee93b60e5ddfd7c890d2a7e2f211"
+    },
+    {
+      "name": "network_stats.json",
+      "bytes": 3160,
+      "sha256": "6515dc9af3ca1c8351309bb3c47543c7d008cd2978aede476d86dfcb3ce92fa0"
+    },
+    {
+      "name": "network_stats.md",
+      "bytes": 1421,
+      "sha256": "b35ba213d7d9933aac460612480f0ff15816a4167cd642fd6eb876958d27bd57"
+    },
+    {
+      "name": "top5_quality.json",
+      "bytes": 12133,
+      "sha256": "0b6ed3458a1a26429fa4e4019bd204bded981acb5ad4f3828f5cea47892576fd"
+    },
+    {
+      "name": "top5_quality.md",
+      "bytes": 5656,
+      "sha256": "3f74eb1366dcf15e57defdeec633f66837a440d9d297947da7d5a3e695bbee49"
+    }
+  ]
+}
