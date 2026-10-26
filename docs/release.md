@@ -35,8 +35,9 @@
    `.github/ISSUE_TEMPLATE/correction.yml` template and the process in
    `docs/corrections.md`.
 3. **Deployment.** The API and static frontend have not been deployed together
-   from this repository. Set `PUBECON_DB`, `PUBECON_CORS_ORIGINS`, and
-   `VITE_API_BASE` as described in `docs/m5-frontend.md`.
+   from this repository. Use `docs/deployment.md` and the included Docker
+   Compose/Caddy stack; set `PUBECON_DB`, `PUBECON_CORS_ORIGINS`, and
+   `VITE_API_BASE` if you split hostnames.
 4. **Validation limits.** A targeted 12-per-journal article-type sample was
    inspected; per-journal error rates are not estimated. Author identity beyond
    the reviewed namesake cases remains a review-queue risk, not a precision

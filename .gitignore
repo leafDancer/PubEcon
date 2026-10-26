@@ -6,6 +6,9 @@ venv/
 *.egg-info/
 .pytest_cache/
 
+# Deployment secrets
+.env
+
 # Generated data and databases
 data/raw/
 data/curated/

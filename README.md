@@ -216,6 +216,18 @@ npm run dev
 
 Open `http://127.0.0.1:5173`. Vite proxies `/api` to the FastAPI service. For a separated deployment, set `VITE_API_BASE` at frontend build time and `PUBECON_CORS_ORIGINS` on the API; see `docs/m5-frontend.md`.
 
+### Deploy the public site
+
+The repository includes a Docker Compose stack with Caddy for automatic HTTPS.
+See `docs/deployment.md` for the server, DNS, database-asset, and firewall
+steps. In short:
+
+```powershell
+cp .env.example .env
+# edit DOMAIN and ACME_EMAIL, place top5.db at data/curated/top5.db
+docker compose up -d --build
+```
+
 Useful commands:
 
 ```powershell
@@ -290,6 +302,10 @@ web/
   src/             React routes, components, charts, network explorer, connection finder
   public/          static assets
   scripts/         build helpers (SPA 404 fallback)
+deploy/
+  Dockerfile.api   FastAPI container
+  Dockerfile.caddy Caddy + React build container
+  Caddyfile        TLS, static files, and /api reverse proxy
 docs/
   methodology.md   public methodology and inference rules
   data-sources.md  source reconnaissance and known limitations
@@ -300,6 +316,7 @@ docs/
   top5-validation.md  per-journal ingest, identity, and coverage checks
   corrections.md   correction and takedown workflow
   release.md       v1.0 release checklist, manifest, and open gates
+  deployment.md    server, DNS, Docker Compose, and Caddy deployment
   audit-m1.md      independent multi-agent audit and remediation status
 tests/
   test_normalize.py
