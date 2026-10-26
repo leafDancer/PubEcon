@@ -25,6 +25,17 @@ def connect(path: Path | str = DB_PATH) -> sqlite3.Connection:
     return conn
 
 
+def connect_readonly(path: Path | str = DB_PATH) -> sqlite3.Connection:
+    """Open an existing database without running migrations or writing."""
+    path = Path(path).resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"Database not found: {path}")
+    conn = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA query_only = ON")
+    return conn
+
+
 MIGRATION_COLUMNS: dict[str, dict[str, str]] = {
     "papers": {
         "journal_code": "TEXT",

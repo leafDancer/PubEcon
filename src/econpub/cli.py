@@ -287,8 +287,12 @@ def main(argv: list[str] | None = None) -> None:
                 port=args.port,
             )
         return
-    conn = db.connect(args.db)
-    db.init_db(conn)
+    read_only_commands = {"report", "top5-report", "release-manifest"}
+    if args.command in read_only_commands:
+        conn = db.connect_readonly(args.db)
+    else:
+        conn = db.connect(args.db)
+        db.init_db(conn)
     try:
         if args.command == "top5":
             from .top5_build import build_top5
