@@ -1,6 +1,6 @@
 # Data license
 
-The EconPub database compilation — the selection, arrangement, identity
+The PubEcon database compilation — the selection, arrangement, identity
 resolution, derived coauthorship edges, career-stage assignments, and the
 project's own metadata — is licensed under the **Creative Commons Attribution
 4.0 International License (CC BY 4.0)**.
@@ -9,7 +9,7 @@ You may share and adapt the compilation for any purpose, provided that you give
 appropriate credit, link to the license, and indicate if changes were made.
 A suggested attribution:
 
-> EconPub, *EconPub top-five economics journal database*, version 1.0.0,
+> PubEcon, *PubEcon top-five economics journal database*, version 1.0.0,
 > licensed under CC BY 4.0.
 
 License text: https://creativecommons.org/licenses/by/4.0/legalcode

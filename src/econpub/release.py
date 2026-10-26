@@ -167,7 +167,7 @@ def generate_release_manifest(
     conn.row_factory = sqlite3.Row
     try:
         manifest: dict[str, Any] = {
-            "product": "EconPub",
+            "product": "PubEcon",
             "version": __version__,
             "generated_at": utcnow(),
             "git_commit": _git_commit(root),

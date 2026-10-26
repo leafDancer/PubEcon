@@ -26,13 +26,13 @@
 ## Release decisions
 
 1. **License.** Resolved: MIT for code (`LICENSE`) and CC BY 4.0 for the
-   EconPub compilation (`DATA_LICENSE.md`). Third-party metadata and abstracts
+   PubEcon compilation (`DATA_LICENSE.md`). Third-party metadata and abstracts
    remain subject to their source terms.
 2. **Correction channel.** Resolved: public GitHub Issues with the
    `.github/ISSUE_TEMPLATE/correction.yml` template and the process in
    `docs/corrections.md`.
 3. **Deployment.** The API and static frontend have not been deployed together
-   from this repository. Set `ECONPUB_DB`, `ECONPUB_CORS_ORIGINS`, and
+   from this repository. Set `PUBECON_DB`, `PUBECON_CORS_ORIGINS`, and
    `VITE_API_BASE` as described in `docs/m5-frontend.md`.
 4. **Validation limits.** A targeted 12-per-journal article-type sample was
    inspected; per-journal error rates are not estimated. Author identity beyond
@@ -45,7 +45,7 @@ After the database artifact is uploaded and the repository's Issues tracker is
 public:
 
 ```powershell
-git tag -a v1.0.0 -m "EconPub v1.0.0"
+git tag -a v1.0.0 -m "PubEcon v1.0.0"
 git push origin v1.0.0
 ```
 

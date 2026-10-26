@@ -1,4 +1,6 @@
-# EconPub
+# PubEcon
+
+Repository: <https://github.com/leafDancer/PubEcon>
 
 A public, methodologically documented database of publications in the top five economics journals — the *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica* — with a coauthor network and publish-time career-stage inference.
 
@@ -9,7 +11,7 @@ Existing economics publication sites are strong on citation counts and journal r
 1. **Who worked with whom, and how did those networks evolve?**
 2. **What was each author's career stage when the paper was published?**
 
-EconPub makes both first-class. Every inferred field carries its evidence and confidence, so the result is inspectable rather than a black box.
+PubEcon makes both first-class. Every inferred field carries its evidence and confidence, so the result is inspectable rather than a black box.
 
 ## Scope (v1.0)
 
@@ -113,6 +115,9 @@ Install the package and its API/CV extras first:
 pip install -e ".[api]"
 ```
 
+This installs the `pubecon` command; the legacy `econpub` entry point remains
+available. The Python import package is still `econpub` for compatibility.
+
 The product itself is the combined top-five database; the commands below build
 the AER baseline first, then the combined dataset. A fresh clone can run the
 top-five build directly (see “Build the combined top-five database”).
@@ -188,7 +193,7 @@ In one terminal:
 python run.py serve --port 8000 --db data/curated/top5.db
 ```
 
-Without `--db`, the API serves `data/curated/top5.db` when it exists and falls back to the AER baseline (`data/curated/econpub.db`). Set `ECONPUB_DB` explicitly in deployment.
+Without `--db`, the API serves `data/curated/top5.db` when it exists and falls back to the AER baseline (`data/curated/econpub.db`). Set `PUBECON_DB` explicitly in deployment; the legacy `ECONPUB_DB` name is still accepted.
 
 In another:
 
@@ -198,7 +203,7 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Vite proxies `/api` to the FastAPI service. For a separated deployment, set `VITE_API_BASE` at frontend build time and `ECONPUB_CORS_ORIGINS` on the API; see `docs/m5-frontend.md`.
+Open `http://127.0.0.1:5173`. Vite proxies `/api` to the FastAPI service. For a separated deployment, set `VITE_API_BASE` at frontend build time and `PUBECON_CORS_ORIGINS` on the API; see `docs/m5-frontend.md`.
 
 Useful commands:
 
@@ -234,10 +239,14 @@ release manifest records the exact database bytes used for a release.
 Set a contact address for Crossref's polite pool:
 
 ```powershell
-$env:ECONPUB_MAILTO="you@example.com"
+$env:PUBECON_MAILTO="you@example.com"
 ```
 
 ## Project layout
+
+The Python import package and existing database filename keep the `econpub`
+identifier for compatibility; the distribution, CLI, API, and frontend display
+name are PubEcon.
 
 ```
 src/econpub/
@@ -328,4 +337,4 @@ Author resolution is rebuildable: `authors.py` groups authorships by a middle-in
 - **Database compilation:** CC BY 4.0; see `DATA_LICENSE.md`.
 - **Third-party material:** Crossref/OpenAlex/ORCID metadata, publisher
   abstracts, titles, and author names remain subject to their source terms and
-  are not relicensed by EconPub. No full text is redistributed.
+  are not relicensed by PubEcon. No full text is redistributed.

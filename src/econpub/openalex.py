@@ -32,7 +32,7 @@ log = logging.getLogger(__name__)
 OPENALEX_BASE = "https://api.openalex.org/works"
 OPENALEX_RAW_DIR = RAW_DIR / "openalex"
 WORKS_DIR = OPENALEX_RAW_DIR / "works"
-USER_AGENT = f"EconPubDatabase/0.2 (mailto:{MAILTO})"
+USER_AGENT = f"PubEconDatabase/1.0 (mailto:{MAILTO})"
 
 # OpenAlex byline recovery is a fallback for deposits that have no authors at
 # all. It occasionally carries an issue-level or acknowledgement-level author

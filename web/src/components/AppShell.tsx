@@ -34,7 +34,7 @@ export default function AppShell() {
       <aside className="ep-rail">
         <div className="ep-rail-top">
           <NavLink to="/" className="ep-wordmark" end>
-            <span className="ep-wordmark-name">EconPub</span>
+            <span className="ep-wordmark-name">PubEcon</span>
             <span className="ep-wordmark-meta">{scopeLabel} 2000–2026</span>
           </NavLink>
           <nav className="ep-nav" aria-label="Primary">
@@ -79,7 +79,7 @@ export default function AppShell() {
       <div className="ep-main">
         <header className="ep-mobile-head">
           <NavLink to="/" className="ep-mobile-wordmark" end>
-            EconPub
+            PubEcon
           </NavLink>
           <nav className="ep-mobile-nav" aria-label="Primary">
             {nav.map((item) => (
@@ -94,7 +94,7 @@ export default function AppShell() {
         </main>
         <footer className="ep-footer">
           <p>
-            EconPub is an independent research project. Data is shown with provenance and
+            PubEcon is an independent research project. Data is shown with provenance and
             confidence; missing evidence is never filled silently.
           </p>
           <p className="ep-footer-links">

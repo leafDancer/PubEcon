@@ -7,11 +7,15 @@ from pathlib import Path
 PACKAGE_DIR = Path(__file__).resolve().parent
 _REPO_ROOT = PACKAGE_DIR.parents[1]
 # Editable checkouts keep data beside the repository. A wheel install has no
-# repository, so use the working directory unless ECONPUB_DATA_DIR is set.
+# repository, so use the working directory unless PUBECON_DATA_DIR is set.
 PROJECT_ROOT = _REPO_ROOT if (_REPO_ROOT / "pyproject.toml").exists() else Path.cwd()
 SRC_DIR = PACKAGE_DIR.parent
 
-DATA_DIR = Path(os.environ.get("ECONPUB_DATA_DIR", PROJECT_ROOT / "data")).expanduser().resolve()
+DATA_DIR = Path(
+    os.environ.get(
+        "PUBECON_DATA_DIR", os.environ.get("ECONPUB_DATA_DIR", PROJECT_ROOT / "data")
+    )
+).expanduser().resolve()
 RAW_DIR = DATA_DIR / "raw"
 CURATED_DIR = DATA_DIR / "curated"
 REPORTS_DIR = DATA_DIR / "reports"
@@ -52,8 +56,12 @@ START_YEAR = 2000
 
 # Crossref asks API users to identify a contact address. Override this with
 # your own address when running a real harvest.
-MAILTO = os.environ.get("ECONPUB_MAILTO", "econpub-database@users.noreply.github.com")
-USER_AGENT = f"EconPubDatabase/0.1 (mailto:{MAILTO})"
+MAILTO = (
+    os.environ.get("PUBECON_MAILTO")
+    or os.environ.get("ECONPUB_MAILTO")
+    or "pubecon-database@users.noreply.github.com"
+)
+USER_AGENT = f"PubEconDatabase/1.0 (mailto:{MAILTO})"
 
 # Only fields needed for M1. Keeping the selection narrow makes pagination
 # substantially faster; source_records still preserves the raw payload.

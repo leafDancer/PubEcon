@@ -1,6 +1,6 @@
 # Methodology
 
-This document defines what EconPub measures, how each field is derived, and where the uncertainty lies. It is intended to be published alongside the database.
+This document defines what PubEcon measures, how each field is derived, and where the uncertainty lies. It is intended to be published alongside the database.
 
 ## Unit of analysis
 

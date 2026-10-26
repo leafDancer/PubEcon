@@ -67,7 +67,7 @@ def link_openalex_authors(conn) -> None:
 
 def setup_logging() -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
-    log_path = LOGS_DIR / "econpub.log"
+    log_path = LOGS_DIR / "pubecon.log"
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -82,7 +82,7 @@ def setup_logging() -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="econpub", description="EconPub data pipeline")
+    parser = argparse.ArgumentParser(prog="pubecon", description="PubEcon data pipeline")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     harvest_parser = subparsers.add_parser("harvest", help="Harvest Crossref metadata")
@@ -251,7 +251,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--db",
         type=Path,
         default=None,
-        help="Database path; defaults to $ECONPUB_DB, then data/curated/top5.db if present, else data/curated/econpub.db",
+        help="Database path; defaults to $PUBECON_DB ($ECONPUB_DB is also accepted), then data/curated/top5.db if present, else data/curated/econpub.db",
     )
 
     return parser
@@ -271,8 +271,11 @@ def main(argv: list[str] | None = None) -> None:
         from .api import create_app
 
         default_db = TOP5_DB if TOP5_DB.exists() else DB_PATH
-        serve_db = args.db or Path(os.environ.get("ECONPUB_DB", default_db))
+        serve_db = args.db or Path(
+            os.environ.get("PUBECON_DB", os.environ.get("ECONPUB_DB", default_db))
+        )
         if args.reload:
+            os.environ["PUBECON_DB"] = str(serve_db)
             os.environ["ECONPUB_DB"] = str(serve_db)
             uvicorn.run(
                 "econpub.api:app",

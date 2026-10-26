@@ -12,7 +12,7 @@ top five in economics:
 | RES | Review of Economic Studies | 0034-6527 | Oxford University Press |
 | ECMA | Econometrica | 0012-9682 | Econometric Society / Wiley |
 
-The goals that distinguish EconPub do not change: coauthor-network topology,
+The goals that distinguish PubEcon do not change: coauthor-network topology,
 career stage at publication, explicit provenance and confidence, and visible
 missingness. Expanding the journal set increases the value of the first two —
 a cross-journal coauthor network is far more informative than five separate
@@ -171,7 +171,7 @@ The read-only API and frontend now expose the journal dimension:
   cross-journal career timeline; the app shell and methodology page are
   journal-aware.
 - The combined database can be served with
-  `python run.py serve --db data/curated/top5.db`, or by setting `ECONPUB_DB`.
+  `python run.py serve --db data/curated/top5.db`, or by setting `PUBECON_DB`.
 - The network explorer supports a journal filter. When a journal is selected,
   edges are derived from that journal's papers, so a tie is a tie in that
   journal; the "All five" view uses the precomputed cross-journal edge table.

@@ -201,7 +201,7 @@ export default function OverviewPage() {
   const rankings = useApi(() => api.rankings(5), [])
   const [rankingTab, setRankingTab] = useState<RankingTab>('assistant_professor')
 
-  if (loading) return <LoadingState label="Loading the EconPub record" />
+  if (loading) return <LoadingState label="Loading the PubEcon record" />
   if (error) return <ErrorState message={error} />
   if (!data) return null
 

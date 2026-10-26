@@ -1,6 +1,6 @@
 # Release manifest
 
-- **Product:** EconPub
+- **Product:** PubEcon
 - **Version:** 1.0.0
 - **Generated:** 2026-10-26T15:56:11+00:00
 - **Git commit:** 08fc100bbe8a1fa2b991359be9b82c04dc702375

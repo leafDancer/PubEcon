@@ -23,7 +23,7 @@ export default function MethodologyPage() {
         <p className="ep-kicker">Method and limits</p>
         <h1>How the record is built</h1>
         <p className="ep-page-deck">
-          EconPub is a public, evidence-first database. Every inferred field carries its source and
+          PubEcon is a public, evidence-first database. Every inferred field carries its source and
           confidence. Missing evidence is displayed as missing, never filled silently.
         </p>
       </header>

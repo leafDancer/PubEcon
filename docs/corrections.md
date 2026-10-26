@@ -1,6 +1,6 @@
 # Corrections and takedowns
 
-EconPub publishes inferred and source-derived records. A correction is a
+PubEcon publishes inferred and source-derived records. A correction is a
 first-class data change, not a silent edit.
 
 ## How to report

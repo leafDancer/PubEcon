@@ -48,7 +48,7 @@ def _db_path(value: Path | str | None = None) -> Path:
     if value is not None:
         return Path(value)
     default = TOP5_DB if TOP5_DB.exists() else DB_PATH
-    return Path(os.environ.get("ECONPUB_DB", default))
+    return Path(os.environ.get("PUBECON_DB", os.environ.get("ECONPUB_DB", default)))
 
 
 def _ro_connect(database: Path) -> sqlite3.Connection:
@@ -1723,16 +1723,14 @@ def create_app(
     cors_origins: list[str] | None = None,
 ) -> FastAPI:
     db_path = _db_path(database)
-    allowed = cors_origins or [
-        value.strip()
-        for value in os.environ.get(
-            "ECONPUB_CORS_ORIGINS",
-            "http://localhost:5173,http://127.0.0.1:5173",
-        ).split(",")
-        if value.strip()
-    ]
+    origins = (
+        os.environ.get("PUBECON_CORS_ORIGINS")
+        or os.environ.get("ECONPUB_CORS_ORIGINS")
+        or "http://localhost:5173,http://127.0.0.1:5173"
+    )
+    allowed = cors_origins or [value.strip() for value in origins.split(",") if value.strip()]
     app = FastAPI(
-        title="EconPub API",
+        title="PubEcon API",
         version=__version__,
         description="Read-only API for the top five economics journals, 2000+.",
     )

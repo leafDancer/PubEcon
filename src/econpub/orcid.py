@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 ORCID_API = "https://pub.orcid.org/v3.0"
 RAW_ORCID_DIR = RAW_DIR / "orcid"
 RECORDS_DIR = RAW_ORCID_DIR / "records"
-USER_AGENT = f"EconPubDatabase/0.4 (mailto:{MAILTO})"
+USER_AGENT = f"PubEconDatabase/1.0 (mailto:{MAILTO})"
 
 _THREAD_LOCAL = threading.local()
 _CLIENTS: list[httpx.Client] = []
