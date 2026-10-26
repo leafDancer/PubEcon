@@ -248,6 +248,16 @@ journals it covers.
    reproducible.
 4. Update `docs/methodology.md`, `docs/data-sources.md`, and the README scope.
 
+## Current status
+
+| Phase | Status |
+|---|---|
+| M7.1 data foundation | Complete for all five journals; per-journal pilots and combined build done |
+| M7.2 identity and enrichment | Complete; cross-journal reach validated, namesake splits preserved, OpenAlex missing-bylines recovered |
+| M7.3 career layer | ORCID complete; CV partial (246 parsed documents, 74 assignments, 760 homepage candidates queued) |
+| M7.4 API and frontend | Complete except journal filtering of network edges; top-five database is the default when present |
+| M7.5 validation and release | Random 12-per-journal article sample done; per-journal error rates, a public correction workflow, and the final deployment remain |
+
 ## Risks and controls
 
 | Risk | Control |
