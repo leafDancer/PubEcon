@@ -54,7 +54,7 @@ export const api = {
   paper: (doi: string) => get<PaperDetail>(`/papers/${doi}`),
   authors: (params: Params) => get<AuthorList>('/authors', params),
   author: (stableId: string) => get<AuthorDetail>(`/authors/${stableId}`),
-  authorNetwork: (stableId: string, limit = 50) =>
-    get<NetworkPayload>(`/authors/${stableId}/network`, { limit }),
+  authorNetwork: (stableId: string, limit = 50, journal?: string) =>
+    get<NetworkPayload>(`/authors/${stableId}/network`, { limit, journal }),
   network: (params: Params) => get<NetworkPayload>('/network', params),
 }

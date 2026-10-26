@@ -888,12 +888,16 @@ def _network_nodes(
     year_to: int | None,
     *,
     center_id: int | None = None,
+    journal: str | None = None,
 ) -> list[dict[str, Any]]:
     if not author_ids:
         return []
     placeholders = ",".join("?" for _ in author_ids)
     year_clause = ""
     params: list[Any] = list(author_ids)
+    if journal:
+        year_clause += " AND p.journal_code=?"
+        params.append(journal)
     if year_from is not None:
         year_clause += " AND p.published_year>=?"
         params.append(year_from)
@@ -947,29 +951,66 @@ def _network_edges(
     author_ids: list[int],
     year_from: int | None,
     year_to: int | None,
+    journal: str | None = None,
 ) -> list[dict[str, Any]]:
     if len(author_ids) < 2:
         return []
     placeholders = ",".join("?" for _ in author_ids)
-    clauses = [f"author_a_id IN ({placeholders})", f"author_b_id IN ({placeholders})"]
-    params: list[Any] = [*author_ids, *author_ids]
-    if year_from is not None:
-        clauses.append("year>=?")
-        params.append(year_from)
-    if year_to is not None:
-        clauses.append("year<=?")
-        params.append(year_to)
-    rows = conn.execute(
-        f"""
-        SELECT author_a_id, author_b_id, COUNT(DISTINCT paper_id) AS weight,
-               MIN(year) AS first_year, MAX(year) AS last_year
-        FROM coauthorship_edges
-        WHERE {' AND '.join(clauses)}
-        GROUP BY author_a_id, author_b_id
-        ORDER BY weight DESC
-        """,
-        params,
-    ).fetchall()
+    if journal:
+        # The precomputed edge table is cross-journal. For a journal-scoped
+        # view, derive edges from the selected papers so a tie is a tie in
+        # that journal, not a cross-journal aggregate.
+        clauses = [
+            f"s1.author_id IN ({placeholders})",
+            f"s2.author_id IN ({placeholders})",
+            "s1.author_id < s2.author_id",
+            "p.content_type='article'",
+            "p.is_duplicate=0",
+            "p.journal_code=?",
+        ]
+        params: list[Any] = [*author_ids, *author_ids, journal]
+        if year_from is not None:
+            clauses.append("p.published_year>=?")
+            params.append(year_from)
+        if year_to is not None:
+            clauses.append("p.published_year<=?")
+            params.append(year_to)
+        rows = conn.execute(
+            f"""
+            SELECT s1.author_id AS author_a_id, s2.author_id AS author_b_id,
+                   COUNT(DISTINCT p.paper_id) AS weight,
+                   MIN(p.published_year) AS first_year,
+                   MAX(p.published_year) AS last_year
+            FROM authorships s1
+            JOIN authorships s2
+              ON s1.paper_id=s2.paper_id AND s1.author_id < s2.author_id
+            JOIN papers p ON p.paper_id=s1.paper_id
+            WHERE {' AND '.join(clauses)}
+            GROUP BY s1.author_id, s2.author_id
+            ORDER BY weight DESC
+            """,
+            params,
+        ).fetchall()
+    else:
+        clauses = [f"author_a_id IN ({placeholders})", f"author_b_id IN ({placeholders})"]
+        params = [*author_ids, *author_ids]
+        if year_from is not None:
+            clauses.append("year>=?")
+            params.append(year_from)
+        if year_to is not None:
+            clauses.append("year<=?")
+            params.append(year_to)
+        rows = conn.execute(
+            f"""
+            SELECT author_a_id, author_b_id, COUNT(DISTINCT paper_id) AS weight,
+                   MIN(year) AS first_year, MAX(year) AS last_year
+            FROM coauthorship_edges
+            WHERE {' AND '.join(clauses)}
+            GROUP BY author_a_id, author_b_id
+            ORDER BY weight DESC
+            """,
+            params,
+        ).fetchall()
     stable_rows = conn.execute(
         f"SELECT author_id, stable_id FROM authors WHERE author_id IN ({placeholders})",
         author_ids,
@@ -989,7 +1030,10 @@ def _network_edges(
 
 
 def _ego_network(
-    conn: sqlite3.Connection, stable_id: str, limit: int
+    conn: sqlite3.Connection,
+    stable_id: str,
+    limit: int,
+    journal: str | None = None,
 ) -> dict[str, Any]:
     center = conn.execute(
         "SELECT author_id, canonical_name FROM authors WHERE stable_id=?", (stable_id,)
@@ -997,30 +1041,63 @@ def _ego_network(
     if not center:
         raise HTTPException(status_code=404, detail="Author not found")
     center_id = int(center["author_id"])
-    neighbors = conn.execute(
+    if journal:
+        pairs_sql = """
+            WITH pairs AS (
+                SELECT CASE WHEN s1.author_id=? THEN s2.author_id ELSE s1.author_id END
+                           AS other_id,
+                       s1.paper_id, p.published_year AS year
+                FROM authorships s1
+                JOIN authorships s2
+                  ON s2.paper_id=s1.paper_id AND s2.author_id<>s1.author_id
+                JOIN papers p ON p.paper_id=s1.paper_id
+                WHERE (s1.author_id=? OR s2.author_id=?)
+                  AND p.content_type='article' AND p.is_duplicate=0
+                  AND p.journal_code=?
+            )
         """
-        WITH pairs AS (
-            SELECT CASE WHEN author_a_id=? THEN author_b_id ELSE author_a_id END AS other_id,
-                   paper_id, year
+        neighbors = conn.execute(
+            pairs_sql
+            + """
+            SELECT other_id, COUNT(DISTINCT paper_id) AS shared,
+                   MIN(year) AS first_year, MAX(year) AS last_year
+            FROM pairs GROUP BY other_id
+            ORDER BY shared DESC, other_id
+            LIMIT ?
+            """,
+            (center_id, center_id, center_id, journal, limit),
+        ).fetchall()
+        total_coauthors = conn.execute(
+            pairs_sql + "SELECT COUNT(DISTINCT other_id) FROM pairs",
+            (center_id, center_id, center_id, journal),
+        ).fetchone()[0]
+    else:
+        neighbors = conn.execute(
+            """
+            WITH pairs AS (
+                SELECT CASE WHEN author_a_id=? THEN author_b_id ELSE author_a_id END AS other_id,
+                       paper_id, year
+                FROM coauthorship_edges WHERE author_a_id=? OR author_b_id=?
+            )
+            SELECT other_id, COUNT(DISTINCT paper_id) AS shared,
+                   MIN(year) AS first_year, MAX(year) AS last_year
+            FROM pairs GROUP BY other_id
+            ORDER BY shared DESC, other_id
+            LIMIT ?
+            """,
+            (center_id, center_id, center_id, limit),
+        ).fetchall()
+        total_coauthors = conn.execute(
+            """
+            SELECT COUNT(DISTINCT CASE WHEN author_a_id=? THEN author_b_id ELSE author_a_id END)
             FROM coauthorship_edges WHERE author_a_id=? OR author_b_id=?
-        )
-        SELECT other_id, COUNT(DISTINCT paper_id) AS shared,
-               MIN(year) AS first_year, MAX(year) AS last_year
-        FROM pairs GROUP BY other_id
-        ORDER BY shared DESC, other_id
-        LIMIT ?
-        """,
-        (center_id, center_id, center_id, limit),
-    ).fetchall()
-    total_coauthors = conn.execute(
-        """
-        SELECT COUNT(DISTINCT CASE WHEN author_a_id=? THEN author_b_id ELSE author_a_id END)
-        FROM coauthorship_edges WHERE author_a_id=? OR author_b_id=?
-        """,
-        (center_id, center_id, center_id),
-    ).fetchone()[0]
+            """,
+            (center_id, center_id, center_id),
+        ).fetchone()[0]
     ids = [center_id, *[int(row["other_id"]) for row in neighbors]]
-    nodes = _network_nodes(conn, ids, None, None, center_id=center_id)
+    nodes = _network_nodes(
+        conn, ids, None, None, center_id=center_id, journal=journal
+    )
     shared = {
         int(row["other_id"]): {
             "shared": row["shared"],
@@ -1040,7 +1117,7 @@ def _ego_network(
             node["shared"] = info["shared"]
             node["shared_first_year"] = info["first_year"]
             node["shared_last_year"] = info["last_year"]
-    edges = _network_edges(conn, ids, None, None)
+    edges = _network_edges(conn, ids, None, None, journal=journal)
     return {
         "mode": "ego",
         "focus": stable_id,
@@ -1052,6 +1129,7 @@ def _ego_network(
             "total_coauthors": total_coauthors,
             "truncated": total_coauthors > len(neighbors),
             "limit": limit,
+            "journal": journal,
         },
     }
 
@@ -1063,9 +1141,13 @@ def _top_network(
     year_to: int | None,
     limit: int,
     min_papers: int,
+    journal: str | None = None,
 ) -> dict[str, Any]:
     clauses = ["p.content_type='article'", "p.is_duplicate=0"]
     params: list[Any] = []
+    if journal:
+        clauses.append("p.journal_code=?")
+        params.append(journal)
     if year_from is not None:
         clauses.append("p.published_year>=?")
         params.append(year_from)
@@ -1092,8 +1174,8 @@ def _top_network(
         [*params, min_papers, limit],
     ).fetchall()
     ids = [int(row["author_id"]) for row in rows]
-    nodes = _network_nodes(conn, ids, year_from, year_to)
-    edges = _network_edges(conn, ids, year_from, year_to)
+    nodes = _network_nodes(conn, ids, year_from, year_to, journal=journal)
+    edges = _network_edges(conn, ids, year_from, year_to, journal=journal)
     return {
         "mode": "top",
         "nodes": nodes,
@@ -1103,6 +1185,7 @@ def _top_network(
             "year_to": year_to,
             "limit": limit,
             "min_papers": min_papers,
+            "journal": journal,
             "selected": len(nodes),
             "total_authors": total,
             "truncated": total > len(nodes),
@@ -1289,15 +1372,18 @@ def create_app(
 
     @app.get("/api/authors/{stable_id}/network")
     def author_network(
-        stable_id: str, limit: int = Query(50, ge=5, le=150)
+        stable_id: str,
+        limit: int = Query(50, ge=5, le=150),
+        journal: str | None = Query(None, pattern="^(AER|QJE|JPE|RES|ECMA)$"),
     ) -> dict[str, Any]:
         with connection() as conn:
-            return _ego_network(conn, stable_id, limit)
+            return _ego_network(conn, stable_id, limit, journal=journal)
 
     @app.get("/api/network")
     def network(
         year_from: int | None = Query(None, ge=START_YEAR, le=2100),
         year_to: int | None = Query(None, ge=START_YEAR, le=2100),
+        journal: str | None = Query(None, pattern="^(AER|QJE|JPE|RES|ECMA)$"),
         limit: int = Query(250, ge=20, le=600),
         min_papers: int = Query(2, ge=1, le=20),
     ) -> dict[str, Any]:
@@ -1306,6 +1392,7 @@ def create_app(
                 conn,
                 year_from=year_from,
                 year_to=year_to,
+                journal=journal,
                 limit=limit,
                 min_papers=min_papers,
             )

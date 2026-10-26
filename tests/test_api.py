@@ -94,6 +94,14 @@ class ApiTests(unittest.TestCase):
         self.assertIn("meta", body)
         self.assertIn("edges", body)
 
+        filtered = self.client.get("/api/network?limit=20&min_papers=2&journal=AER")
+        self.assertEqual(filtered.status_code, 200)
+        self.assertEqual(filtered.json()["meta"]["journal"], "AER")
+        self.assertLessEqual(
+            filtered.json()["meta"]["total_authors"], body["meta"]["total_authors"]
+        )
+        self.assertEqual(self.client.get("/api/network?journal=NOPE").status_code, 422)
+
         ego = self.client.get("/api/authors/aer-a-000929/network?limit=5")
         self.assertEqual(ego.status_code, 200)
         ego_body = ego.json()

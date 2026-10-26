@@ -277,6 +277,7 @@ export interface NetworkPayload {
     year_to?: number | null
     limit?: number
     min_papers?: number
+    journal?: string | null
     selected: number
     total_authors?: number
     total_coauthors?: number

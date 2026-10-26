@@ -15,6 +15,7 @@ const PRESETS = [
 export default function NetworkPage() {
   const [params, setParams] = useSearchParams()
   const focus = params.get('focus') ?? ''
+  const journal = params.get('journal') ?? 'all'
   const yearFrom = Number(params.get('year_from') ?? 2000)
   const yearTo = Number(params.get('year_to') ?? 2026)
   const limit = Number(params.get('limit') ?? 120)
@@ -30,17 +31,21 @@ export default function NetworkPage() {
     [debouncedSearch],
   )
 
+  const overview = useApi(() => api.overview(), [])
+  const journalOptions = overview.data?.dataset.journals ?? []
+
   const graph = useApi(
     () =>
       focus
-        ? api.authorNetwork(focus, 60)
+        ? api.authorNetwork(focus, 60, journal === 'all' ? undefined : journal)
         : api.network({
+            journal: journal === 'all' ? undefined : journal,
             year_from: yearFrom,
             year_to: yearTo,
             limit,
             min_papers: minPapers,
           }),
-    [focus, yearFrom, yearTo, limit, minPapers],
+    [focus, journal, yearFrom, yearTo, limit, minPapers],
   )
 
   function update(values: Record<string, string | number | null>) {
@@ -66,6 +71,26 @@ export default function NetworkPage() {
       </header>
 
       <section className="ep-network-controls" aria-label="Network controls">
+        {journalOptions.length > 1 && (
+          <label className="ep-field">
+            <span>Journal</span>
+            <select
+              value={journal}
+              onChange={(event) =>
+                update({
+                  journal: event.target.value === 'all' ? null : event.target.value,
+                })
+              }
+            >
+              <option value="all">All five</option>
+              {journalOptions.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.code} — {item.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {!focus && (
           <>
             <label className="ep-field">
@@ -145,7 +170,9 @@ export default function NetworkPage() {
           <p>
             Ego network for <Link to={`/authors/${focus}`}>{focusName ?? focus}</Link>
             {graph.data?.meta.total_coauthors
-              ? `, ${formatNumber(graph.data.meta.total_coauthors)} coauthors in the record`
+              ? `, ${formatNumber(graph.data.meta.total_coauthors)} coauthors in ${
+                  journal === 'all' ? 'the record' : journal
+                }`
               : ''}
           </p>
           <button type="button" className="ep-text-button" onClick={() => update({ focus: null })}>
@@ -157,8 +184,10 @@ export default function NetworkPage() {
       {!focus && (
         <p className="ep-network-note">
           Showing the top {formatNumber(graph.data?.meta.selected ?? limit)} authors in the selected
-          range, not the complete graph. A tie is one coauthored paper, and ties
-          may connect papers in different journals.
+          range, not the complete graph. A tie is one coauthored paper
+          {journal === 'all'
+            ? ', and ties may connect papers in different journals.'
+            : ` in ${journal}.`}
         </p>
       )}
 

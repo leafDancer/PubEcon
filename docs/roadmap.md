@@ -175,9 +175,9 @@ The read-only API and frontend now expose the journal dimension:
   journal-aware.
 - The combined database can be served with
   `python run.py serve --db data/curated/top5.db`, or by setting `ECONPUB_DB`.
-- The **network explorer is intentionally cross-journal** for now. Filtering
-  edges by journal requires journal attributes on `coauthorship_edges`; until
-  then, a journal filter would show cross-journal ties under a misleading label.
+- The network explorer supports a journal filter. When a journal is selected,
+  edges are derived from that journal's papers, so a tie is a tie in that
+  journal; the "All five" view uses the precomputed cross-journal edge table.
 - The served database remains the AER baseline until the combined pilot passes
   the remaining validation and the CV queue is processed.
 
@@ -255,7 +255,7 @@ journals it covers.
 | M7.1 data foundation | Complete for all five journals; per-journal pilots and combined build done |
 | M7.2 identity and enrichment | Complete; cross-journal reach validated, namesake splits preserved, OpenAlex missing-bylines recovered |
 | M7.3 career layer | ORCID complete; CV crawl queue empty (438 parsed documents, 106 assignments; 777 failed sources remain visible) |
-| M7.4 API and frontend | Complete except journal filtering of network edges; top-five database is the default when present |
+| M7.4 API and frontend | Complete, including journal-scoped networks; top-five database is the default when present |
 | M7.5 validation and release | Random 12-per-journal article sample done; per-journal error rates, a public correction workflow, and the final deployment remain |
 
 ## Risks and controls

@@ -59,8 +59,8 @@ uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 | `GET /api/papers/{doi}` | Paper detail: authorships, career assignments, institutions, JEL, OpenAlex topics, provenance |
 | `GET /api/authors` | Paginated author index; filters `q`, `stage`, `year_from`, `year_to`, `sort` |
 | `GET /api/authors/{stable_id}` | Author profile, career events, per-paper assignments, coauthors, institutions |
-| `GET /api/authors/{stable_id}/network` | Bounded ego network (default 50 coauthors, max 150) |
-| `GET /api/network` | Ranked subgraph: top authors by papers in a year range, bounded to 600 nodes |
+| `GET /api/authors/{stable_id}/network` | Bounded ego network (default 50 coauthors, max 150); optional `journal` filter |
+| `GET /api/network` | Ranked subgraph: top authors by papers in a year range, bounded to 600 nodes; optional `journal` filter |
 
 Pagination is capped at 100 rows. The network endpoint is always a filtered sample; it never serializes all 5,892 authors or 9,375 edges. The response includes `meta.truncated` and `meta.total_authors` so the UI can say what is missing.
 
@@ -73,7 +73,7 @@ Pagination is capped at 100 rows. The network endpoint is always a filtered samp
 | `/papers/{doi}` | Paper page with abstract, byline, career-at-publication table, JEL, topics, citations |
 | `/authors` | Searchable author index with stage and coverage filters |
 | `/authors/{stable_id}` | Author page with career timeline, papers, evidence, coauthors, institutions |
-| `/network` | Coauthor explorer; supports `?focus=<stable_id>` for an ego network |
+| `/network` | Coauthor explorer; supports `?focus=<stable_id>` for an ego network and `?journal=` for a journal-scoped graph |
 | `/methodology` | Public method, evidence hierarchy, ORCID identity tiers, and limitations |
 
 ## Design system
