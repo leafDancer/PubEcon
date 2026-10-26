@@ -353,13 +353,13 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
         "evidence": evidence,
         "orcid_tiers": orcid_tiers,
         "institutions": institutions,
-        "top_authors": _top_authors(conn, limit=8),
+        "top_authors": _top_authors(conn, limit=10),
         "recent_papers": _recent_papers(conn, limit=6),
         "most_cited": _most_cited(conn, limit=6),
     }
 
 
-def _top_authors(conn: sqlite3.Connection, limit: int = 8) -> list[dict[str, Any]]:
+def _top_authors(conn: sqlite3.Connection, limit: int = 10) -> list[dict[str, Any]]:
     rows = conn.execute(
         """
         SELECT a.stable_id, a.canonical_name, a.orcid_match_confidence,
@@ -477,7 +477,7 @@ _INSTITUTION_SQL = """
 """
 
 
-def _rankings(conn: sqlite3.Connection, limit: int = 8) -> dict[str, Any]:
+def _rankings(conn: sqlite3.Connection, limit: int = 10) -> dict[str, Any]:
     assistant = conn.execute(
         f"""
         SELECT a.author_id, a.stable_id, a.canonical_name,
@@ -1746,7 +1746,7 @@ def create_app(
 
     @app.get("/api/rankings")
     def rankings(
-        limit: int = Query(8, ge=1, le=50),
+        limit: int = Query(10, ge=1, le=50),
     ) -> dict[str, Any]:
         with connection() as conn:
             return _rankings(conn, limit)

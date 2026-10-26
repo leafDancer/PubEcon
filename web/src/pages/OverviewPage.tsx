@@ -110,7 +110,7 @@ function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) 
 export default function OverviewPage() {
   const { data, loading, error } = useApi(() => api.overview(), [])
   const network = useApi(() => api.network({ limit: 36, min_papers: 4 }), [])
-  const rankings = useApi(() => api.rankings(8), [])
+  const rankings = useApi(() => api.rankings(10), [])
   const [rankingTab, setRankingTab] = useState<RankingTab>('assistant_professor')
 
   if (loading) return <LoadingState label="Loading the EconPub record" />
