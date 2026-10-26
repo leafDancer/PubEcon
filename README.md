@@ -25,6 +25,13 @@ PubEcon makes both first-class. Every inferred field carries its evidence and co
 - **Not included:** pre-2000 archive, full text, or personal data such as birth dates, home addresses, phone numbers, and emails.
 - **Plan:** `docs/roadmap.md` tracks the M7 phases, acceptance criteria, and risks.
 
+## Get the dataset
+
+The code is in this repository. The built top-five SQLite database is published
+as the `top5.db` asset on the
+[v1.0.0 release](https://github.com/leafDancer/PubEcon/releases/tag/v1.0.0).
+Verify it against `data/reports/release_manifest.md` before use.
+
 ## Architecture
 
 The browser never downloads the database. A read-only FastAPI service exposes paginated paper and author views, bounded network subgraphs, shortest-path queries, and cached graph statistics; a React/Vite frontend consumes only those endpoints.
