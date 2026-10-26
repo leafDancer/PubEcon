@@ -36,6 +36,7 @@ class ApiTests(unittest.TestCase):
         self.assertTrue(body["years"])
         self.assertTrue(body["dataset"]["journals"])
         self.assertEqual(body["dataset"]["journals"][0]["code"], "AER")
+        self.assertIn("career_coverage", body["dataset"]["journals"][0])
         self.assertTrue(body["recent_papers"])
         self.assertTrue(body["recent_papers"][0].get("authors"))
 

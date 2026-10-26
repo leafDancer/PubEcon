@@ -281,16 +281,40 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
         ORDER BY papers DESC, code
         """
     ).fetchall()
-    journals = [
-        {
-            "code": row["code"],
-            "name": JOURNALS.get(row["code"]).name if row["code"] in JOURNALS else row["code"],
-            "issn": JOURNALS.get(row["code"]).issn if row["code"] in JOURNALS else None,
-            "papers": row["papers"],
-            "abstracts": row["abstracts"] or 0,
-        }
-        for row in journal_rows
-    ]
+    career_rows = conn.execute(
+        """
+        SELECT p.journal_code AS code,
+               COUNT(*) AS slots,
+               SUM(CASE WHEN ca.authorship_id IS NOT NULL THEN 1 ELSE 0 END) AS assignments
+        FROM authorships s
+        JOIN papers p ON p.paper_id=s.paper_id
+        LEFT JOIN career_assignments ca ON ca.authorship_id=s.authorship_id
+        WHERE p.content_type='article' AND p.is_duplicate=0
+        GROUP BY p.journal_code
+        """
+    ).fetchall()
+    career_by_journal = {row["code"]: row for row in career_rows}
+    journals = []
+    for row in journal_rows:
+        career_row = career_by_journal.get(row["code"])
+        slots = career_row["slots"] if career_row else 0
+        assignments = career_row["assignments"] if career_row else 0
+        journals.append(
+            {
+                "code": row["code"],
+                "name": JOURNALS.get(row["code"]).name
+                if row["code"] in JOURNALS
+                else row["code"],
+                "issn": JOURNALS.get(row["code"]).issn
+                if row["code"] in JOURNALS
+                else None,
+                "papers": row["papers"],
+                "abstracts": row["abstracts"] or 0,
+                "slots": slots,
+                "assignments": assignments,
+                "career_coverage": _pct(assignments, slots),
+            }
+        )
     scope_label = (
         journals[0]["name"] if len(journals) == 1 else "Top five economics journals"
     )

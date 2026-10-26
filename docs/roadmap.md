@@ -158,12 +158,22 @@ period ORCID records describe best.
 
 ### M7.4 progress
 
-The read-only API now exposes the journal dimension: paper payloads include
-`journal`, `/api/papers` and `/api/authors` accept a `journal=` filter, and
-`/api/overview` reports per-journal paper and abstract counts. The frontend
-types carry the new fields; the journal filter controls and per-journal
-overview panels are still to be built. The served database remains AER-only
-until the combined build is validated.
+The read-only API and frontend now expose the journal dimension:
+
+- Paper payloads include `journal`; `/api/papers` and `/api/authors` accept a
+  `journal=` filter; `/api/overview` reports per-journal papers, abstracts,
+  author slots, career assignments, and career coverage.
+- The papers page has a journal selector and journal badges; the overview has a
+  per-journal breakdown; the author page shows the journal for every paper and a
+  cross-journal career timeline; the app shell and methodology page are
+  journal-aware.
+- The combined database can be served with
+  `python run.py serve --db data/curated/top5.db`, or by setting `ECONPUB_DB`.
+- The **network explorer is intentionally cross-journal** for now. Filtering
+  edges by journal requires journal attributes on `coauthorship_edges`; until
+  then, a journal filter would show cross-journal ties under a misleading label.
+- The served database remains the AER baseline until the combined pilot passes
+  the remaining validation and the CV queue is processed.
 
 ## Phases
 

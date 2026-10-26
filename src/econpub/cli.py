@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -209,7 +210,12 @@ def build_parser() -> argparse.ArgumentParser:
     serve_parser.add_argument("--host", default="127.0.0.1")
     serve_parser.add_argument("--port", type=int, default=8000)
     serve_parser.add_argument("--reload", action="store_true")
-    serve_parser.add_argument("--db", type=Path, default=DB_PATH)
+    serve_parser.add_argument(
+        "--db",
+        type=Path,
+        default=None,
+        help="Database path; defaults to $ECONPUB_DB or data/curated/econpub.db",
+    )
 
     return parser
 
@@ -227,10 +233,9 @@ def main(argv: list[str] | None = None) -> None:
             ) from exc
         from .api import create_app
 
+        serve_db = args.db or Path(os.environ.get("ECONPUB_DB", DB_PATH))
         if args.reload:
-            import os
-
-            os.environ["ECONPUB_DB"] = str(args.db)
+            os.environ["ECONPUB_DB"] = str(serve_db)
             uvicorn.run(
                 "econpub.api:app",
                 host=args.host,
@@ -239,7 +244,7 @@ def main(argv: list[str] | None = None) -> None:
             )
         else:
             uvicorn.run(
-                create_app(args.db),
+                create_app(serve_db),
                 host=args.host,
                 port=args.port,
             )

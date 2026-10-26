@@ -162,6 +162,9 @@ export default function OverviewPage() {
                 <strong>{formatPct((100 * item.abstracts) / Math.max(item.papers, 1))}</strong>{' '}
                 abstracts
               </span>
+              <span className="ep-journal-metric">
+                <strong>{formatPct(item.career_coverage)}</strong> career
+              </span>
             </Link>
           ))}
         </div>

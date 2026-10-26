@@ -41,7 +41,16 @@ export interface Overview {
   dataset: {
     journal: string
     issn: string | null
-    journals: Array<{ code: string; name: string; issn: string | null; papers: number; abstracts: number }>
+    journals: Array<{
+      code: string
+      name: string
+      issn: string | null
+      papers: number
+      abstracts: number
+      slots: number
+      assignments: number
+      career_coverage: number
+    }>
     start_year: number
   }
   counts: {

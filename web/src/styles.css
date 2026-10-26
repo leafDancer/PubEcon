@@ -693,7 +693,7 @@ h3 {
 
 .ep-journal-row {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 110px 130px;
+  grid-template-columns: 56px minmax(0, 1fr) 100px 120px 120px;
   gap: 16px;
   align-items: baseline;
   padding: 12px 0;

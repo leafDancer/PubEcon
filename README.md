@@ -171,8 +171,10 @@ pip install -e ".[api]"
 In one terminal:
 
 ```powershell
-python run.py serve --port 8000
+python run.py serve --port 8000 --db data/curated/top5.db
 ```
+
+Without `--db`, the API serves the AER baseline (`data/curated/econpub.db`). Set `ECONPUB_DB` to make the top-five database the deployment default.
 
 In another:
 
