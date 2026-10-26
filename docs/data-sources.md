@@ -23,6 +23,9 @@ AEA, OpenAlex, and author CVs all have usable coverage.
 
 - Abstracts are present for many research articles. Subject fields are not consistently populated; JEL codes come from AEA pages instead.
 - Crossref rate limits can return HTTP 429 under bursts. The harvester uses a contact address, sequential requests, and exponential backoff, and caches every raw page.
+- **JPE deposits no abstracts** in the records observed here; OpenAlex is the only abstract source for JPE.
+- **ECMA 2008–2014 deposits omit authors** for 388 articles (DOI prefix `10.3982/ecta`). OpenAlex work authorship recovered 359 of them; the remaining 29 are stored as `unattributed`.
+- JPE back-cover teasers, turnaround-time tables, and mastheads are deposited as `journal-article` records; the classifier moves them to front matter by title and page evidence.
 
 ## AEA website (AER only)
 

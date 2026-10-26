@@ -403,7 +403,7 @@ def _recent_papers(conn: sqlite3.Connection, limit: int = 6) -> list[dict[str, A
         ORDER BY p.published_year DESC, p.published_month DESC, p.doi DESC
         LIMIT ?
         """,
-        (limit * 8,),
+        (limit * 20,),
     ).fetchall()
     # Diversify the front page by journal: the newest row overall is usually
     # AER simply because it has the most papers, which would make a

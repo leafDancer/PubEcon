@@ -33,14 +33,14 @@ The API caps page sizes and never serializes the full author table: the AER base
 
 | Journal | Research articles | Author slots | Abstracts |
 |---|---|---|---|
-| AER | 4,798 | 10,802 | 4,307 |
+| AER | 4,787 | 10,786 | 4,305 |
 | RES | 1,748 | 4,034 | 1,716 |
 | ECMA | 1,740 | 3,859 | 1,621 |
-| JPE | 1,501 | 3,478 | 1,329 |
+| JPE | 1,500 | 3,477 | 1,329 |
 | QJE | 1,181 | 3,085 | 1,164 |
-| **Total** | **10,968** | **25,258** | **10,137** |
+| **Total** | **10,956** | **25,241** | **10,135** |
 
-The combined pilot has 10,065 canonical authors and 24,478 coauthorship edges. 3,337 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. ORCID-only career coverage is 4,004 assignments (15.8% of slots); the AER baseline remains higher because it also has byline and CV evidence. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
+The combined pilot has 10,065 canonical authors and 24,478 coauthorship edges. 3,337 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. Career coverage is 4,077 assignments (16.2% of slots): ORCID plus a partial CV layer (246 parsed documents, 74 CV assignments; 760 homepage candidates remain queued). The AER baseline remains higher because it also has byline rank and a fuller CV corpus. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
 
 ## AER baseline dataset (M4)
 

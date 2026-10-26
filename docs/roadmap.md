@@ -107,15 +107,17 @@ merges. It is a validation build, not the served database.
 
 | Journal | Research articles | Author slots | Abstracts |
 |---|---|---|---|
-| AER | 4,798 | 10,802 | 4,307 |
+| AER | 4,787 | 10,786 | 4,305 |
 | RES | 1,748 | 4,034 | 1,716 |
 | ECMA | 1,740 | 3,859 | 1,621 |
-| JPE | 1,501 | 3,478 | 1,329 |
+| JPE | 1,500 | 3,477 | 1,329 |
 | QJE | 1,181 | 3,085 | 1,164 |
-| **Total** | **10,968** | **25,258** | **10,137** |
+| **Total** | **10,956** | **25,241** | **10,135** |
 
 - OpenAlex backfilled **801** authorships, including 12 AER articles that
-  lacked Crossref authors (4,786 → 4,798) and 359 ECMA articles.
+  lacked Crossref authors and 359 ECMA articles. A later administrative cleanup
+  moved 11 AER society records out of the article count, leaving 4,787 AER
+  research articles in the combined database.
 - The combined identity layer has **10,065 canonical authors** and **24,478**
   coauthorship edges.
 - Cross-journal reach is large: **3,337** authors appear in at least two
@@ -138,23 +140,27 @@ The combined database now has an ORCID career layer:
 - Identity tiers: 2,376 verified by DOI, 346 by title, 899 by institution, 454
   by economics-field signal, 1,439 unverified (events withheld), 150 rejected
   for name conflict, 294 for field mismatch, and 28 for career risk.
-- **4,004 of 25,258 author slots (15.8%)** receive an ORCID career stage:
-  506 high, 1,213 medium, and 2,285 low confidence.
+- **4,003 of 25,241 author slots (15.9%)** receive an ORCID career stage,
+  plus **74** CV assignments (246 parsed documents), for **4,077 total
+  assignments (16.2%)**. Confidence: 506 high, 1,213 medium, and 2,285 low
+  from ORCID, plus 14 high, 41 medium, and 19 low from CV.
 
 | Journal | Slots | Assigned | Coverage | High/medium |
 |---|---|---|---|---|
-| AER | 10,802 | 1,668 | 15.4% | 734 |
-| RES | 4,034 | 710 | 17.6% | 322 |
-| ECMA | 3,859 | 587 | 15.2% | 226 |
-| JPE | 3,478 | 620 | 17.8% | 261 |
-| QJE | 3,085 | 419 | 13.6% | 176 |
+| AER | 10,786 | 1,700 | 15.8% | 760 |
+| RES | 4,034 | 718 | 17.8% | 328 |
+| ECMA | 3,859 | 607 | 15.7% | 241 |
+| JPE | 3,477 | 629 | 18.1% | 266 |
+| QJE | 3,085 | 423 | 13.7% | 179 |
 
-This is an **ORCID-only** layer for the combined database. The separate AER
-database still reaches 21.4% because it also has byline rank (669 slots) and CV
-(45 slots) evidence. New-journal authors have no byline rank data, so their
-coverage is lower and remains visibly missing rather than imputed. Coverage
-rises from about 11% for 2000 papers to about 21% for 2026 papers, tracking the
-period ORCID records describe best.
+This is an **ORCID plus partial-CV** layer for the combined database. The CV
+crawl has parsed 246 documents into 1,040 events and 74 assignments; 760 ORCID
+homepage candidates remain queued. The separate AER database still reaches
+21.4% because it also has byline rank (669 slots) and a fuller CV corpus.
+New-journal authors have no byline rank data, so their coverage is lower and
+remains visibly missing rather than imputed. Coverage rises from about 11% for
+2000 papers to about 21% for 2026 papers, tracking the period ORCID records
+describe best.
 
 ### M7.4 progress
 

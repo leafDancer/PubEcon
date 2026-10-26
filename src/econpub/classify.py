@@ -170,6 +170,18 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
             OR LOWER(COALESCE(title,'')) LIKE 'committee on the status%'
             OR LOWER(COALESCE(title,'')) LIKE '%job openings for economists%'
             OR LOWER(COALESCE(title,'')) LIKE 'information on the association%'
+            OR LOWER(COALESCE(title,'')) LIKE 'independent auditor%'
+            OR LOWER(COALESCE(title,'')) LIKE 'auditors'' report%'
+            OR LOWER(COALESCE(title,'')) LIKE 'certificate of incorporation%'
+            OR LOWER(COALESCE(title,'')) LIKE 'honors and awards%'
+            OR LOWER(COALESCE(title,'')) LIKE 'past officers%'
+            OR LOWER(COALESCE(title,'')) LIKE 'search committee%'
+            OR LOWER(COALESCE(title,'')) LIKE 'ad hoc search committee%'
+            OR LOWER(COALESCE(title,'')) LIKE 'excellence in refereeing%'
+            OR LOWER(COALESCE(title,'')) LIKE 'proceedings of the one hundred%'
+            OR LOWER(COALESCE(title,'')) LIKE 'report of ad hoc committee%'
+            OR LOWER(COALESCE(title,'')) LIKE 'committee on economic education%'
+            OR LOWER(COALESCE(title,'')) LIKE 'committee on government relations%'
         )
         """
     )

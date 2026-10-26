@@ -157,7 +157,8 @@ export default function NetworkPage() {
       {!focus && (
         <p className="ep-network-note">
           Showing the top {formatNumber(graph.data?.meta.selected ?? limit)} authors in the selected
-          range, not the complete graph. A tie is one coauthored paper.
+          range, not the complete graph. A tie is one coauthored paper, and ties
+          may connect papers in different journals.
         </p>
       )}
 

@@ -15,7 +15,7 @@ classified in its own pilot database before the combined build.
   agree. Front matter includes editorial boards, tables of contents, covers,
   and referee lists. Crossref provides abstracts for about half the articles;
   OpenAlex raises coverage to 98.6%.
-- **JPE** — 2,143 records, 1,501 research articles. The largest correction was
+- **JPE** — 2,143 records, 1,500 research articles plus one explicit book review. The largest correction was
   editorial: 592 records are back-cover teasers, JPE turnaround-time tables,
   mastheads, indexes, and submission notices. "Back Cover" pages alone
   accounted for 166 records. Crossref has **no abstracts** for JPE; OpenAlex
@@ -34,14 +34,31 @@ classified in its own pilot database before the combined build.
 
 - **ECMA 2008–2014** deposits omit authors for 388 articles (DOI prefix
   `10.3982/ecta`). OpenAlex recovered 359 bylines (801 author slots). The
-  remaining 29 stay `unattributed`; they are visible in the report rather than
+  remaining 30 stay `unattributed`; they are visible in the report rather than
   dropped.
 - **AER** had 49 `unattributed` records before the combined build. OpenAlex
-  recovered authors for 12, raising AER research articles from 4,786 to 4,798
-  in the combined database. The AER baseline reports still reflect the older
-  number until the main database is refreshed.
+  recovered 12 AER bylines. A later administrative cleanup moved 11 AER society
+  records out of the article count, so the combined AER figure is 4,787. The
+  AER baseline reports still reflect the older number until the main database
+  is refreshed.
 - **JPE abstracts**: Crossref supplies none. This is a source limitation, not a
   parser failure; OpenAlex is required for JPE abstract coverage.
+
+## Random article-type sample
+
+A random sample of 12 research articles per journal was inspected by title and
+year after the classifier was applied. All sampled items were research
+contributions. One JPE item was an explicit reply ("Any Non-welfarist Method of
+Policy Assessment Violates the Pareto Principle: Reply"), which the pipeline
+keeps as a research article. The sample also surfaced one explicit JPE book
+review; the classifier now stores titles beginning with "Book Review" as
+`book_review`, not `article`.
+
+Comments and replies are kept as research articles by design: AER has 6 titles
+starting with "Comment", JPE 6 comments and 1 reply, and ECMA 12 comments and
+13 replies. Whether to expose them as a separate type is a product decision,
+not a silent reclassification. Unlabelled book reviews whose title is just the
+book title remain a known gap.
 
 ## Identity checks
 
@@ -71,11 +88,13 @@ were applied. Known risks were checked explicitly:
 
 ## Career coverage
 
-The combined pilot is ORCID-only: 4,004 of 25,258 slots (15.8%) receive a
-stage. Per journal: AER 15.4%, RES 17.6%, ECMA 15.2%, JPE 17.8%, QJE 13.6%.
-The AER baseline remains at 21.4% because it also has byline rank and CV
-evidence. New journals have no byline rank field in Crossref, so their
-coverage is structurally lower; no heuristic fills the gap.
+The combined pilot has ORCID plus a partial CV layer: 4,077 of 25,241 slots
+(16.2%) receive a stage. Per journal: AER 15.8%, RES 17.8%, ECMA 15.7%, JPE
+18.1%, QJE 13.7%. The CV crawl parsed 246 documents into 1,040 events and 74
+assignments; 760 ORCID homepage candidates remain queued. The AER baseline
+remains at 21.4% because it also has byline rank and a fuller CV corpus. New
+journals have no byline rank field in Crossref, so their coverage is
+structurally lower; no heuristic fills the gap.
 
 ## Still unverified
 

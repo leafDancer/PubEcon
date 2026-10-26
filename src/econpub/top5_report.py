@@ -130,6 +130,18 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
             """
         )
     )
+    cv = conn.execute(
+        """
+        SELECT
+            (SELECT COUNT(*) FROM author_cv_sources) AS sources,
+            (SELECT COUNT(*) FROM author_cv_sources WHERE status='candidate') AS candidates,
+            (SELECT COUNT(*) FROM author_cv_sources WHERE status='parsed') AS parsed,
+            (SELECT COUNT(*) FROM author_cv_sources WHERE status='failed') AS failed,
+            (SELECT COUNT(*) FROM career_events WHERE source_type='cv') AS events,
+            (SELECT COUNT(*) FROM career_assignments WHERE evidence_type LIKE 'cv%') AS assignments,
+            (SELECT COUNT(DISTINCT author_id) FROM career_events WHERE source_type='cv') AS authors
+        """
+    ).fetchone()
     totals = conn.execute(
         """
         SELECT
@@ -151,6 +163,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
         "inventory": inventory,
         "career_by_journal": career,
         "career_evidence": evidence,
+        "cv": dict(cv),
         "orcid_tiers": orcid_tiers,
         "journal_reach": reach,
         "top_cross_journal_authors": top_cross,
@@ -261,6 +274,28 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
     lines.append(
         "Career evidence is ORCID and CV only for the new journals. AER also has "
         "byline rank evidence. Unknown slots are not imputed."
+    )
+    lines.append("")
+    lines.append("## CV coverage")
+    lines.append("")
+    lines.append(
+        _table(
+            ["Metric", "Value"],
+            [
+                ("CV/homepage sources", cv["sources"]),
+                ("  — candidates not yet processed", cv["candidates"]),
+                ("  — parsed documents", cv["parsed"]),
+                ("  — failed", cv["failed"]),
+                ("Authors with CV events", cv["authors"]),
+                ("CV career events", cv["events"]),
+                ("CV career assignments", cv["assignments"]),
+            ],
+        )
+    )
+    lines.append("")
+    lines.append(
+        "The CV crawl is resumable. A non-zero candidate count is a visible queue, "
+        "not a claim that no CV exists."
     )
     lines.append("")
     lines.append("## Career evidence")

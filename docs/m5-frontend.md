@@ -44,7 +44,7 @@ On the API side, allow the frontend origin:
 
 ```powershell
 $env:ECONPUB_CORS_ORIGINS="https://econpub.example.org"
-$env:ECONPUB_DB="D:\data\econpub.db"
+$env:ECONPUB_DB="D:\data	op5.db"
 uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 ```
 
@@ -53,9 +53,9 @@ uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 | Route | Purpose |
 |---|---|
 | `GET /api/health` | Liveness and database path |
-| `GET /api/overview` | Landing-page counts, yearly series, stages, institutions, recent and most-cited papers |
+| `GET /api/overview` | Landing-page counts, per-journal inventory and coverage, yearly series, stages, institutions, recent and most-cited papers |
 | `GET /api/stats` | Same statistical payload without the landing-page framing |
-| `GET /api/papers` | Paginated paper index; filters `q`, `year_from`, `year_to`, `is_pp`, `sort` |
+| `GET /api/papers` | Paginated paper index; filters `q`, `journal`, `year_from`, `year_to`, `is_pp`, `sort` |
 | `GET /api/papers/{doi}` | Paper detail: authorships, career assignments, institutions, JEL, OpenAlex topics, provenance |
 | `GET /api/authors` | Paginated author index; filters `q`, `stage`, `year_from`, `year_to`, `sort` |
 | `GET /api/authors/{stable_id}` | Author profile, career events, per-paper assignments, coauthors, institutions |
@@ -88,6 +88,7 @@ The interface is a research ledger, not a dashboard of cards:
 ## Deployment
 
 - **Backend:** run `uvicorn econpub.api:app` behind a reverse proxy. The database is read-only and can be mounted on persistent storage. Set `ECONPUB_CORS_ORIGINS` to the frontend origin.
+- **Database:** set `ECONPUB_DB` to the combined top-five database for the full product; omit it to serve the AER baseline.
 - **Frontend:** `npm run build` produces `web/dist`. Serve it from any static host with SPA rewrites to `index.html`.
 - **GitHub Pages:** `npm run build` also writes `dist/404.html` as a copy of the app shell. Set `VITE_BASE` to the repository path so asset URLs and the React Router basename match:
 
