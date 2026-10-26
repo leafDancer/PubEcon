@@ -58,6 +58,7 @@ export default function NetworkPage() {
   }
 
   const focusName = graph.data?.nodes.find((node) => node.id === focus)?.name
+  const knownStageCount = graph.data?.nodes.filter((node) => node.stage).length ?? 0
 
   return (
     <div className="ep-page ep-network-page">
@@ -187,7 +188,12 @@ export default function NetworkPage() {
           range, not the complete graph. A tie is one coauthored paper
           {journal === 'all'
             ? ', and ties may connect papers in different journals.'
-            : ` in ${journal}.`}
+            : ` in ${journal}.`}{' '}
+          {graph.data
+            ? `Career stage known for ${formatNumber(knownStageCount)} of ${formatNumber(
+                graph.data.nodes.length,
+              )} authors in view.`
+            : ''}
         </p>
       )}
 
