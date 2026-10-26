@@ -12,6 +12,7 @@ export default function AuthorsPage() {
   const [params, setParams] = useSearchParams()
   const qParam = params.get('q') ?? ''
   const stage = params.get('stage') ?? 'all'
+  const journal = params.get('journal') ?? 'all'
   const yearFrom = Number(params.get('year_from') ?? 2000)
   const yearTo = Number(params.get('year_to') ?? 2026)
   const sort = params.get('sort') ?? 'papers'
@@ -39,18 +40,22 @@ export default function AuthorsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qParam])
 
+  const overview = useApi(() => api.overview(), [])
+  const journalOptions = overview.data?.dataset.journals ?? []
+
   const listing = useApi(
     () =>
       api.authors({
         q: qParam,
         stage: stage === 'all' ? undefined : stage,
+        journal: journal === 'all' ? undefined : journal,
         year_from: yearFrom,
         year_to: yearTo,
         sort,
         page,
         page_size: 25,
       }),
-    [qParam, stage, yearFrom, yearTo, sort, page],
+    [qParam, stage, journal, yearFrom, yearTo, sort, page],
   )
 
   return (
@@ -59,8 +64,8 @@ export default function AuthorsPage() {
         <p className="ep-kicker">People</p>
         <h1>Authors</h1>
         <p className="ep-page-deck">
-          Canonical author identities, the papers they published in the AER, and the career stage
-          evidence attached to each appearance.
+          Canonical author identities, the papers they published across the top five journals, and
+          the career stage evidence attached to each appearance.
         </p>
       </header>
 
@@ -74,6 +79,24 @@ export default function AuthorsPage() {
             onChange={(event) => setQInput(event.target.value)}
           />
         </label>
+        {journalOptions.length > 1 && (
+          <label className="ep-field">
+            <span>Journal</span>
+            <select
+              value={journal}
+              onChange={(event) =>
+                update({ journal: event.target.value === 'all' ? null : event.target.value })
+              }
+            >
+              <option value="all">All five</option>
+              {journalOptions.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.code} — {item.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="ep-field">
           <span>Stage</span>
           <select value={stage} onChange={(event) => update({ stage: event.target.value })}>
@@ -116,7 +139,7 @@ export default function AuthorsPage() {
           <select value={sort} onChange={(event) => update({ sort: event.target.value })}>
             <option value="papers">Most papers</option>
             <option value="name">Name A–Z</option>
-            <option value="first_year">First AER year</option>
+            <option value="first_year">First year</option>
             <option value="recent">Most recent</option>
           </select>
         </label>
@@ -127,6 +150,7 @@ export default function AuthorsPage() {
           {listing.data ? (
             <>
               <strong>{formatNumber(listing.data.total)}</strong> authors
+              {journal !== 'all' ? ` in ${journal}` : ''}
               {qParam ? ` matching “${qParam}”` : ''}
             </>
           ) : (

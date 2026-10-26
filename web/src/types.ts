@@ -40,7 +40,7 @@ export interface Overview {
   generated_at: string
   dataset: {
     journal: string
-    issn: string
+    issn: string | null
     journals: Array<{ code: string; name: string; issn: string | null; papers: number; abstracts: number }>
     start_year: number
   }
@@ -175,6 +175,7 @@ export interface CareerEvent {
 export interface AuthorPaper {
   doi: string
   title: string
+  journal: string
   year: number
   month: number | null
   volume: string | null

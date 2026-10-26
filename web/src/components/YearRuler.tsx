@@ -42,7 +42,7 @@ export default function YearRuler({ years }: { years: YearPoint[] }) {
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="img"
-          aria-label="Articles published in the American Economic Review by year, split between regular articles and Papers and Proceedings."
+          aria-label="Research articles by year across the five journals, split between regular articles and AER Papers and Proceedings."
           onMouseLeave={() => setHover(null)}
         >
           <line x1={LEFT} y1={BOTTOM} x2={RIGHT} y2={BOTTOM} className="ep-year-baseline" />

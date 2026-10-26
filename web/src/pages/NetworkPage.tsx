@@ -157,7 +157,7 @@ export default function NetworkPage() {
       {!focus && (
         <p className="ep-network-note">
           Showing the top {formatNumber(graph.data?.meta.selected ?? limit)} authors in the selected
-          range, not the complete graph. A tie is one coauthored AER paper.
+          range, not the complete graph. A tie is one coauthored paper.
         </p>
       )}
 
@@ -173,7 +173,7 @@ export default function NetworkPage() {
             <div className="ep-section-heading">
               <div>
                 <h2>Authors in this view</h2>
-                <p>Ranked by AER papers in the selected range. Node colour carries confidence.</p>
+                <p>Ranked by papers in the selected range. Node colour carries confidence.</p>
               </div>
             </div>
             <div className="ep-table-wrap">

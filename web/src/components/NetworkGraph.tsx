@@ -200,7 +200,7 @@ export default function NetworkGraph({
         <svg
           ref={svgRef}
           role="img"
-          aria-label={`Coauthor network with ${nodes.length} authors and ${edges.length} ties. Node colour shows career evidence confidence; node size shows AER papers.`}
+          aria-label={`Coauthor network with ${nodes.length} authors and ${edges.length} ties. Node colour shows career evidence confidence; node size shows papers in view.`}
         />
         {hover && (
           <div className="ep-chart-tip ep-network-tip" style={{ left: hover.x, top: hover.y }}>
@@ -226,7 +226,7 @@ export default function NetworkGraph({
           <span className="ep-legend-dot is-low" /> Low
           <span className="ep-legend-dot is-unknown" /> No stage
         </span>
-        <span className="ep-legend">Node size = AER papers in view. Edge width = shared papers.</span>
+        <span className="ep-legend">Node size = papers in view. Edge width = shared papers.</span>
       </div>
     </div>
   )

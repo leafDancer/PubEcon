@@ -30,6 +30,7 @@ export default function PaperPage() {
             Vol. {data.volume ?? '—'}, No. {data.issue ?? '—'}
           </span>
           {data.pages && <span>pp. {data.pages}</span>}
+          <span className="ep-flag is-journal">{data.journal}</span>
           {data.is_pp && <span className="ep-flag">Papers &amp; Proceedings</span>}
           {data.retraction_status && <span className="ep-flag is-alert">Retracted</span>}
         </div>
@@ -133,6 +134,10 @@ export default function PaperPage() {
                     {data.doi}
                   </a>
                 </dd>
+              </div>
+              <div>
+                <dt>Journal</dt>
+                <dd>{data.journal}</dd>
               </div>
               <div>
                 <dt>Published</dt>

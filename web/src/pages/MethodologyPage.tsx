@@ -44,10 +44,12 @@ export default function MethodologyPage() {
           <section id="scope">
             <h2>Scope</h2>
             <p>
-              The record covers the <em>American Economic Review</em> (ISSN 0002-8282) from 2000
-              onward. It includes research articles and, through 2017, the AER Papers &amp;
-              Proceedings. It does not include the pre-2000 archive, full text, or personal data
-              such as birth dates, home addresses, or email addresses.
+              The record covers the top five economics journals — the <em>American Economic
+              Review</em>, <em>Quarterly Journal of Economics</em>, <em>Journal of Political
+              Economy</em>, <em>Review of Economic Studies</em>, and <em>Econometrica</em> — from
+              2000 onward. AER includes its Papers &amp; Proceedings through 2017. The record does
+              not include the pre-2000 archive, full text, or personal data such as birth dates,
+              home addresses, or email addresses.
             </p>
             <div className="ep-method-stats">
               <span>
@@ -137,7 +139,7 @@ export default function MethodologyPage() {
             <h2>ORCID identity validation</h2>
             <p>
               An ORCID link is not accepted merely because OpenAlex attached it to an authorship.
-              The record is checked against the author&apos;s AER papers and affiliations first.
+              The record is checked against the author&apos;s papers and affiliations across the five journals first.
             </p>
             <div className="ep-table-wrap">
               <table className="ep-table">
@@ -153,28 +155,28 @@ export default function MethodologyPage() {
                     <td>
                       <code>verified_doi</code>
                     </td>
-                    <td>An ORCID work DOI matches an AER DOI</td>
+                    <td>An ORCID work DOI matches a paper DOI</td>
                     <td>Events used; confidence retained</td>
                   </tr>
                   <tr>
                     <td>
                       <code>verified_title</code>
                     </td>
-                    <td>An ORCID work title matches an AER title</td>
+                    <td>An ORCID work title matches a paper title</td>
                     <td>Events used; confidence retained</td>
                   </tr>
                   <tr>
                     <td>
                       <code>verified_institution</code>
                     </td>
-                    <td>ORCID employment/education overlaps an AER byline institution</td>
+                    <td>ORCID employment/education overlaps a byline institution</td>
                     <td>Events used; capped at medium</td>
                   </tr>
                   <tr>
                     <td>
                       <code>field_economics</code>
                     </td>
-                    <td>An economics department or core economics journal, without a direct AER link</td>
+                    <td>An economics department or core economics journal, without a direct paper link</td>
                     <td>Events used; capped at low and flagged</td>
                   </tr>
                   <tr>

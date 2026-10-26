@@ -47,6 +47,7 @@ export default function PaperRow({ paper }: { paper: Paper }) {
         )}
       </div>
       <div className="ep-paper-flags">
+        <span className="ep-flag is-journal">{paper.journal}</span>
         {paper.is_pp && <span className="ep-flag">P&amp;P</span>}
         {paper.retraction_status && <span className="ep-flag is-alert">Retracted</span>}
       </div>

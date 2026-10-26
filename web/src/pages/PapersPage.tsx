@@ -11,6 +11,7 @@ const YEARS = Array.from({ length: 27 }, (_, index) => 2000 + index)
 export default function PapersPage() {
   const [params, setParams] = useSearchParams()
   const qParam = params.get('q') ?? ''
+  const journal = params.get('journal') ?? 'all'
   const yearFrom = Number(params.get('year_from') ?? 2000)
   const yearTo = Number(params.get('year_to') ?? 2026)
   const pp = params.get('pp') ?? 'all'
@@ -42,11 +43,15 @@ export default function PapersPage() {
     setParams(next, { replace: true })
   }
 
+  const overview = useApi(() => api.overview(), [])
+  const journalOptions = overview.data?.dataset.journals ?? []
+
   const isPp = pp === 'pp' ? true : pp === 'articles' ? false : undefined
   const listing = useApi(
     () =>
       api.papers({
         q: qParam,
+        journal: journal === 'all' ? undefined : journal,
         year_from: yearFrom,
         year_to: yearTo,
         is_pp: isPp,
@@ -54,7 +59,7 @@ export default function PapersPage() {
         page,
         page_size: 25,
       }),
-    [qParam, yearFrom, yearTo, pp, sort, page],
+    [qParam, journal, yearFrom, yearTo, pp, sort, page],
   )
 
   return (
@@ -63,7 +68,7 @@ export default function PapersPage() {
         <p className="ep-kicker">The record</p>
         <h1>Papers</h1>
         <p className="ep-page-deck">
-          Research articles from the <em>American Economic Review</em>, 2000–2026, including
+          Research articles from the top five economics journals, 2000–2026, including AER
           Papers &amp; Proceedings through 2017.
         </p>
       </header>
@@ -78,6 +83,27 @@ export default function PapersPage() {
             onChange={(event) => setQInput(event.target.value)}
           />
         </label>
+        {journalOptions.length > 1 && (
+          <label className="ep-field">
+            <span>Journal</span>
+            <select
+              value={journal}
+              onChange={(event) =>
+                update({
+                  journal: event.target.value === 'all' ? null : event.target.value,
+                  pp: 'all',
+                })
+              }
+            >
+              <option value="all">All five</option>
+              {journalOptions.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.code} — {item.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="ep-field">
           <span>From</span>
           <select
@@ -104,14 +130,16 @@ export default function PapersPage() {
             ))}
           </select>
         </label>
-        <label className="ep-field">
-          <span>Type</span>
-          <select value={pp} onChange={(event) => update({ pp: event.target.value })}>
-            <option value="all">All research</option>
-            <option value="articles">Regular articles</option>
-            <option value="pp">Papers &amp; Proceedings</option>
-          </select>
-        </label>
+        {(journal === 'all' || journal === 'AER') && (
+          <label className="ep-field">
+            <span>Type</span>
+            <select value={pp} onChange={(event) => update({ pp: event.target.value })}>
+              <option value="all">All research</option>
+              <option value="articles">Regular articles</option>
+              <option value="pp">Papers &amp; Proceedings</option>
+            </select>
+          </label>
+        )}
         <label className="ep-field">
           <span>Sort</span>
           <select value={sort} onChange={(event) => update({ sort: event.target.value })}>
@@ -128,6 +156,7 @@ export default function PapersPage() {
           {listing.data ? (
             <>
               <strong>{formatNumber(listing.data.total)}</strong> papers
+              {journal !== 'all' ? ` in ${journal}` : ''}
               {qParam ? ` matching “${qParam}”` : ''}
             </>
           ) : (

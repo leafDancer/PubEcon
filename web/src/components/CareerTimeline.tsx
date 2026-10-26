@@ -85,7 +85,7 @@ export default function CareerTimeline({ author }: { author: AuthorDetail }) {
           <div className="ep-timeline-row is-papers">
             <div className="ep-timeline-label">
               <span className="ep-timeline-label-main">Papers</span>
-              <span className="ep-timeline-label-meta">{author.paper_list.length} AER articles</span>
+              <span className="ep-timeline-label-meta">{author.paper_list.length} articles</span>
             </div>
             <div className="ep-timeline-track">
               {[...papersByYear.entries()].map(([year, papers]) => (
@@ -142,7 +142,7 @@ export default function CareerTimeline({ author }: { author: AuthorDetail }) {
       {dated.length === 0 && author.paper_list.length > 0 && (
         <p className="ep-empty-inline">
           No dated employment or education events are available for this author. The paper markers
-          above show when they published in the AER.
+          above show when they published in these journals.
         </p>
       )}
 

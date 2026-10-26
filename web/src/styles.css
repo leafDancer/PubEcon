@@ -407,6 +407,12 @@ h3 {
   color: var(--rust);
 }
 
+.ep-flag.is-journal {
+  border-color: var(--cobalt);
+  background: var(--cobalt-soft);
+  color: var(--cobalt);
+}
+
 .ep-alert {
   margin: 18px 0;
   padding: 12px 15px;
@@ -672,6 +678,68 @@ h3 {
   font-size: 12px;
   text-align: right;
   color: var(--muted);
+}
+
+/* Journal breakdown */
+
+.ep-journal-panel {
+  margin-top: 24px;
+}
+
+.ep-journal-list {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.ep-journal-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 110px 130px;
+  gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.ep-journal-row:hover {
+  background: var(--sheet-strong);
+}
+
+.ep-journal-code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--cobalt);
+}
+
+.ep-journal-name {
+  font-size: 14px;
+}
+
+.ep-journal-metric {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ep-journal-metric strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .ep-journal-row {
+    grid-template-columns: 48px minmax(0, 1fr);
+    row-gap: 2px;
+  }
+
+  .ep-journal-metric {
+    grid-column: 2;
+    text-align: left;
+  }
 }
 
 /* Year ruler */

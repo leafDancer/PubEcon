@@ -12,6 +12,9 @@ const nav = [
 
 export default function AppShell() {
   const { data } = useApi(() => api.overview(), [])
+  const journals = data?.dataset.journals ?? []
+  const isMulti = journals.length > 1
+  const scopeLabel = isMulti ? 'Top 5' : journals[0]?.code ?? 'AER'
   return (
     <div className="ep-shell">
       <a className="ep-skip" href="#main">
@@ -21,7 +24,7 @@ export default function AppShell() {
         <div className="ep-rail-top">
           <NavLink to="/" className="ep-wordmark" end>
             <span className="ep-wordmark-name">EconPub</span>
-            <span className="ep-wordmark-meta">AER 2000–2026</span>
+            <span className="ep-wordmark-meta">{scopeLabel} 2000–2026</span>
           </NavLink>
           <nav className="ep-nav" aria-label="Primary">
             {nav.map((item) => (
@@ -38,8 +41,13 @@ export default function AppShell() {
         </div>
         <div className="ep-rail-bottom">
           <p className="ep-rail-note">
-            A public record of the <em>American Economic Review</em>, built from publisher metadata,
-            OpenAlex, ORCID, and public CVs.
+            A public record of{' '}
+            {isMulti ? (
+              <em>the top five economics journals</em>
+            ) : (
+              <em>the American Economic Review</em>
+            )}
+            , built from publisher metadata, OpenAlex, ORCID, and public CVs.
           </p>
           <dl className="ep-rail-stats">
             <div>
@@ -83,9 +91,15 @@ export default function AppShell() {
             <a href="https://www.aeaweb.org/journals/aer" target="_blank" rel="noreferrer">
               AER at AEA
             </a>
-            <a href="https://doi.org/10.1257/aer" target="_blank" rel="noreferrer">
-              DOI prefix
-            </a>
+            {isMulti ? (
+              <a href="https://www.crossref.org" target="_blank" rel="noreferrer">
+                Crossref
+              </a>
+            ) : (
+              <a href="https://doi.org/10.1257/aer" target="_blank" rel="noreferrer">
+                DOI prefix
+              </a>
+            )}
           </p>
         </footer>
       </div>

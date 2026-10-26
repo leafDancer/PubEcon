@@ -40,11 +40,12 @@ export default function OverviewPage() {
     <div className="ep-page ep-overview">
       <section className="ep-hero">
         <div className="ep-hero-copy">
-          <p className="ep-kicker">American Economic Review / 2000–2026</p>
+          <p className="ep-kicker">{data.dataset.journal} / 2000–2026</p>
           <h1>Twenty-six years of economics, in the open.</h1>
           <p className="ep-hero-deck">
-            Every AER research article since 2000, its authors, and the career stage each author
-            held when the paper was published. Evidence and confidence travel with every claim.
+            Every research article in the top five economics journals since 2000, its authors,
+            and the career stage each author held when the paper was published. Evidence and
+            confidence travel with every claim.
           </p>
           <div className="ep-actions">
             <Link className="ep-button" to="/papers">
@@ -64,7 +65,7 @@ export default function OverviewPage() {
         <Stat
           value={formatNumber(data.counts.papers)}
           label="research articles"
-          note={`${formatNumber(data.counts.pp_papers)} from Papers & Proceedings`}
+          note={`${formatNumber(data.counts.pp_papers)} AER Papers & Proceedings`}
         />
         <Stat value={formatNumber(data.counts.authors)} label="canonical authors" note="with stable public IDs" />
         <Stat
@@ -75,7 +76,7 @@ export default function OverviewPage() {
         <Stat
           value={formatNumber(data.counts.coauthorship_edges)}
           label="coauthor ties"
-          note="from 4,786 article records"
+          note={`from ${formatNumber(data.counts.papers)} article records`}
         />
       </section>
 
@@ -132,6 +133,40 @@ export default function OverviewPage() {
         </div>
       </section>
 
+      <section className="ep-panel ep-journal-panel">
+        <div className="ep-section-heading">
+          <div>
+            <h2>The five journals</h2>
+            <p>
+              Each journal is a first-class scope, not a filter applied after the fact. Coverage
+              is reported separately so a pooled number never hides a weak journal.
+            </p>
+          </div>
+          <Link className="ep-text-link" to="/papers">
+            Browse all
+          </Link>
+        </div>
+        <div className="ep-journal-list">
+          {data.dataset.journals.map((item) => (
+            <Link
+              className="ep-journal-row"
+              key={item.code}
+              to={`/papers?journal=${item.code}`}
+            >
+              <span className="ep-journal-code">{item.code}</span>
+              <span className="ep-journal-name">{item.name}</span>
+              <span className="ep-journal-metric">
+                <strong>{formatNumber(item.papers)}</strong> papers
+              </span>
+              <span className="ep-journal-metric">
+                <strong>{formatPct((100 * item.abstracts) / Math.max(item.papers, 1))}</strong>{' '}
+                abstracts
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="ep-split ep-lists">
         <div className="ep-panel">
           <div className="ep-section-heading">
@@ -171,7 +206,7 @@ export default function OverviewPage() {
         <div className="ep-panel">
           <div className="ep-section-heading">
             <div>
-              <h2>Authors with the deepest AER record</h2>
+              <h2>Authors with the deepest record</h2>
               <p>Ranked by research articles in the database.</p>
             </div>
             <Link className="ep-text-link" to="/authors">
@@ -204,12 +239,12 @@ export default function OverviewPage() {
               <dt>Career stage</dt>
               <dd>
                 {formatPct(data.coverage.career)} of author slots. ORCID identities are validated
-                against AER evidence before their events are used.
+                against their publication record before their events are used.
               </dd>
             </div>
             <div>
               <dt>Abstracts</dt>
-              <dd>{formatPct(data.coverage.abstract)} of articles have an abstract from AEA, Crossref, or OpenAlex.</dd>
+              <dd>{formatPct(data.coverage.abstract)} of articles have an abstract from the publisher, Crossref, or OpenAlex.</dd>
             </div>
             <div>
               <dt>Institutions</dt>

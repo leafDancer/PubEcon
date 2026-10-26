@@ -37,7 +37,7 @@ export default function AuthorPage() {
           <p className="ep-kicker">Author record / {data.stable_id}</p>
           <h1>{data.name}</h1>
           <p className="ep-page-deck">
-            {data.institution ?? 'Institution not resolved'} (AER papers {yearRange(data.first_year, data.last_year)})
+            {data.institution ?? 'Institution not resolved'} (papers {yearRange(data.first_year, data.last_year)})
           </p>
           <div className="ep-author-head-links">
             {data.orcid ? (
@@ -59,7 +59,7 @@ export default function AuthorPage() {
         <div className="ep-author-head-stats">
           <div>
             <strong>{formatNumber(data.papers)}</strong>
-            <span>AER papers</span>
+            <span>papers</span>
           </div>
           <div>
             <strong>{formatNumber(data.coauthor_count)}</strong>
@@ -85,7 +85,7 @@ export default function AuthorPage() {
         <section className="ep-panel" aria-labelledby="author-papers">
           <div className="ep-section-heading">
             <div>
-              <h2 id="author-papers">AER papers</h2>
+              <h2 id="author-papers">Papers</h2>
               <p>Each row carries the stage assigned at that paper&apos;s publication date.</p>
             </div>
           </div>
@@ -97,6 +97,7 @@ export default function AuthorPage() {
                 <thead>
                   <tr>
                     <th scope="col">Year</th>
+                    <th scope="col">Journal</th>
                     <th scope="col">Paper</th>
                     <th scope="col">Stage at publication</th>
                     <th scope="col">Evidence</th>
@@ -106,6 +107,9 @@ export default function AuthorPage() {
                   {data.paper_list.map((paper) => (
                     <tr key={`${paper.doi}-${paper.author_order}`}>
                       <td>{paper.year}</td>
+                      <td>
+                        <span className="ep-flag is-journal">{paper.journal}</span>
+                      </td>
                       <td>
                         <Link to={`/papers/${paper.doi}`}>{paper.title}</Link>
                         <small className="ep-cell-note">

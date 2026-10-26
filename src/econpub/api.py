@@ -12,7 +12,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .config import DB_PATH, JOURNAL_ISSN, JOURNAL_NAME, JOURNALS, START_YEAR
+from .config import DB_PATH, JOURNALS, START_YEAR
 from .normalize import normalize_doi
 
 STAGE_ORDER = [
@@ -291,11 +291,15 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
         }
         for row in journal_rows
     ]
+    scope_label = (
+        journals[0]["name"] if len(journals) == 1 else "Top five economics journals"
+    )
+    scope_issn = journals[0]["issn"] if len(journals) == 1 else None
     return {
         "generated_at": _utcnow(),
         "dataset": {
-            "journal": JOURNAL_NAME,
-            "issn": JOURNAL_ISSN,
+            "journal": scope_label,
+            "issn": scope_issn,
             "journals": journals,
             "start_year": START_YEAR,
         },
@@ -375,11 +379,41 @@ def _recent_papers(conn: sqlite3.Connection, limit: int = 6) -> list[dict[str, A
         ORDER BY p.published_year DESC, p.published_month DESC, p.doi DESC
         LIMIT ?
         """,
-        (limit,),
+        (limit * 8,),
     ).fetchall()
-    authors = _paper_authors(conn, [int(row["paper_id"]) for row in rows])
-    items = []
+    # Diversify the front page by journal: the newest row overall is usually
+    # AER simply because it has the most papers, which would make a
+    # multi-journal record look AER-only.
+    selected: list[sqlite3.Row] = []
+    used: set[int] = set()
+    seen_journals: set[str] = set()
     for row in rows:
+        journal = row["journal_code"] or "AER"
+        if journal in seen_journals:
+            continue
+        selected.append(row)
+        used.add(int(row["paper_id"]))
+        seen_journals.add(journal)
+        if len(selected) == limit:
+            break
+    for row in rows:
+        if len(selected) >= limit:
+            break
+        if int(row["paper_id"]) in used:
+            continue
+        selected.append(row)
+        used.add(int(row["paper_id"]))
+    selected.sort(
+        key=lambda row: (
+            row["published_year"] or 0,
+            row["published_month"] or 0,
+            row["doi"] or "",
+        ),
+        reverse=True,
+    )
+    authors = _paper_authors(conn, [int(row["paper_id"]) for row in selected])
+    items = []
+    for row in selected:
         item = _paper_summary(row)
         item["authors"] = authors.get(int(row["paper_id"]), [])
         items.append(item)
@@ -604,7 +638,7 @@ def _author_detail(conn: sqlite3.Connection, stable_id: str) -> dict[str, Any]:
 
     papers = conn.execute(
         """
-        SELECT p.doi, p.title, p.published_year, p.published_month, p.volume, p.issue,
+        SELECT p.doi, p.title, p.journal_code, p.published_year, p.published_month, p.volume, p.issue,
                p.page_first, p.page_last, p.is_pp,
                s.author_order, ca.stage, ca.evidence_type,
                ca.confidence AS career_confidence, ca.notes, ca.source_url
@@ -698,6 +732,7 @@ def _author_detail(conn: sqlite3.Connection, stable_id: str) -> dict[str, Any]:
             {
                 "doi": row["doi"],
                 "title": row["title"],
+                "journal": row["journal_code"] or "AER",
                 "year": row["published_year"],
                 "month": row["published_month"],
                 "volume": row["volume"],
