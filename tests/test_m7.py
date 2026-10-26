@@ -11,6 +11,7 @@ from econpub import db
 from econpub.classify import classify_papers
 from econpub.config import DEFAULT_JOURNAL, JOURNALS
 from econpub.crossref import parse_item
+from econpub.top5_report import generate_top5_report
 
 
 class JournalRegistryTests(unittest.TestCase):
@@ -136,6 +137,31 @@ class JournalClassificationTests(unittest.TestCase):
             ).fetchall()
             self.assertEqual([row["content_type"] for row in rows], ["article", "article"])
             self.assertEqual([row["is_duplicate"] for row in rows], [0, 0])
+            conn.close()
+
+    def test_top5_report_lists_each_journal(self) -> None:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as temp:
+            path = Path(temp) / "test.db"
+            conn = db.connect(path)
+            db.init_db(conn)
+            for journal, doi in (("AER", "10.1257/aer.1"), ("QJE", "10.1093/qje.1")):
+                cursor = conn.execute(
+                    """
+                    INSERT INTO papers (doi, journal_code, title, created_at, updated_at)
+                    VALUES (?, ?, 'A Paper', '2026-01-01', '2026-01-01')
+                    """,
+                    (doi, journal),
+                )
+                conn.execute(
+                    "INSERT INTO authorships (paper_id, author_order, full_name) VALUES (?, 1, 'Jane Doe')",
+                    (cursor.lastrowid,),
+                )
+            conn.commit()
+            markdown, metrics = generate_top5_report(conn, path=Path(temp) / "report.md")
+            text = markdown.read_text(encoding="utf-8")
+            self.assertIn("| QJE |", text)
+            self.assertIn("| AER |", text)
+            self.assertTrue(metrics.exists())
             conn.close()
 
 

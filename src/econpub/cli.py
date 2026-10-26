@@ -88,6 +88,11 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser = subparsers.add_parser("report", help="Generate the M1 quality report")
     report_parser.add_argument("--db", type=Path, default=DB_PATH)
 
+    top5_parser = subparsers.add_parser(
+        "top5-report", help="Generate the combined top-five quality report"
+    )
+    top5_parser.add_argument("--db", type=Path, default=DB_PATH)
+
     all_parser = subparsers.add_parser("all", help="Harvest, then generate the report")
     all_parser.add_argument("--journal", choices=sorted(JOURNALS), default=DEFAULT_JOURNAL)
     all_parser.add_argument("--rows", type=int, default=1000)
@@ -411,6 +416,12 @@ def main(argv: list[str] | None = None) -> None:
                 print(f"Abstract cleanup: {clean_openalex_abstracts(conn)}")
                 link_openalex_authors(conn)
 
+        if args.command == "top5-report":
+            from .top5_report import generate_top5_report
+
+            markdown_path, metrics_path = generate_top5_report(conn)
+            print(f"Report:  {markdown_path}")
+            print(f"Metrics: {metrics_path}")
         if args.command in {"m2", "report", "all"}:
             report_path = REPORTS_DIR / ("m2_quality.md" if args.command == "m2" else "m1_quality.md")
             markdown_path, metrics_path = generate_report(conn, path=report_path)
