@@ -38,7 +38,12 @@ export interface TopAuthor {
 
 export interface Overview {
   generated_at: string
-  dataset: { journal: string; issn: string; start_year: number }
+  dataset: {
+    journal: string
+    issn: string
+    journals: Array<{ code: string; name: string; issn: string | null; papers: number; abstracts: number }>
+    start_year: number
+  }
   counts: {
     papers: number
     pp_papers: number
@@ -82,6 +87,7 @@ export interface AuthorRef {
 export interface Paper {
   doi: string
   title: string
+  journal: string
   year: number
   month: number | null
   date: string | null

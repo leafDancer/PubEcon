@@ -92,6 +92,11 @@ The multi-journal data foundation is in progress:
   longer be assigned to two components split by a namesake rule, and a merge
   candidate whose author was already merged in the same pass is left pending
   instead of dereferencing a missing row.
+- Cross-journal overlap is substantial even before the ORCID pass: the four
+  pilot databases contain **6,220** distinct OpenAlex-linked authors, of whom
+  **1,814** appear in at least two journals and **651** in at least three.
+  Merging identities across journals is therefore the main value of M7.2, not
+  a cosmetic deduplication step.
 
 ## Phases
 

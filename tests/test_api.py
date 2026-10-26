@@ -34,6 +34,8 @@ class ApiTests(unittest.TestCase):
         self.assertGreater(body["counts"]["papers"], 4000)
         self.assertLess(body["counts"]["pp_papers"], body["counts"]["papers"])
         self.assertTrue(body["years"])
+        self.assertTrue(body["dataset"]["journals"])
+        self.assertEqual(body["dataset"]["journals"][0]["code"], "AER")
         self.assertTrue(body["recent_papers"])
         self.assertTrue(body["recent_papers"][0].get("authors"))
 
@@ -44,6 +46,12 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(len(body["items"]), 2)
         self.assertGreater(body["total"], 4000)
         self.assertIn("authors", body["items"][0])
+        self.assertEqual(body["items"][0]["journal"], "AER")
+
+        filtered = self.client.get("/api/papers?journal=AER&page_size=2")
+        self.assertEqual(filtered.status_code, 200)
+        self.assertTrue(all(item["journal"] == "AER" for item in filtered.json()["items"]))
+        self.assertEqual(self.client.get("/api/papers?journal=NOPE").status_code, 422)
 
         doi = body["items"][0]["doi"]
         detail = self.client.get(f"/api/papers/{doi}")
@@ -61,6 +69,13 @@ class ApiTests(unittest.TestCase):
         author = body["items"][0]
         self.assertIn("papers", author)
         self.assertIn("coverage", author)
+
+        aer_only = self.client.get("/api/authors?q=Acemoglu&journal=AER")
+        self.assertEqual(aer_only.status_code, 200)
+        self.assertGreaterEqual(aer_only.json()["total"], 1)
+        qje_only = self.client.get("/api/authors?q=Acemoglu&journal=QJE")
+        self.assertEqual(qje_only.status_code, 200)
+        self.assertEqual(qje_only.json()["total"], 0)
 
         detail = self.client.get(f"/api/authors/{author['stable_id']}")
         self.assertEqual(detail.status_code, 200)

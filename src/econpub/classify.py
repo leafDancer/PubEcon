@@ -550,7 +550,7 @@ def detect_duplicates(conn: sqlite3.Connection) -> int:
     groups: dict[tuple[Any, ...], list[dict[str, Any]]] = defaultdict(list)
     for row in conn.execute(
         """
-        SELECT paper_id, doi, title, content_type, volume, issue,
+        SELECT paper_id, doi, title, content_type, journal_code, volume, issue,
                page_first, page_last, published_year, citation_count, abstract_available
         FROM papers
         WHERE content_type <> 'issue_metadata'
@@ -560,6 +560,7 @@ def detect_duplicates(conn: sqlite3.Connection) -> int:
         if not key:
             continue
         group_key = (
+            row["journal_code"] or "AER",
             key,
             row["published_year"],
             row["volume"],
@@ -638,7 +639,7 @@ def _aux_page_pass(conn: sqlite3.Connection, authors_by_paper: dict[int, set[str
     """
     rows = conn.execute(
         """
-        SELECT paper_id, doi, title, content_type, volume, issue,
+        SELECT paper_id, doi, title, content_type, journal_code, volume, issue,
                page_first, page_last, published_year, citation_count, abstract_available
         FROM papers
         WHERE content_type IN ('front_matter', 'association_report', 'unattributed', 'retraction_notice')
@@ -651,7 +652,14 @@ def _aux_page_pass(conn: sqlite3.Connection, authors_by_paper: dict[int, set[str
         pages = page_range(row["page_first"], row["page_last"])
         if pages is None:
             continue
-        groups[(row["published_year"], row["volume"], normalize_issue(row["issue"]))].append(
+        groups[
+            (
+                row["journal_code"] or "AER",
+                row["published_year"],
+                row["volume"],
+                normalize_issue(row["issue"]),
+            )
+        ].append(
             {
                 "paper_id": row["paper_id"],
                 "doi": row["doi"] or "",

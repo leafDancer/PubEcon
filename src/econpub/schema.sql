@@ -76,7 +76,6 @@ CREATE TABLE IF NOT EXISTS papers (
 );
 
 CREATE INDEX IF NOT EXISTS idx_papers_year ON papers(published_year);
-CREATE INDEX IF NOT EXISTS idx_papers_journal_year ON papers(journal_code, published_year);
 CREATE INDEX IF NOT EXISTS idx_papers_type ON papers(item_type);
 CREATE INDEX IF NOT EXISTS idx_papers_duplicate ON papers(is_duplicate);
 CREATE INDEX IF NOT EXISTS idx_papers_retraction ON papers(retraction_status);

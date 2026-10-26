@@ -109,6 +109,35 @@ class JournalClassificationTests(unittest.TestCase):
             self.assertEqual(types["10.1093/qje/announcements-research"], "article")
             conn.close()
 
+    def test_duplicate_detection_is_journal_scoped(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "test.db"
+            conn = db.connect(path)
+            db.init_db(conn)
+            for journal, doi in (("AER", "10.1257/aer.same"), ("QJE", "10.1093/qje.same")):
+                cursor = conn.execute(
+                    """
+                    INSERT INTO papers
+                        (doi, journal_code, item_type, title, volume, issue,
+                         page_first, page_last, published_year, created_at, updated_at)
+                    VALUES (?, ?, 'journal-article', 'Same Title', '1', '1',
+                            '1', '10', 2020, '2026-01-01', '2026-01-01')
+                    """,
+                    (doi, journal),
+                )
+                conn.execute(
+                    "INSERT INTO authorships (paper_id, author_order, full_name) VALUES (?, 1, 'Jane Doe')",
+                    (cursor.lastrowid,),
+                )
+            conn.commit()
+            classify_papers(conn)
+            rows = conn.execute(
+                "SELECT doi, content_type, is_duplicate FROM papers ORDER BY doi"
+            ).fetchall()
+            self.assertEqual([row["content_type"] for row in rows], ["article", "article"])
+            self.assertEqual([row["is_duplicate"] for row in rows], [0, 0])
+            conn.close()
+
 
 if __name__ == "__main__":
     unittest.main()

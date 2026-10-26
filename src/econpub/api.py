@@ -12,7 +12,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .config import DB_PATH, JOURNAL_ISSN, JOURNAL_NAME, START_YEAR
+from .config import DB_PATH, JOURNAL_ISSN, JOURNAL_NAME, JOURNALS, START_YEAR
 from .normalize import normalize_doi
 
 STAGE_ORDER = [
@@ -66,7 +66,7 @@ def _row(row: sqlite3.Row | None) -> dict[str, Any] | None:
 
 def _paper_columns() -> str:
     return """
-        p.paper_id, p.doi, p.title, p.content_type, p.is_pp, p.volume, p.issue,
+        p.paper_id, p.doi, p.title, p.content_type, p.journal_code, p.is_pp, p.volume, p.issue,
         p.page_first, p.page_last, p.published_year, p.published_month,
         p.published_date, p.abstract, p.abstract_available, p.abstract_source,
         p.citation_count, p.openalex_cited_by_count, p.openalex_id,
@@ -79,6 +79,7 @@ def _paper_summary(row: sqlite3.Row) -> dict[str, Any]:
     return {
         "doi": row["doi"],
         "title": row["title"],
+        "journal": row["journal_code"] or "AER",
         "year": row["published_year"],
         "month": row["published_month"],
         "date": row["published_date"],
@@ -269,11 +270,33 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
             """
         )
     ]
+    journal_rows = conn.execute(
+        """
+        SELECT COALESCE(p.journal_code,'AER') AS code,
+               COUNT(*) AS papers,
+               SUM(CASE WHEN p.abstract IS NOT NULL AND p.abstract<>'' THEN 1 ELSE 0 END) AS abstracts
+        FROM papers p
+        WHERE p.content_type='article' AND p.is_duplicate=0
+        GROUP BY COALESCE(p.journal_code,'AER')
+        ORDER BY papers DESC, code
+        """
+    ).fetchall()
+    journals = [
+        {
+            "code": row["code"],
+            "name": JOURNALS.get(row["code"]).name if row["code"] in JOURNALS else row["code"],
+            "issn": JOURNALS.get(row["code"]).issn if row["code"] in JOURNALS else None,
+            "papers": row["papers"],
+            "abstracts": row["abstracts"] or 0,
+        }
+        for row in journal_rows
+    ]
     return {
         "generated_at": _utcnow(),
         "dataset": {
             "journal": JOURNAL_NAME,
             "issn": JOURNAL_ISSN,
+            "journals": journals,
             "start_year": START_YEAR,
         },
         "counts": {
@@ -440,6 +463,7 @@ def _author_list_query(
     *,
     q: str | None,
     stage: str | None,
+    journal: str | None,
     year_from: int | None,
     year_to: int | None,
     sort: str,
@@ -451,6 +475,13 @@ def _author_list_query(
     if q:
         where.append("a.canonical_name LIKE ?")
         params.append(f"%{q}%")
+    if journal:
+        where.append(
+            """EXISTS (SELECT 1 FROM authorships sj JOIN papers pj ON pj.paper_id=sj.paper_id
+                       WHERE sj.author_id=a.author_id AND pj.journal_code=?
+                         AND pj.content_type='article' AND pj.is_duplicate=0)"""
+        )
+        params.append(journal)
     if stage:
         where.append(
             "EXISTS (SELECT 1 FROM career_assignments ca WHERE ca.author_id=a.author_id AND ca.stage=?)"
@@ -478,6 +509,9 @@ def _author_list_query(
 
     year_clause = ""
     paper_params: list[Any] = []
+    if journal:
+        year_clause += " AND p.journal_code=?"
+        paper_params.append(journal)
     if year_from is not None:
         year_clause += " AND p.published_year>=?"
         paper_params.append(year_from)
@@ -1093,6 +1127,7 @@ def create_app(
     @app.get("/api/papers")
     def papers(
         q: str | None = Query(None, max_length=200),
+        journal: str | None = Query(None, pattern="^(AER|QJE|JPE|RES|ECMA)$"),
         year_from: int | None = Query(None, ge=START_YEAR, le=2100),
         year_to: int | None = Query(None, ge=START_YEAR, le=2100),
         is_pp: bool | None = None,
@@ -1112,6 +1147,9 @@ def create_app(
                 )
                 like = f"%{q}%"
                 params.extend([like, like, like])
+            if journal:
+                where.append("p.journal_code=?")
+                params.append(journal)
             if year_from is not None:
                 where.append("p.published_year>=?")
                 params.append(year_from)
@@ -1165,6 +1203,7 @@ def create_app(
     def authors(
         q: str | None = Query(None, max_length=200),
         stage: str | None = None,
+        journal: str | None = Query(None, pattern="^(AER|QJE|JPE|RES|ECMA)$"),
         year_from: int | None = Query(None, ge=START_YEAR, le=2100),
         year_to: int | None = Query(None, ge=START_YEAR, le=2100),
         sort: str = Query("papers", pattern="^(papers|name|first_year|recent)$"),
@@ -1176,6 +1215,7 @@ def create_app(
                 conn,
                 q=q,
                 stage=stage,
+                journal=journal,
                 year_from=year_from,
                 year_to=year_to,
                 sort=sort,
