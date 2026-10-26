@@ -1,6 +1,6 @@
 # Top-five dataset report
 
-Generated 2026-10-26T07:03:58+00:00.
+Generated 2026-10-26T07:15:58+00:00.
 
 Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica*, 2000–present. AER includes Papers & Proceedings through 2017. Counts are research articles unless stated otherwise.
 
@@ -13,7 +13,7 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 | Author slots | 25241 |
 | Canonical authors | 10065 |
 | Coauthorship edges | 24478 |
-| Career assignments | 4077 |
+| Career assignments | 4109 |
 | Authors flagged for review | 2454 |
 | Separation rules | 3 |
 
@@ -31,11 +31,11 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 
 | Journal | Slots | Assigned | Coverage | High/medium |
 |---|---|---|---|---|
-| AER | 10786 | 1700 | 15.8% | 760 |
-| QJE | 3085 | 423 | 13.7% | 179 |
-| JPE | 3477 | 629 | 18.1% | 266 |
-| RES | 4034 | 718 | 17.8% | 328 |
-| ECMA | 3859 | 607 | 15.7% | 241 |
+| AER | 10786 | 1713 | 15.9% | 768 |
+| QJE | 3085 | 427 | 13.8% | 182 |
+| JPE | 3477 | 634 | 18.2% | 269 |
+| RES | 4034 | 722 | 17.9% | 332 |
+| ECMA | 3859 | 613 | 15.9% | 244 |
 
 Career evidence is ORCID and CV only for the new journals. AER also has byline rank evidence. Unknown slots are not imputed.
 
@@ -43,13 +43,13 @@ Career evidence is ORCID and CV only for the new journals. AER also has byline r
 
 | Metric | Value |
 |---|---|
-| CV/homepage sources | 2033 |
-|   — candidates not yet processed | 760 |
-|   — parsed documents | 246 |
-|   — failed | 416 |
-| Authors with CV events | 173 |
-| CV career events | 1040 |
-| CV career assignments | 74 |
+| CV/homepage sources | 2278 |
+|   — candidates not yet processed | 0 |
+|   — parsed documents | 438 |
+|   — failed | 777 |
+| Authors with CV events | 310 |
+| CV career events | 1895 |
+| CV career assignments | 106 |
 
 The CV crawl is resumable. A non-zero candidate count is a visible queue, not a claim that no CV exists.
 
@@ -61,9 +61,9 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 | orcid_employment | medium | 1143 |
 | orcid_employment | high | 506 |
 | orcid_education | medium | 70 |
-| cv_employment | medium | 39 |
-| cv_employment | low | 19 |
-| cv_employment | high | 14 |
+| cv_employment | medium | 56 |
+| cv_employment | low | 30 |
+| cv_employment | high | 18 |
 | orcid_education | low | 4 |
 | cv_education | medium | 2 |
 

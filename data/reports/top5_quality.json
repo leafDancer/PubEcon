@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-26T07:03:58+00:00",
+  "generated_at": "2026-10-26T07:15:58+00:00",
   "totals": {
     "records": 13443,
     "articles": 10956,
     "slots": 25241,
     "authors": 10065,
     "edges": 24478,
-    "assignments": 4077,
+    "assignments": 4109,
     "needs_review": 2454,
     "separation_rules": 3
   },
@@ -81,32 +81,32 @@
     {
       "journal": "AER",
       "slots": 10786,
-      "assigned": 1700,
-      "high_medium": 760
+      "assigned": 1713,
+      "high_medium": 768
     },
     {
       "journal": "ECMA",
       "slots": 3859,
-      "assigned": 607,
-      "high_medium": 241
+      "assigned": 613,
+      "high_medium": 244
     },
     {
       "journal": "JPE",
       "slots": 3477,
-      "assigned": 629,
-      "high_medium": 266
+      "assigned": 634,
+      "high_medium": 269
     },
     {
       "journal": "QJE",
       "slots": 3085,
-      "assigned": 423,
-      "high_medium": 179
+      "assigned": 427,
+      "high_medium": 182
     },
     {
       "journal": "RES",
       "slots": 4034,
-      "assigned": 718,
-      "high_medium": 328
+      "assigned": 722,
+      "high_medium": 332
     }
   ],
   "career_evidence": [
@@ -133,17 +133,17 @@
     {
       "evidence_type": "cv_employment",
       "confidence": "medium",
-      "n": 39
+      "n": 56
     },
     {
       "evidence_type": "cv_employment",
       "confidence": "low",
-      "n": 19
+      "n": 30
     },
     {
       "evidence_type": "cv_employment",
       "confidence": "high",
-      "n": 14
+      "n": 18
     },
     {
       "evidence_type": "orcid_education",
@@ -157,13 +157,13 @@
     }
   ],
   "cv": {
-    "sources": 2033,
-    "candidates": 760,
-    "parsed": 246,
-    "failed": 416,
-    "events": 1040,
-    "assignments": 74,
-    "authors": 173
+    "sources": 2278,
+    "candidates": 0,
+    "parsed": 438,
+    "failed": 777,
+    "events": 1895,
+    "assignments": 106,
+    "authors": 310
   },
   "orcid_tiers": [
     {

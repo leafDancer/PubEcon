@@ -88,10 +88,10 @@ were applied. Known risks were checked explicitly:
 
 ## Career coverage
 
-The combined pilot has ORCID plus a partial CV layer: 4,077 of 25,241 slots
-(16.2%) receive a stage. Per journal: AER 15.8%, RES 17.8%, ECMA 15.7%, JPE
-18.1%, QJE 13.7%. The CV crawl parsed 246 documents into 1,040 events and 74
-assignments; 760 ORCID homepage candidates remain queued. The AER baseline
+The combined pilot has ORCID plus a CV layer: 4,109 of 25,241 slots (16.3%)
+receive a stage. Per journal: AER 15.9%, RES 17.9%, ECMA 15.9%, JPE 18.2%, QJE
+13.8%. The CV crawl parsed 438 documents into 1,895 events and 106 assignments;
+the queue is empty and 777 sources failed or were unreachable. The AER baseline
 remains at 21.4% because it also has byline rank and a fuller CV corpus. New
 journals have no byline rank field in Crossref, so their coverage is
 structurally lower; no heuristic fills the gap.

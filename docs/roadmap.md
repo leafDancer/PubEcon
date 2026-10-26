@@ -141,21 +141,21 @@ The combined database now has an ORCID career layer:
   by economics-field signal, 1,439 unverified (events withheld), 150 rejected
   for name conflict, 294 for field mismatch, and 28 for career risk.
 - **4,003 of 25,241 author slots (15.9%)** receive an ORCID career stage,
-  plus **74** CV assignments (246 parsed documents), for **4,077 total
-  assignments (16.2%)**. Confidence: 506 high, 1,213 medium, and 2,285 low
-  from ORCID, plus 14 high, 41 medium, and 19 low from CV.
+  plus **106** CV assignments (438 parsed documents, 1,895 events), for
+  **4,109 total assignments (16.3%)**. Confidence: 506 high, 1,143 medium, and
+  2,280 low from ORCID, plus 18 high, 58 medium, and 30 low from CV.
 
 | Journal | Slots | Assigned | Coverage | High/medium |
 |---|---|---|---|---|
-| AER | 10,786 | 1,700 | 15.8% | 760 |
-| RES | 4,034 | 718 | 17.8% | 328 |
-| ECMA | 3,859 | 607 | 15.7% | 241 |
-| JPE | 3,477 | 629 | 18.1% | 266 |
-| QJE | 3,085 | 423 | 13.7% | 179 |
+| AER | 10,786 | 1,713 | 15.9% | 768 |
+| RES | 4,034 | 722 | 17.9% | 332 |
+| ECMA | 3,859 | 613 | 15.9% | 244 |
+| JPE | 3,477 | 634 | 18.2% | 269 |
+| QJE | 3,085 | 427 | 13.8% | 182 |
 
-This is an **ORCID plus partial-CV** layer for the combined database. The CV
-crawl has parsed 246 documents into 1,040 events and 74 assignments; 760 ORCID
-homepage candidates remain queued. The separate AER database still reaches
+This is an **ORCID plus CV** layer for the combined database. The CV crawl has
+parsed 438 documents into 1,895 events and 106 assignments; the queue is empty
+and 777 sources failed or were unreachable. The separate AER database still reaches
 21.4% because it also has byline rank (669 slots) and a fuller CV corpus.
 New-journal authors have no byline rank data, so their coverage is lower and
 remains visibly missing rather than imputed. Coverage rises from about 11% for
@@ -254,7 +254,7 @@ journals it covers.
 |---|---|
 | M7.1 data foundation | Complete for all five journals; per-journal pilots and combined build done |
 | M7.2 identity and enrichment | Complete; cross-journal reach validated, namesake splits preserved, OpenAlex missing-bylines recovered |
-| M7.3 career layer | ORCID complete; CV partial (246 parsed documents, 74 assignments, 760 homepage candidates queued) |
+| M7.3 career layer | ORCID complete; CV crawl queue empty (438 parsed documents, 106 assignments; 777 failed sources remain visible) |
 | M7.4 API and frontend | Complete except journal filtering of network edges; top-five database is the default when present |
 | M7.5 validation and release | Random 12-per-journal article sample done; per-journal error rates, a public correction workflow, and the final deployment remain |
 
