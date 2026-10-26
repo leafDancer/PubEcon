@@ -62,6 +62,7 @@ uvicorn econpub.api:app --host 0.0.0.0 --port 8000
 | `GET /api/authors/{stable_id}/network` | Bounded ego network (default 50 coauthors, max 150); optional `journal` filter |
 | `GET /api/network` | Ranked subgraph: top authors by papers in a year range, bounded to 600 nodes; optional `journal` filter |
 | `GET /api/network/stats` | Cached average path length, diameter, components, and clustering for `ALL` or one journal |
+| `GET /api/rankings` | Bounded leaderboards: assistant-professor output, five-journal authors, most coauthors, strongest pairs |
 | `GET /api/path` | Shortest coauthorship path between two stable IDs (`from`, `to`), with the shared papers at each step |
 
 Pagination is capped at 100 rows. The network endpoint is always a filtered sample; it never serializes all 5,892 authors or 9,375 edges. The response includes `meta.truncated` and `meta.total_authors` so the UI can say what is missing.

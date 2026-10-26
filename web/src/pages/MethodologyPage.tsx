@@ -37,6 +37,7 @@ export default function MethodologyPage() {
           <a href="#orcid">ORCID identity</a>
           <a href="#identity">Stable identity</a>
           <a href="#network">Coauthor network</a>
+          <a href="#rankings">Leaderboards</a>
           <a href="#dates">Dates and topics</a>
           <a href="#limits">Limits</a>
         </aside>
@@ -229,6 +230,20 @@ export default function MethodologyPage() {
               connected component. Authors outside that component are reported separately rather
               than treated as infinitely distant. Clustering is the mean local clustering
               coefficient: how often two coauthors of an author also coauthor with each other.
+            </p>
+          </section>
+
+          <section id="rankings">
+            <h2>Leaderboards</h2>
+            <p>
+              Rankings are descriptive, not evaluations. The assistant-professor list uses only
+              high- or medium-confidence explicit assignments and shows the share of each author’s
+              papers with a known stage; an author with more documented papers is not necessarily
+              more prolific. The five-journal list requires at least one research article in each
+              journal. The coauthor list counts distinct coauthors across all five journals, so a
+              single large-team paper can place an early-career author high. The strongest-pair list
+              counts shared research articles. Coverage and confidence always travel with the
+              metric.
             </p>
           </section>
 

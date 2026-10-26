@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import NetworkGraph from '../components/NetworkGraph'
@@ -6,6 +7,7 @@ import StageBadge from '../components/StageBadge'
 import YearRuler from '../components/YearRuler'
 import { formatNumber, formatPct, useApi } from '../lib'
 import { ErrorState, LoadingState } from '../components/States'
+import type { RankingsPayload } from '../types'
 
 function Stat({
   value,
@@ -25,9 +27,79 @@ function Stat({
   )
 }
 
+type RankingTab = 'assistant_professor' | 'five_journal' | 'most_coauthors' | 'strongest_pair'
+
+const RANKING_TABS: Array<{ id: RankingTab; label: string }> = [
+  { id: 'assistant_professor', label: 'Assistant professors' },
+  { id: 'five_journal', label: 'Five-journal club' },
+  { id: 'most_coauthors', label: 'Most coauthors' },
+  { id: 'strongest_pair', label: 'Strongest pairs' },
+]
+
+function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) {
+  if (tab === 'strongest_pair') {
+    return (
+      <ol className="ep-ranked-list">
+        {data.strongest_pair.map((pair, index) => (
+          <li key={`${pair.a.id}-${pair.b.id}`}>
+            <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <span className="ep-rank-pair">
+                <Link to={`/authors/${pair.a.id}`}>{pair.a.name}</Link>
+                <span>&amp;</span>
+                <Link to={`/authors/${pair.b.id}`}>{pair.b.name}</Link>
+              </span>
+              <small>
+                {pair.a.institution ?? 'Institution not resolved'} /{' '}
+                {pair.b.institution ?? 'Institution not resolved'} · {pair.first_year ?? '—'}–
+                {pair.last_year ?? '—'}
+              </small>
+            </div>
+            <span className="ep-rank-value">{pair.shared_papers}</span>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  const rows = data[tab]
+  return (
+    <ol className="ep-ranked-list">
+      {rows.map((row, index) => {
+        const metric =
+          tab === 'assistant_professor'
+            ? row.assistant_papers
+            : tab === 'most_coauthors'
+              ? row.coauthors
+              : row.papers
+        const detail =
+          tab === 'assistant_professor'
+            ? `${row.coverage?.toFixed(0) ?? '—'}% of papers have a known stage`
+            : tab === 'five_journal'
+              ? 'all five journals'
+              : `${row.papers} papers`
+        return (
+          <li key={row.id}>
+            <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <Link to={`/authors/${row.id}`}>{row.name}</Link>
+              <small>
+                {row.institution ?? 'Institution not resolved'} · {detail}
+              </small>
+            </div>
+            <span className="ep-rank-value">{metric}</span>
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
 export default function OverviewPage() {
   const { data, loading, error } = useApi(() => api.overview(), [])
   const network = useApi(() => api.network({ limit: 36, min_papers: 4 }), [])
+  const rankings = useApi(() => api.rankings(8), [])
+  const [rankingTab, setRankingTab] = useState<RankingTab>('assistant_professor')
 
   if (loading) return <LoadingState label="Loading the EconPub record" />
   if (error) return <ErrorState message={error} />
@@ -209,25 +281,42 @@ export default function OverviewPage() {
         <div className="ep-panel">
           <div className="ep-section-heading">
             <div>
-              <h2>Authors with the deepest record</h2>
-              <p>Ranked by research articles in the database.</p>
+              <h2>Leaderboards</h2>
+              <p>Descriptive rankings; coverage travels with each list.</p>
             </div>
-            <Link className="ep-text-link" to="/authors">
-              Browse authors
+            <Link className="ep-text-link" to="/methodology#network">
+              Definitions
             </Link>
           </div>
-          <ol className="ep-ranked-list">
-            {data.top_authors.map((author, index) => (
-              <li key={author.stable_id}>
-                <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
-                <div>
-                  <Link to={`/authors/${author.stable_id}`}>{author.name}</Link>
-                  <small>{author.institution ?? 'Institution not resolved'}</small>
-                </div>
-                <span className="ep-rank-value">{author.papers}</span>
-              </li>
+          <div className="ep-ranking-tabs" role="tablist" aria-label="Leaderboard">
+            {RANKING_TABS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={rankingTab === item.id}
+                className={rankingTab === item.id ? 'is-active' : ''}
+                onClick={() => setRankingTab(item.id)}
+              >
+                {item.label}
+              </button>
             ))}
-          </ol>
+          </div>
+          {rankings.data ? (
+            <RankingList tab={rankingTab} data={rankings.data} />
+          ) : (
+            <p className="ep-empty-inline">Loading rankings</p>
+          )}
+          <p className="ep-note ep-ranking-note">
+            {rankingTab === 'assistant_professor' &&
+              'High/medium-confidence assistant-professor assignments only. Coverage is the share of the author’s papers with a known stage.'}
+            {rankingTab === 'five_journal' &&
+              'At least one research article in every one of AER, QJE, JPE, RES, and ECMA.'}
+            {rankingTab === 'most_coauthors' &&
+              'Distinct coauthors across all five journals. Large-team papers can put early-career authors high on this list.'}
+            {rankingTab === 'strongest_pair' &&
+              'Pairs ranked by shared research articles; multiple shared papers do not affect path distance.'}
+          </p>
         </div>
 
         <div className="ep-panel ep-note-panel">

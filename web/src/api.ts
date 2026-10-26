@@ -7,6 +7,7 @@ import type {
   PaperDetail,
   PaperList,
   PathPayload,
+  RankingsPayload,
 } from './types'
 
 const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? '/api'
@@ -62,4 +63,5 @@ export const api = {
   networkStats: (journal?: string) =>
     get<NetworkStats>('/network/stats', { journal }),
   path: (params: Params) => get<PathPayload>('/path', params),
+  rankings: (limit = 8) => get<RankingsPayload>('/rankings', { limit }),
 }

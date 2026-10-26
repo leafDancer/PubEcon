@@ -117,6 +117,24 @@ Confirmed name splits are protected by `author_separation_rules`. Each rule reco
 - **Clustering** is the mean local clustering coefficient: the share of an
   author's coauthor pairs that also coauthor with each other.
 
+## Rankings
+
+Overview leaderboards are descriptive, not evaluations:
+
+- **Assistant-professor output** counts papers with an explicit
+  `assistant_professor` assignment at high or medium confidence. It reports
+  known-stage papers over all top-five papers; authors with more complete
+  documentation can rank higher for that reason.
+- **Five-journal authors** require at least one research article in each of
+  AER, QJE, JPE, RES, and ECMA, and are ranked by total papers.
+- **Most coauthors** counts distinct coauthors across all five journals. A
+  single large-team paper can place an early-career author high on this list.
+- **Strongest pairs** count shared research articles; up to three papers are
+  shown per pair.
+
+Rankings never combine career coverage, citations, and network position into a
+composite "influence" score. A missing stage is not treated as zero output.
+
 ## ORCID identity validation
 
 An ORCID link is not accepted merely because OpenAlex attached it to an authorship. Each link is assessed against the author's AER record:

@@ -121,6 +121,23 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(ego_body["mode"], "ego")
         self.assertTrue(any(node["is_center"] for node in ego_body["nodes"]))
 
+    def test_rankings_are_bounded(self) -> None:
+        response = self.client.get("/api/rankings?limit=3")
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        for key in (
+            "assistant_professor",
+            "five_journal",
+            "most_coauthors",
+            "strongest_pair",
+        ):
+            self.assertIn(key, body)
+            self.assertLessEqual(len(body[key]), 3)
+        self.assertTrue(body["assistant_professor"])
+        self.assertTrue(body["most_coauthors"])
+        self.assertTrue(body["strongest_pair"][0]["papers"])
+        self.assertEqual(self.client.get("/api/rankings?limit=0").status_code, 422)
+
     def test_not_found(self) -> None:
         response = self.client.get("/api/papers/10.1257/does-not-exist")
         self.assertEqual(response.status_code, 404)

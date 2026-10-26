@@ -319,6 +319,36 @@ export interface PathPayload {
   }
 }
 
+export interface RankingAuthor {
+  id: string
+  name: string
+  institution: string | null
+  papers: number
+  assistant_papers?: number
+  known_papers?: number
+  coverage?: number
+  coauthors?: number
+  journals?: number
+  journal_codes?: string[]
+}
+
+export interface RankingPair {
+  a: { id: string; name: string; institution: string | null }
+  b: { id: string; name: string; institution: string | null }
+  shared_papers: number
+  first_year: number | null
+  last_year: number | null
+  papers: PathPaper[]
+}
+
+export interface RankingsPayload {
+  assistant_professor: RankingAuthor[]
+  five_journal: RankingAuthor[]
+  most_coauthors: RankingAuthor[]
+  strongest_pair: RankingPair[]
+  definitions: Record<string, string>
+}
+
 export interface NetworkStats {
   scope: string
   journal: string | null

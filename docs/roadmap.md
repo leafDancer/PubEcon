@@ -182,6 +182,9 @@ The read-only API and frontend now expose the journal dimension:
   authors, with the papers that establish each step. The network page reports
   average path length, diameter, components, and clustering from the cached
   graph statistics.
+- Overview leaderboards cover assistant-professor output, five-journal
+  authors, most coauthors, and strongest recurring pairs, with coverage notes
+  and confidence filters.
 - The served database remains the AER baseline until the combined pilot passes
   the remaining validation and the CV queue is processed.
 

@@ -2803,3 +2803,45 @@ h3 {
     border-bottom: 1px solid var(--line);
   }
 }
+
+/* Overview leaderboards */
+
+.ep-ranking-tabs {
+  display: flex;
+  gap: 2px;
+  margin: 14px 0 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+
+.ep-ranking-tabs button {
+  padding: 7px 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ep-ranking-tabs button:hover {
+  color: var(--ink);
+}
+
+.ep-ranking-tabs button.is-active {
+  border-bottom-color: var(--pine);
+  color: var(--ink);
+}
+
+.ep-rank-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.ep-ranking-note {
+  margin-top: 10px;
+}

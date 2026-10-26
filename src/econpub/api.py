@@ -467,6 +467,194 @@ def _most_cited(conn: sqlite3.Connection, limit: int = 6) -> list[dict[str, Any]
     return items
 
 
+_INSTITUTION_SQL = """
+    COALESCE(a.openalex_last_institution_name,
+        (SELECT COALESCE(si.openalex_institution_name, si.institution_hint)
+         FROM authorships si JOIN papers pi ON pi.paper_id=si.paper_id
+         WHERE si.author_id=a.author_id AND pi.content_type='article'
+           AND pi.is_duplicate=0
+         ORDER BY pi.published_year DESC, si.author_order LIMIT 1))
+"""
+
+
+def _rankings(conn: sqlite3.Connection, limit: int = 8) -> dict[str, Any]:
+    assistant = conn.execute(
+        f"""
+        SELECT a.author_id, a.stable_id, a.canonical_name,
+               COUNT(DISTINCT ca.paper_id) AS assistant_papers,
+               (SELECT COUNT(DISTINCT s.paper_id)
+                FROM authorships s JOIN papers p2 ON p2.paper_id=s.paper_id
+                WHERE s.author_id=a.author_id AND p2.content_type='article'
+                  AND p2.is_duplicate=0) AS total_papers,
+               (SELECT COUNT(DISTINCT ca2.paper_id)
+                FROM career_assignments ca2 JOIN papers p3 ON p3.paper_id=ca2.paper_id
+                WHERE ca2.author_id=a.author_id AND p3.content_type='article'
+                  AND p3.is_duplicate=0) AS known_papers,
+               {_INSTITUTION_SQL} AS institution
+        FROM authors a
+        JOIN career_assignments ca ON ca.author_id=a.author_id
+        JOIN papers p ON p.paper_id=ca.paper_id
+        WHERE ca.stage='assistant_professor'
+          AND ca.confidence IN ('high','medium')
+          AND p.content_type='article' AND p.is_duplicate=0
+        GROUP BY a.author_id
+        ORDER BY assistant_papers DESC, total_papers DESC, a.canonical_name
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    five_journal = conn.execute(
+        f"""
+        SELECT a.author_id, a.stable_id, a.canonical_name,
+               COUNT(DISTINCT p.paper_id) AS papers,
+               COUNT(DISTINCT p.journal_code) AS journals,
+               GROUP_CONCAT(DISTINCT p.journal_code) AS journal_codes,
+               {_INSTITUTION_SQL} AS institution
+        FROM authors a
+        JOIN authorships s ON s.author_id=a.author_id
+        JOIN papers p ON p.paper_id=s.paper_id
+        WHERE p.content_type='article' AND p.is_duplicate=0
+        GROUP BY a.author_id
+        HAVING journals=5
+        ORDER BY papers DESC, a.canonical_name
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    coauthors = conn.execute(
+        f"""
+        WITH pairs AS (
+            SELECT author_a_id AS author_id, author_b_id AS other_id
+            FROM coauthorship_edges
+            UNION ALL
+            SELECT author_b_id, author_a_id FROM coauthorship_edges
+        )
+        SELECT a.author_id, a.stable_id, a.canonical_name,
+               COUNT(DISTINCT pairs.other_id) AS coauthors,
+               (SELECT COUNT(DISTINCT s.paper_id)
+                FROM authorships s JOIN papers p2 ON p2.paper_id=s.paper_id
+                WHERE s.author_id=a.author_id AND p2.content_type='article'
+                  AND p2.is_duplicate=0) AS papers,
+               {_INSTITUTION_SQL} AS institution
+        FROM pairs
+        JOIN authors a ON a.author_id=pairs.author_id
+        GROUP BY a.author_id
+        ORDER BY coauthors DESC, papers DESC, a.canonical_name
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    pair_rows = conn.execute(
+        f"""
+        SELECT e.author_a_id, e.author_b_id,
+               COUNT(DISTINCT e.paper_id) AS shared_papers,
+               MIN(e.year) AS first_year, MAX(e.year) AS last_year,
+               a.stable_id AS a_stable, a.canonical_name AS a_name,
+               b.stable_id AS b_stable, b.canonical_name AS b_name,
+               COALESCE(a.openalex_last_institution_name,
+                   (SELECT COALESCE(si.openalex_institution_name, si.institution_hint)
+                    FROM authorships si JOIN papers pi ON pi.paper_id=si.paper_id
+                    WHERE si.author_id=a.author_id AND pi.content_type='article'
+                      AND pi.is_duplicate=0
+                    ORDER BY pi.published_year DESC, si.author_order LIMIT 1)) AS a_institution,
+               COALESCE(b.openalex_last_institution_name,
+                   (SELECT COALESCE(si.openalex_institution_name, si.institution_hint)
+                    FROM authorships si JOIN papers pi ON pi.paper_id=si.paper_id
+                    WHERE si.author_id=b.author_id AND pi.content_type='article'
+                      AND pi.is_duplicate=0
+                    ORDER BY pi.published_year DESC, si.author_order LIMIT 1)) AS b_institution
+        FROM coauthorship_edges e
+        JOIN authors a ON a.author_id=e.author_a_id
+        JOIN authors b ON b.author_id=e.author_b_id
+        GROUP BY e.author_a_id, e.author_b_id
+        ORDER BY shared_papers DESC, a_name, b_name
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    return {
+        "assistant_professor": [
+            {
+                "id": row["stable_id"],
+                "name": row["canonical_name"],
+                "institution": _clean(row["institution"]),
+                "assistant_papers": row["assistant_papers"],
+                "papers": row["total_papers"],
+                "known_papers": row["known_papers"],
+                "coverage": _pct(row["known_papers"], row["total_papers"]),
+            }
+            for row in assistant
+        ],
+        "five_journal": [
+            {
+                "id": row["stable_id"],
+                "name": row["canonical_name"],
+                "institution": _clean(row["institution"]),
+                "papers": row["papers"],
+                "journals": row["journals"],
+                "journal_codes": sorted(set((row["journal_codes"] or "").split(","))),
+            }
+            for row in five_journal
+        ],
+        "most_coauthors": [
+            {
+                "id": row["stable_id"],
+                "name": row["canonical_name"],
+                "institution": _clean(row["institution"]),
+                "coauthors": row["coauthors"],
+                "papers": row["papers"],
+            }
+            for row in coauthors
+        ],
+        "strongest_pair": [
+            {
+                "a": {
+                    "id": row["a_stable"],
+                    "name": row["a_name"],
+                    "institution": _clean(row["a_institution"]),
+                },
+                "b": {
+                    "id": row["b_stable"],
+                    "name": row["b_name"],
+                    "institution": _clean(row["b_institution"]),
+                },
+                "shared_papers": row["shared_papers"],
+                "first_year": row["first_year"],
+                "last_year": row["last_year"],
+                "papers": edge_papers(
+                    conn,
+                    int(row["author_a_id"]),
+                    int(row["author_b_id"]),
+                    limit=3,
+                ),
+            }
+            for row in pair_rows
+        ],
+        "definitions": {
+            "assistant_professor": (
+                "Papers with an explicit assistant-professor assignment at high or "
+                "medium confidence. Coverage is known-stage papers divided by all "
+                "top-five papers."
+            ),
+            "five_journal": (
+                "Authors with at least one research article in each of AER, QJE, "
+                "JPE, RES, and ECMA; ranked by total papers."
+            ),
+            "most_coauthors": (
+                "Distinct coauthors across all top-five research articles."
+            ),
+            "strongest_pair": (
+                "Author pairs with the most shared research articles; up to three "
+                "papers are shown per pair."
+            ),
+        },
+    }
+
+
 def _dominant_stages(
     conn: sqlite3.Connection,
     author_ids: list[int],
@@ -1555,6 +1743,13 @@ def create_app(
                 limit=limit,
                 min_papers=min_papers,
             )
+
+    @app.get("/api/rankings")
+    def rankings(
+        limit: int = Query(8, ge=1, le=50),
+    ) -> dict[str, Any]:
+        with connection() as conn:
+            return _rankings(conn, limit)
 
     @app.get("/api/network/stats")
     def network_stats(
