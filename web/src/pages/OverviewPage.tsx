@@ -55,7 +55,10 @@ function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) 
                 {pair.last_year ?? '—'}
               </small>
             </div>
-            <span className="ep-rank-value">{pair.shared_papers}</span>
+            <span className="ep-rank-value">
+              {pair.shared_papers}
+              <small>shared</small>
+            </span>
           </li>
         ))}
       </ol>
@@ -87,7 +90,16 @@ function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) 
                 {row.institution ?? 'Institution not resolved'} · {detail}
               </small>
             </div>
-            <span className="ep-rank-value">{metric}</span>
+            <span className="ep-rank-value">
+              {metric}
+              <small>
+                {tab === 'most_coauthors'
+                  ? 'coauthors'
+                  : tab === 'assistant_professor'
+                    ? 'as asst.'
+                    : 'papers'}
+              </small>
+            </span>
           </li>
         )
       })}
