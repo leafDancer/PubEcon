@@ -88,7 +88,7 @@ The interface is a research ledger, not a dashboard of cards:
 ## Deployment
 
 - **Backend:** run `uvicorn econpub.api:app` behind a reverse proxy. The database is read-only and can be mounted on persistent storage. Set `ECONPUB_CORS_ORIGINS` to the frontend origin.
-- **Database:** set `ECONPUB_DB` to the combined top-five database for the full product; omit it to serve the AER baseline.
+- **Database:** set `ECONPUB_DB` to the combined top-five database for the full product. If unset, the API uses `data/curated/top5.db` when present and otherwise falls back to the AER baseline.
 - **Frontend:** `npm run build` produces `web/dist`. Serve it from any static host with SPA rewrites to `index.html`.
 - **GitHub Pages:** `npm run build` also writes `dist/404.html` as a copy of the app shell. Set `VITE_BASE` to the repository path so asset URLs and the React Router basename match:
 

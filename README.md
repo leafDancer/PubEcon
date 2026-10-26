@@ -174,7 +174,7 @@ In one terminal:
 python run.py serve --port 8000 --db data/curated/top5.db
 ```
 
-Without `--db`, the API serves the AER baseline (`data/curated/econpub.db`). Set `ECONPUB_DB` to make the top-five database the deployment default.
+Without `--db`, the API serves `data/curated/top5.db` when it exists and falls back to the AER baseline (`data/curated/econpub.db`). Set `ECONPUB_DB` explicitly in deployment.
 
 In another:
 

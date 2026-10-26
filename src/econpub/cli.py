@@ -23,7 +23,14 @@ from .cv import (
     parse_cv_sources,
     queue_landing_links,
 )
-from .config import CURATED_DIR, DB_PATH, DEFAULT_JOURNAL, JOURNALS, LOGS_DIR, REPORTS_DIR
+from .config import (
+    DB_PATH,
+    DEFAULT_JOURNAL,
+    JOURNALS,
+    LOGS_DIR,
+    REPORTS_DIR,
+    TOP5_DB,
+)
 from .coverage import generate_m6_report
 from .crossref import harvest
 from .identity import ensure_identity_ledger
@@ -110,7 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
     top5_build_parser.add_argument("--skip-orcid", action="store_true")
     top5_build_parser.add_argument("--workers", type=int, default=4)
     top5_build_parser.add_argument("--batch-size", type=int, default=50)
-    top5_build_parser.add_argument("--db", type=Path, default=CURATED_DIR / "top5.db")
+    top5_build_parser.add_argument("--db", type=Path, default=TOP5_DB)
 
     aea_parser = subparsers.add_parser(
         "aea", help="Fetch AEA article pages for JEL codes, abstracts, and issue months"
@@ -214,7 +221,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--db",
         type=Path,
         default=None,
-        help="Database path; defaults to $ECONPUB_DB or data/curated/econpub.db",
+        help="Database path; defaults to $ECONPUB_DB, then data/curated/top5.db if present, else data/curated/econpub.db",
     )
 
     return parser
@@ -233,7 +240,8 @@ def main(argv: list[str] | None = None) -> None:
             ) from exc
         from .api import create_app
 
-        serve_db = args.db or Path(os.environ.get("ECONPUB_DB", DB_PATH))
+        default_db = TOP5_DB if TOP5_DB.exists() else DB_PATH
+        serve_db = args.db or Path(os.environ.get("ECONPUB_DB", default_db))
         if args.reload:
             os.environ["ECONPUB_DB"] = str(serve_db)
             uvicorn.run(

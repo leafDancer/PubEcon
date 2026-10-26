@@ -14,6 +14,7 @@ CURATED_DIR = DATA_DIR / "curated"
 REPORTS_DIR = DATA_DIR / "reports"
 LOGS_DIR = DATA_DIR / "logs"
 DB_PATH = CURATED_DIR / "econpub.db"
+TOP5_DB = CURATED_DIR / "top5.db"
 SCHEMA_PATH = PACKAGE_DIR / "schema.sql"
 
 
