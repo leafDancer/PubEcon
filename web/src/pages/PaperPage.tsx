@@ -147,7 +147,15 @@ export default function PaperPage() {
                 <dt>Citations</dt>
                 <dd>
                   {formatNumber(citationCount)}
-                  <small> OpenAlex / Crossref as reported</small>
+                  <small>
+                    {' '}
+                    {data.openalex_cited_by_count != null ? 'OpenAlex' : 'Crossref'} as reported
+                  </small>
+                  {data.openalex_cited_by_count != null && data.citation_count != null && (
+                    <small className="ep-cite-secondary">
+                      Crossref: {formatNumber(data.citation_count)}
+                    </small>
+                  )}
                 </dd>
               </div>
               <div>

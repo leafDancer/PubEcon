@@ -159,7 +159,9 @@ The preferred abstract is stored in `abstract`; AEA and OpenAlex versions are re
 
 ## Citation counts
 
-Crossref's `is-referenced-by-count` is stored in `papers.citation_count`; OpenAlex's `cited_by_count` is stored separately in `papers.openalex_cited_by_count`. They are not reconciled. Both are as-reported by the source and can be affected by duplicate works, citation-matching errors, or differences in what counts as a citation. The API and frontend will always label the source; the database does not present a single "true" citation count.
+Crossref's `is-referenced-by-count` is stored in `papers.citation_count`; OpenAlex's `cited_by_count` is stored separately in `papers.openalex_cited_by_count`. They are not reconciled. Both are as-reported by the source and can be affected by duplicate works, citation-matching errors, or differences in what counts as a citation. The API and frontend prefer OpenAlex and fall back to Crossref, always labelling the source; the database does not present a single "true" citation count.
+
+These are **not Google Scholar counts**. Google Scholar indexes full text, working papers, books, theses, slides, and other grey literature, and has no public, reproducible API. OpenAlex and Crossref index a narrower set of works; Crossref's count is based on references deposited by publishers, which many publishers do not deposit in full. Counts from OpenAlex, Crossref, and Google Scholar therefore differ systematically, and OpenAlex can also split or merge works. The project uses OpenAlex/Crossref because they are documented, DOI-keyed, and reproducible; it does not scrape Google Scholar.
 
 ## Institution resolution
 

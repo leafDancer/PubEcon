@@ -53,7 +53,9 @@ export default function PaperRow({ paper }: { paper: Paper }) {
       </div>
       <div className="ep-paper-cites">
         <span>{formatNumber(paper.openalex_cited_by_count ?? paper.citation_count)}</span>
-        <small>citations</small>
+        <small>
+          {paper.openalex_cited_by_count != null ? 'OpenAlex cites' : 'Crossref cites'}
+        </small>
       </div>
     </article>
   )

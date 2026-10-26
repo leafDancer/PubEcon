@@ -221,7 +221,17 @@ export default function MethodologyPage() {
               Crossref&apos;s historical month field. JEL codes are parsed from AEA article pages
               and stored separately from machine-generated OpenAlex topics; the two schemes are
               never merged. Citation counts are stored as reported by Crossref and OpenAlex and are
-              not reconciled into a single “true” count.
+              not reconciled into a single “true” count. The interface prefers OpenAlex&apos;s
+              <code>cited_by_count</code> and falls back to Crossref&apos;s
+              <code>is-referenced-by-count</code>.
+            </p>
+            <p>
+              These counts are not Google Scholar counts. Google Scholar indexes full text, working
+              papers, books, and other grey literature, and has no public, reproducible API.
+              OpenAlex and Crossref index a narrower set of works, and Crossref only counts
+              citations deposited by publishers, so their numbers are usually lower and can
+              disagree with each other. The product labels the source and does not present a
+              reconciled “true” citation count.
             </p>
             <p>
               Every abstract records its provenance: <code>crossref</code>, <code>aea</code>, or{' '}
