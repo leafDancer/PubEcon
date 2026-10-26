@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T07:15:58+00:00",
+  "generated_at": "2026-10-26T13:55:35+00:00",
   "totals": {
     "records": 13443,
     "articles": 10956,
@@ -283,6 +283,48 @@
     {
       "status": "resolved_split",
       "n": 38
+    }
+  ],
+  "review_status": [
+    {
+      "status": "orcid_unverified",
+      "n": 1382
+    },
+    {
+      "status": "orcid_unverified_field",
+      "n": 441
+    },
+    {
+      "status": "orcid_field_mismatch",
+      "n": 256
+    },
+    {
+      "status": "unspecified",
+      "n": 145
+    },
+    {
+      "status": "orcid_name_conflict",
+      "n": 142
+    },
+    {
+      "status": "openalex_fragmentation",
+      "n": 46
+    },
+    {
+      "status": "orcid_unverified_career_risk",
+      "n": 23
+    },
+    {
+      "status": "orcid_conflict",
+      "n": 9
+    },
+    {
+      "status": "namesake_resolved",
+      "n": 7
+    },
+    {
+      "status": "manual_review",
+      "n": 3
     }
   ],
   "unattributed": [

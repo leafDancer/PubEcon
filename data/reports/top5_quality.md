@@ -1,6 +1,6 @@
 # Top-five dataset report
 
-Generated 2026-10-26T07:15:58+00:00.
+Generated 2026-10-26T13:55:35+00:00.
 
 Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica*, 2000–present. AER includes Papers & Proceedings through 2017. Counts are research articles unless stated otherwise.
 
@@ -107,6 +107,19 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 |---|---|
 | pending | 5 |
 | resolved_split | 38 |
+
+| Review status | Authors |
+|---|---|
+| orcid_unverified | 1382 |
+| orcid_unverified_field | 441 |
+| orcid_field_mismatch | 256 |
+| unspecified | 145 |
+| orcid_name_conflict | 142 |
+| openalex_fragmentation | 46 |
+| orcid_unverified_career_risk | 23 |
+| orcid_conflict | 9 |
+| namesake_resolved | 7 |
+| manual_review | 3 |
 
 ## Missingness
 

@@ -120,6 +120,15 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
             "SELECT status, COUNT(*) AS n FROM author_merge_candidates GROUP BY status"
         )
     )
+    review_status = _dicts(
+        conn.execute(
+            """
+            SELECT COALESCE(review_status,'unspecified') AS status, COUNT(*) AS n
+            FROM authors WHERE needs_review=1
+            GROUP BY 1 ORDER BY n DESC
+            """
+        )
+    )
     unattributed_samples = _dicts(
         conn.execute(
             """
@@ -168,6 +177,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
         "journal_reach": reach,
         "top_cross_journal_authors": top_cross,
         "merge_status": merge_status,
+        "review_status": review_status,
         "unattributed": unattributed_samples,
     }
     metrics_path.write_text(
@@ -337,6 +347,14 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
             _table(
                 ["Merge candidate status", "Pairs"],
                 [(row["status"], row["n"]) for row in merge_status],
+            )
+        )
+        lines.append("")
+    if review_status:
+        lines.append(
+            _table(
+                ["Review status", "Authors"],
+                [(row["status"], row["n"]) for row in review_status],
             )
         )
         lines.append("")
