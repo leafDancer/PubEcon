@@ -334,46 +334,129 @@ def fetch_wayback_snapshots(
     return stats
 
 
-def _stage_near_name(text: str, name: str) -> tuple[str, str, str] | None:
-    """Find an academic role phrase near the author's family name."""
-    family = normalize_name_part(name).split()[-1]
-    if not family:
-        return None
+def _fold_with_positions(text: str) -> tuple[str, list[int]]:
+    """Transliterate text while keeping a map back to original offsets.
+
+    Faculty pages often spell names with characters that NFKD does not
+    decompose (Møller, Hortaçsu). Folding the page text makes the family-name
+    search work without losing the positions used for proximity scoring.
+    """
+    from .normalize import transliterate
+
+    chars: list[str] = []
+    positions: list[int] = []
+    for index, char in enumerate(text):
+        for folded in transliterate(char):
+            chars.append(folded)
+            positions.append(index)
+    return "".join(chars), positions
+
+
+def _name_anchors(folded: str, name: str) -> list[tuple[int, int]]:
+    """Find family-name occurrences that plausibly refer to this person."""
+    parts = normalize_name_part(name).split()
+    if not parts:
+        return []
+    family = parts[-1]
+    given = parts[0]
     family_re = re.compile(rf"\b{re.escape(family)}\b", re.IGNORECASE)
-    windows = []
-    for match in family_re.finditer(text[:400_000]):
-        windows.append(text[max(0, match.start() - 350) : match.end() + 650])
-        if len(windows) >= 20:
+    anchors: list[tuple[int, int]] = []
+    all_matches = []
+    for match in family_re.finditer(folded):
+        all_matches.append((match.start(), match.end()))
+        if len(all_matches) >= 80:
             break
-    best: tuple[int, str, str, str] | None = None
-    for window in windows:
+    if len(parts) > 1 and given:
+        given_re = re.compile(rf"\b{re.escape(given)}\b", re.IGNORECASE)
+        initial_re = re.compile(rf"\b{re.escape(given[0])}\s*\.", re.IGNORECASE)
+        for start, end in all_matches:
+            nearby = folded[max(0, start - 100) : end + 100]
+            if given_re.search(nearby) or initial_re.search(nearby):
+                anchors.append((start, end))
+    if not anchors:
+        anchors = all_matches[:20]
+    # Collapse anchors from repeated name mentions in the same heading.
+    collapsed: list[tuple[int, int]] = []
+    for start, end in anchors:
+        if collapsed and start - collapsed[-1][1] < 120:
+            continue
+        collapsed.append((start, end))
+        if len(collapsed) >= 20:
+            break
+    return collapsed
+
+
+def _role_rank(stage: str, confidence: str) -> int:
+    if confidence == "high" and stage in {
+        "assistant_professor",
+        "associate_professor",
+        "full_professor",
+        "emeritus",
+        "lecturer_other_academic",
+    }:
+        return 5
+    if stage == "phd_student":
+        return 4
+    if confidence == "high":
+        return 4
+    if confidence == "medium":
+        return 3
+    return 2
+
+
+def _stage_near_name(text: str, name: str) -> tuple[str, str, str] | None:
+    """Find the academic role phrase closest to the author's name.
+
+    Proximity matters more than pattern specificity: a biography that
+    mentions an NBER "Research Fellow" affiliation far from the name should
+    not outrank the "Professor" title directly under it. A more specific
+    title within a short distance still wins over a generic one.
+    """
+    folded, _positions = _fold_with_positions(text[:400_000])
+    anchors = _name_anchors(folded, name)
+    if not anchors:
+        return None
+    candidates: list[tuple[int, int, str, str, str]] = []
+    for anchor_start, anchor_end in anchors:
+        window_start = max(0, anchor_start - 220)
+        window_end = min(len(folded), anchor_end + 220)
+        window = folded[window_start:window_end]
+        found_here: list[tuple[int, int, int, str, str, str]] = []
         for pattern, stage, confidence in _STUDENT_PATTERNS:
-            found = pattern.search(window)
-            if found:
-                rank = 4 if confidence == "high" else 3
-                if best is None or rank > best[0]:
-                    best = (rank, stage, confidence, clean_text(found.group(0)))
+            for match in pattern.finditer(window):
+                span = (window_start + match.start(), window_start + match.end())
+                found_here.append(
+                    (*span, _role_rank(stage, confidence), stage, confidence, clean_text(match.group(0)))
+                )
         for pattern, stage, confidence in ROLE_PATTERNS:
             if stage == "non_academic":
                 continue
-            found = pattern.search(window)
-            if found:
-                if confidence == "high" and stage in {
-                    "assistant_professor",
-                    "associate_professor",
-                    "full_professor",
-                    "emeritus",
-                }:
-                    rank = 5
-                elif confidence == "low":
-                    rank = 2
-                else:
-                    rank = 4
-                if best is None or rank > best[0]:
-                    best = (rank, stage, confidence, clean_text(found.group(0)))
-    if not best:
+            for match in pattern.finditer(window):
+                span = (window_start + match.start(), window_start + match.end())
+                if confidence == "low" and any(
+                    not (span[1] <= other[0] or span[0] >= other[1])
+                    and other[2] >= 4
+                    for other in found_here
+                ):
+                    continue
+                found_here.append(
+                    (*span, _role_rank(stage, confidence), stage, confidence, clean_text(match.group(0)))
+                )
+        for span_start, span_end, rank, stage, confidence, phrase in found_here:
+            if anchor_end <= span_start:
+                distance = span_start - anchor_end
+            elif span_end <= anchor_start:
+                distance = anchor_start - span_end
+            else:
+                distance = 0
+            candidates.append((distance, rank, stage, confidence, phrase))
+    if not candidates:
         return None
-    _rank, stage, confidence, phrase = best
+    nearest = min(candidate[0] for candidate in candidates)
+    close = [candidate for candidate in candidates if candidate[0] <= nearest + 30]
+    _distance, _rank, stage, confidence, phrase = max(
+        close, key=lambda candidate: (candidate[1], -candidate[0])
+    )
     return stage, confidence, phrase
 
 

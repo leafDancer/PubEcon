@@ -38,6 +38,26 @@ class WaybackTests(unittest.TestCase):
         self.assertEqual(match[0], "phd_student")
         self.assertEqual(match[1], "high")
 
+    def test_nearby_title_beats_distant_affiliation(self) -> None:
+        text = (
+            "Nathan Nunn\n"
+            "Frederic E. Abbe Professor of Economics\n"
+            "Contact\n"
+            "Nathan Nunn is a professor at Harvard University. "
+            "He is also an NBER Faculty Research Fellow."
+        )
+        match = _stage_near_name(text, "Nathan Nunn")
+        self.assertIsNotNone(match)
+        assert match is not None
+        self.assertEqual(match[0], "full_professor")
+
+    def test_transliterated_family_name(self) -> None:
+        text = "Mikkel Plagborg-Møller\nAssistant Professor\nDepartment of Economics"
+        match = _stage_near_name(text, "Mikkel Plagborg-Møller")
+        self.assertIsNotNone(match)
+        assert match is not None
+        self.assertEqual(match[0], "assistant_professor")
+
     def test_pick_snapshots_by_year(self) -> None:
         snapshots = [
             {"timestamp": "20100101000000", "original": "https://example.org/a"},

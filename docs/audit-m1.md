@@ -220,14 +220,14 @@ These are lower-severity or overlapping findings that were not adversarially ver
 
 - ORCID identity: 3,314 of 5,892 canonical authors retain an ORCID after validation. 2,409 are accepted: 1,397 by matching AER DOI, 181 by matching title, 539 by institution overlap, and 292 by a low-confidence economics-field signal. 905 are unverified links whose events are withheld. 72 person-name conflicts, 165 clear field mismatches, and 12 career-risk links are rejected and cleared.
 - ORCID events: 2,067 accepted identities contribute 5,847 employment/education events, of which 4,583 have a start year. Every ORCID link is checked against the author's AER record before its events are used.
-- Career assignments: 2,303 of 10,782 article slots (21.4%) now have a stage: 669 byline, 1,591 ORCID, and 43 CV. Byline evidence remains paper-specific and takes precedence; generic "Professor" titles are low confidence. 1,380 assignments are high/medium confidence and 923 are low.
-- CV layer: 1,347 public CV/homepage sources are tracked. 256 documents were parsed, extracting 1,069 dated events and 43 assignments; 70 CV links remain queued and 377 homepages were unreachable. Raw documents are stored only in the local ignored cache.
+- Career assignments: 2,305 of 10,782 article slots (21.4%) now have a stage: 669 byline, 1,591 ORCID, and 45 CV. Byline evidence remains paper-specific and takes precedence; generic "Professor" titles are low confidence. 1,381 assignments are high/medium confidence and 924 are low.
+- CV layer: 1,362 public CV/homepage sources are tracked. 268 documents were parsed, extracting 1,129 dated events and 45 assignments. The queue is empty; 370 homepages and 72 CV documents remain unreachable. Raw documents are stored only in the local ignored cache.
 - ORCID/CV provenance is explicit in `career_events` (`source_type`, `source_url`, `source_snippet`, confidence) and `career_assignments` (`evidence_type`, `career_event_id`, confidence). `authors.orcid_source` records the identity tier or rejection reason.
 
 **Still open (M5/P2):**
 
-- 8,479 article slots remain without a career assignment; full CV discovery/parsing is resumable.
-- 908 of 964 full-professor assignments are low-confidence generic "Professor" titles and need CV/rank corroboration.
+- 8,477 article slots remain without a career assignment; full CV discovery/parsing is resumable.
+- 909 of 965 full-professor assignments are low-confidence generic "Professor" titles and need CV/rank corroboration.
 - ORCID review remains: 905 unverified links, 292 low-confidence economics-field links, 72 person-name conflicts, 165 field mismatches, and 12 career-risk rejections. 5 multi-ID authors also remain uncertain.
 - The CV parser has only been piloted on 17 documents; precision on a larger sample is not yet measured.
 - AEA JEL remains partial (698/4,786); OpenAlex topics cover 98.9% independently.
@@ -244,13 +244,13 @@ These are lower-severity or overlapping findings that were not adversarially ver
 
 **Completed:**
 
-- CV/homepage crawl expanded to 1,347 tracked sources. 626 homepages were parsed, 281 documents downloaded, and 256 documents parsed.
-- The crawl produced 1,069 dated CV events and 43 career assignments across 177 authors. Total career assignments are now 2,303 of 10,782 slots (21.4%).
+- CV/homepage crawl expanded to 1,362 tracked sources. 633 homepages were parsed, 294 documents downloaded, and 268 documents parsed.
+- The crawl produced 1,129 dated CV events and 45 career assignments across 187 authors. Total career assignments are now 2,305 of 10,782 slots (21.4%).
 - The CV pipeline now caches homepages, supports threaded discovery/fetch, resumes with skip flags, handles `Asst.`/`Assoc.`, colon headers, earned degrees, short and month/year date ranges, HTML-as-PDF, and better institution extraction.
 - A Wayback CDX pipeline and historical-page parser are implemented with `wayback_employment` evidence and a bounded confidence cap. Synthetic parser and snapshot-selection tests pass.
 
 **Still open:**
 
-- 70 CV links remain queued; 377 homepages were unreachable in this environment.
+- The CV queue is empty; 370 homepages and 72 CV documents were unreachable in this environment.
 - `web.archive.org` was unreachable from the development network (connections timed out). The Wayback pipeline has not been run against the live archive; run it from a network with Internet Archive access.
 - The CV corpus is still not a complete census; RePEc/IDEAS and other historical-page sources remain candidates.

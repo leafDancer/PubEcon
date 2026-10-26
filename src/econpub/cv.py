@@ -206,6 +206,53 @@ def _fetch(url: str) -> tuple[bytes | None, str | None, str | None, str | None]:
     return None, None, None, last_error
 
 
+def _looks_like_cv_text(text: str) -> bool:
+    lower = text.lower()
+    signals = sum(
+        1
+        for term in (
+            "education",
+            "employment",
+            "academic appointments",
+            "professional experience",
+            "ph.d",
+            "phd",
+        )
+        if term in lower
+    )
+    return signals >= 2
+
+
+def _cv_link_candidates(links: list[tuple[str, str]]) -> list[tuple[int, str, str]]:
+    candidates: list[tuple[int, str, str]] = []
+    for label, href in links:
+        low = f"{label} {href}".lower()
+        score = 0
+        if any(term in low for term in ("curriculum vitae", " cv", "cv ", "vita", "resume")):
+            score += 5
+        if href.lower().endswith(".pdf"):
+            score += 3
+        if "download" in low:
+            score += 1
+        if any(
+            term in low
+            for term in (
+                "publication",
+                "research",
+                "teaching",
+                "twitter",
+                "linkedin",
+                "scholar.google",
+                "mailto",
+            )
+        ):
+            score -= 5
+        if score >= 4:
+            candidates.append((score, label, href))
+    candidates.sort(reverse=True, key=lambda item: item[0])
+    return candidates
+
+
 def _fetch_page(url: str) -> tuple[bytes | None, str | None, str | None, str | None]:
     """Fetch a page, retrying an old HTTP URL over HTTPS once."""
     result = _fetch(url)
@@ -846,14 +893,13 @@ def fetch_cv_documents(
             is_pdf = False
         if not is_pdf:
             text_preview, links = _html_text_and_links(content, final_url or url)
-            if len(text_preview.strip()) < 500:
-                follow = None
-                for label, href in links:
-                    low = f"{label} {href}".lower()
-                    if href.lower().endswith(".pdf") or "download" in low:
-                        follow = href
-                        break
-                if follow:
+            # Landing pages often contain only a "Download CV" link, even when
+            # the visible page is long. Follow the strongest CV link when the
+            # text does not look like a CV.
+            if not _looks_like_cv_text(text_preview):
+                candidates = _cv_link_candidates(links)
+                follow = candidates[0][2] if candidates else None
+                if follow and follow != url:
                     content2, content_type2, final_url2, error2 = _fetch_page(
                         _normalize_document_url(follow)
                     )
@@ -933,6 +979,58 @@ def fetch_cv_documents(
         _close_clients()
     log.info("CV document fetch: %s", stats)
     return stats
+
+def queue_landing_links(conn, *, limit: int | None = None) -> dict[str, int]:
+    """Queue the strongest CV link from an HTML page that parsed to zero events."""
+    rows = conn.execute(
+        """
+        SELECT source_id, author_id, url, local_path
+        FROM author_cv_sources
+        WHERE status='parsed' AND notes='0 events'
+          AND local_path LIKE '%.html'
+        ORDER BY source_id
+        """
+    ).fetchall()
+    if limit is not None:
+        rows = rows[:limit]
+    stats = {"pages": len(rows), "inserted": 0, "skipped": 0}
+    for row in rows:
+        path = Path(row["local_path"]) if row["local_path"] else None
+        if not path or not path.exists():
+            stats["skipped"] += 1
+            continue
+        try:
+            text, links = _html_text_and_links(path.read_bytes(), row["url"])
+        except OSError:
+            stats["skipped"] += 1
+            continue
+        if _looks_like_cv_text(text):
+            stats["skipped"] += 1
+            continue
+        candidates = _cv_link_candidates(links)
+        if not candidates:
+            stats["skipped"] += 1
+            continue
+        href = candidates[0][2]
+        if href == row["url"]:
+            stats["skipped"] += 1
+            continue
+        cursor = conn.execute(
+            """
+            INSERT OR IGNORE INTO author_cv_sources
+                (author_id, url, source_type, status, notes, created_at)
+            VALUES (?, ?, 'cv_link', 'candidate', 'followed from landing page', ?)
+            """,
+            (row["author_id"], href, db.utcnow()),
+        )
+        if cursor.rowcount:
+            stats["inserted"] += 1
+        else:
+            stats["skipped"] += 1
+    conn.commit()
+    log.info("CV landing-page links: %s", stats)
+    return stats
+
 
 def parse_cv_sources(conn, *, limit: int | None = None) -> dict[str, int]:
     rows = conn.execute(

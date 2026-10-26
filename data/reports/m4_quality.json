@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T04:12:44+00:00",
+  "generated_at": "2026-10-25T07:45:41+00:00",
   "summary": {
     "authors": 5892,
     "authors_with_orcid": 3314,
@@ -7,7 +7,7 @@
     "orcid_events": 5847,
     "dated_orcid_events": 4583,
     "authors_with_events": 2067,
-    "career_assignments": 2303,
+    "career_assignments": 2305,
     "orcid_assignments": 1591,
     "wayback_assignments": 0,
     "byline_assignments": 669,
@@ -18,12 +18,12 @@
     "orcid_unverified": 905,
     "orcid_field_mismatches": 165,
     "orcid_career_risk_rejections": 12,
-    "cv_sources": 1347,
-    "cv_parsed": 256,
-    "cv_events": 1069,
-    "cv_assignments": 43,
-    "high_medium_assignments": 1380,
-    "low_assignments": 923
+    "cv_sources": 1362,
+    "cv_parsed": 268,
+    "cv_events": 1129,
+    "cv_assignments": 45,
+    "high_medium_assignments": 1381,
+    "low_assignments": 924
   },
   "career_events": [
     {
@@ -60,7 +60,7 @@
       "event_type": "employment",
       "source_type": "cv",
       "confidence": "medium",
-      "n": 319
+      "n": 340
     },
     {
       "event_type": "education",
@@ -72,31 +72,31 @@
       "event_type": "education",
       "source_type": "cv",
       "confidence": "medium",
-      "n": 181
+      "n": 190
     },
     {
       "event_type": "education",
       "source_type": "cv",
       "confidence": "high",
-      "n": 179
+      "n": 187
+    },
+    {
+      "event_type": "employment",
+      "source_type": "cv",
+      "confidence": "low",
+      "n": 152
     },
     {
       "event_type": "education",
       "source_type": "cv",
       "confidence": "low",
-      "n": 140
-    },
-    {
-      "event_type": "employment",
-      "source_type": "cv",
-      "confidence": "low",
-      "n": 140
+      "n": 145
     },
     {
       "event_type": "employment",
       "source_type": "cv",
       "confidence": "high",
-      "n": 110
+      "n": 115
     }
   ],
   "career_assignments": [
@@ -185,6 +185,12 @@
       "n": 14
     },
     {
+      "evidence_type": "cv_employment",
+      "stage": "full_professor",
+      "confidence": "low",
+      "n": 11
+    },
+    {
       "evidence_type": "orcid_employment",
       "stage": "lecturer_other_academic",
       "confidence": "high",
@@ -194,12 +200,6 @@
       "evidence_type": "cv_employment",
       "stage": "assistant_professor",
       "confidence": "medium",
-      "n": 10
-    },
-    {
-      "evidence_type": "cv_employment",
-      "stage": "full_professor",
-      "confidence": "low",
       "n": 10
     },
     {
@@ -239,6 +239,12 @@
       "n": 5
     },
     {
+      "evidence_type": "cv_employment",
+      "stage": "non_academic",
+      "confidence": "medium",
+      "n": 4
+    },
+    {
       "evidence_type": "orcid_employment",
       "stage": "postdoc",
       "confidence": "high",
@@ -260,12 +266,6 @@
       "evidence_type": "byline_rank",
       "stage": "associate_professor",
       "confidence": "high",
-      "n": 3
-    },
-    {
-      "evidence_type": "cv_employment",
-      "stage": "non_academic",
-      "confidence": "medium",
       "n": 3
     },
     {
@@ -390,7 +390,7 @@
       "byline": 25,
       "orcid": 47,
       "wayback": 0,
-      "assigned": 74
+      "assigned": 75
     },
     {
       "year": 2007,
@@ -430,7 +430,7 @@
       "byline": 28,
       "orcid": 82,
       "wayback": 0,
-      "assigned": 114
+      "assigned": 115
     },
     {
       "year": 2012,

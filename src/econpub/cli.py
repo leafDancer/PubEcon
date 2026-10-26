@@ -15,7 +15,13 @@ from .aea import (
 from .authors import resolve_all_authors
 from .career import assign_cv_careers, assign_orcid_careers, infer_byline_career
 from .classify import classify_papers
-from .cv import collect_orcid_urls, discover_cv_links, fetch_cv_documents, parse_cv_sources
+from .cv import (
+    collect_orcid_urls,
+    discover_cv_links,
+    fetch_cv_documents,
+    parse_cv_sources,
+    queue_landing_links,
+)
 from .config import DB_PATH, LOGS_DIR, REPORTS_DIR
 from .coverage import generate_m6_report
 from .crossref import harvest
@@ -327,6 +333,7 @@ def main(argv: list[str] | None = None) -> None:
                     ),
                 )
             if not args.skip_fetch:
+                print(f"CV landing links: {queue_landing_links(conn, limit=args.limit)}")
                 print(f"CV documents: {fetch_cv_documents(conn, limit=args.limit, workers=args.workers)}")
             if not args.skip_parse:
                 print(f"CV parse: {parse_cv_sources(conn, limit=args.limit)}")

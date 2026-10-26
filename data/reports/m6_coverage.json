@@ -1,64 +1,60 @@
 {
-  "generated_at": "2026-10-25T04:12:44+00:00",
+  "generated_at": "2026-10-25T07:45:41+00:00",
   "cv_summary": {
-    "sources": 1347,
-    "candidates": 70,
-    "homepages": 626,
-    "downloaded": 281,
-    "parsed": 256,
-    "failed": 377,
-    "name_mismatch": 18,
-    "cv_events": 1069,
-    "cv_assignments": 43
+    "sources": 1362,
+    "candidates": 0,
+    "homepages": 633,
+    "downloaded": 294,
+    "parsed": 268,
+    "failed": 442,
+    "name_mismatch": 19,
+    "cv_events": 1129,
+    "cv_assignments": 45
   },
-  "cv_authors_with_events": 177,
+  "cv_authors_with_events": 187,
   "cv_status": [
     {
       "status": "homepage_fetched",
-      "n": 626
+      "n": 633
     },
     {
       "status": "failed",
-      "n": 377
+      "n": 442
     },
     {
       "status": "parsed",
-      "n": 256
-    },
-    {
-      "status": "candidate",
-      "n": 70
+      "n": 268
     },
     {
       "status": "name_mismatch",
-      "n": 18
+      "n": 19
     }
   ],
   "cv_types": [
     {
       "source_type": "orcid_researcher_url",
       "status": "homepage_fetched",
-      "n": 626
+      "n": 633
     },
     {
       "source_type": "orcid_researcher_url",
       "status": "failed",
-      "n": 377
+      "n": 370
     },
     {
       "source_type": "cv_link",
       "status": "parsed",
-      "n": 255
+      "n": 267
     },
     {
       "source_type": "cv_link",
-      "status": "candidate",
-      "n": 70
+      "status": "failed",
+      "n": 72
     },
     {
       "source_type": "cv_link",
       "status": "name_mismatch",
-      "n": 18
+      "n": 19
     },
     {
       "source_type": "cv_document",
@@ -74,7 +70,25 @@
       "other": 0
     },
     {
+      "domain": "sites.northwestern.edu",
+      "parsed": 4,
+      "failed": 0,
+      "other": 0
+    },
+    {
       "domain": "www.econ.uzh.ch",
+      "parsed": 3,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "personal.lse.ac.uk",
+      "parsed": 3,
+      "failed": 0,
+      "other": 0
+    },
+    {
+      "domain": "192.218.163.164",
       "parsed": 3,
       "failed": 0,
       "other": 0
@@ -86,7 +100,7 @@
       "other": 0
     },
     {
-      "domain": "sites.google.com",
+      "domain": "web.sas.upenn.edu",
       "parsed": 2,
       "failed": 0,
       "other": 0
@@ -122,37 +136,19 @@
       "other": 0
     },
     {
+      "domain": "fportier.wordpress.com",
+      "parsed": 2,
+      "failed": 0,
+      "other": 0
+    },
+    {
       "domain": "www.david-anthoff.com",
       "parsed": 2,
       "failed": 0,
       "other": 0
     },
     {
-      "domain": "personal.lse.ac.uk",
-      "parsed": 2,
-      "failed": 0,
-      "other": 0
-    },
-    {
       "domain": "eml.berkeley.edu",
-      "parsed": 2,
-      "failed": 0,
-      "other": 0
-    },
-    {
-      "domain": "sites.northwestern.edu",
-      "parsed": 2,
-      "failed": 0,
-      "other": 0
-    },
-    {
-      "domain": "koichiroito.com",
-      "parsed": 2,
-      "failed": 0,
-      "other": 0
-    },
-    {
-      "domain": "www.tax.mpg.de",
       "parsed": 2,
       "failed": 0,
       "other": 0

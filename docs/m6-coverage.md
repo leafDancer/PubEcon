@@ -48,14 +48,39 @@ python run.py wayback --skip-collect --skip-fetch --skip-parse
 
 The current development environment cannot reach `web.archive.org` (connections time out). The Wayback pipeline is implemented and covered by parser/snapshot-selection tests, but it has not been run against the live archive here. Run it from a network that can reach the Internet Archive before treating it as a coverage source.
 
+### Common Crawl fallback
+
+Common Crawl is reachable from this environment and was tested as an alternative
+historical-page source. The index (`index.commoncrawl.org`) and the WARC range
+endpoint (`data.commoncrawl.org`) both respond, and a captured HTML page can be
+recovered with a byte-range request, decompressed, and passed to the same
+rank parser.
+
+It is not enabled as a coverage source yet:
+
+- The index endpoint returned HTTP 502/504 on a large share of requests, so a
+  full author sweep needs long backoff, a response cache, and a single worker.
+- Exact-URL captures are sparse for personal faculty pages; several sampled
+  homepages had no capture in the crawl nearest the paper year.
+- Some captures are redirects (HTTP 301) or empty shells, so only `200`
+  `text/html` records with a meaningful body are usable.
+
+The tested flow is documented here so a future run does not have to rediscover
+it: choose the crawl nearest the paper year from `collinfo.json`, query the
+exact URL with `filter=status:200` and `filter=mime:text/html`, read
+`filename`/`offset`/`length`, fetch that byte range from
+`data.commoncrawl.org`, gunzip the WARC record, split on the first two
+`\r\n\r\n` boundaries, and parse the third part as the HTTP body. Record
+Common Crawl captures under their own provenance; do not label them Wayback.
+
 ## Current run (2026-10-25)
 
-- **1,347** CV/homepage sources are tracked (ORCID researcher URLs plus discovered CV links).
-- **626** homepages were parsed for CV links; **281** documents were downloaded; **256** were parsed.
-- **193** documents produced at least one event; the other 63 were parsed with zero events.
-- **1,069** CV career events and **43** CV career assignments were extracted across **177** authors.
-- **70** CV links remain in the resumable queue; **18** were rejected as name mismatches; **377** homepages were unreachable.
-- Total career assignments are **2,303 of 10,782 article slots (21.4%)**: 669 byline, 1,591 ORCID, and 43 CV.
+- **1,362** CV/homepage sources are tracked (ORCID researcher URLs plus discovered CV links).
+- **633** homepages were parsed for CV links; **294** documents were downloaded; **268** were parsed.
+- **203** documents produced at least one event; the other 65 were parsed with zero events.
+- **1,129** CV career events and **45** CV career assignments were extracted across **187** authors.
+- The CV queue is empty; **19** were rejected as name mismatches; **370** homepages and **72** CV documents were unreachable.
+- Total career assignments are **2,305 of 10,782 article slots (21.4%)**: 669 byline, 1,591 ORCID, and 45 CV.
 - The crawler now handles `Asst.`/`Assoc.` abbreviations, colon-terminated section headers, `EARNED DEGREES`, short end years such as `2015-22`, month/year ranges such as `05/2014-07/2017`, HTML masquerading as PDF, and institution names such as `University of St Gallen`.
 - Wayback snapshots are **0** in this run because the development network cannot reach `web.archive.org`.
 

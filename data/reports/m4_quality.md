@@ -1,6 +1,6 @@
 # M4 Career Evidence Report — AER 2000+
 
-Generated: 2026-10-25T04:12:44+00:00
+Generated: 2026-10-25T07:45:41+00:00
 
 Scope: **American Economic Review** (ISSN 0002-8282), 2000–present. M4 adds structured ORCID employment/education timelines and uses them to infer career stage at publication.
 
@@ -15,21 +15,21 @@ Scope: **American Economic Review** (ISSN 0002-8282), 2000–present. M4 adds st
 | ORCID identities contributing events | 2067 |
 | ORCID career events | 5847 |
 | ORCID events with a start year | 4583 |
-| Career assignments (all sources) | 2303 |
+| Career assignments (all sources) | 2305 |
 |   — byline assignments | 669 |
 |   — ORCID assignments | 1591 |
 |   — Wayback assignments | 0 |
 | Career coverage (article slots) | 21.4% |
-|   — high/medium confidence | 1380 |
-|   — low confidence | 923 |
+|   — high/medium confidence | 1381 |
+|   — low confidence | 924 |
 | ORCID name conflicts skipped | 72 |
 | ORCID author conflicts | 0 |
 | ORCID field mismatches rejected | 165 |
 | ORCID career-risk rejections | 12 |
-| CV/homepage sources | 1347 |
-| CV documents parsed | 256 |
-| CV career events | 1069 |
-| CV assignments | 43 |
+| CV/homepage sources | 1362 |
+| CV documents parsed | 268 |
+| CV career events | 1129 |
+| CV assignments | 45 |
 
 ## ORCID identity confidence
 
@@ -69,13 +69,13 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | education | orcid | high | 1086 |
 | employment | orcid | low | 989 |
 | education | orcid | medium | 533 |
-| employment | cv | medium | 319 |
+| employment | cv | medium | 340 |
 | education | orcid | low | 248 |
-| education | cv | medium | 181 |
-| education | cv | high | 179 |
-| education | cv | low | 140 |
-| employment | cv | low | 140 |
-| employment | cv | high | 110 |
+| education | cv | medium | 190 |
+| education | cv | high | 187 |
+| employment | cv | low | 152 |
+| education | cv | low | 145 |
+| employment | cv | high | 115 |
 
 ## Career assignments by evidence and stage
 
@@ -95,20 +95,20 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | orcid_employment | research_fellow | medium | 16 |
 | orcid_employment | research_fellow | high | 15 |
 | orcid_employment | lecturer_other_academic | medium | 14 |
+| cv_employment | full_professor | low | 11 |
 | orcid_employment | lecturer_other_academic | high | 11 |
 | cv_employment | assistant_professor | medium | 10 |
-| cv_employment | full_professor | low | 10 |
 | orcid_employment | postdoc | medium | 9 |
 | cv_employment | associate_professor | medium | 8 |
 | cv_employment | assistant_professor | high | 7 |
 | orcid_employment | associate_professor | low | 6 |
 | orcid_employment | full_professor | high | 6 |
 | orcid_employment | assistant_professor | low | 5 |
+| cv_employment | non_academic | medium | 4 |
 | orcid_employment | postdoc | high | 4 |
 | byline_rank | research_fellow | high | 4 |
 | byline_rank | assistant_professor | high | 3 |
 | byline_rank | associate_professor | high | 3 |
-| cv_employment | non_academic | medium | 3 |
 | cv_employment | associate_professor | high | 2 |
 | byline_rank | lecturer_other_academic | high | 2 |
 | orcid_employment | non_academic | low | 2 |
@@ -131,12 +131,12 @@ Only ORCID records with direct AER evidence (a matching DOI, paper title, or ins
 | 2003 | 342 | 16 | 28 | 0 | 44 | 12.9% |
 | 2004 | 341 | 22 | 37 | 0 | 62 | 18.2% |
 | 2005 | 371 | 23 | 49 | 0 | 73 | 19.7% |
-| 2006 | 364 | 25 | 47 | 0 | 74 | 20.3% |
+| 2006 | 364 | 25 | 47 | 0 | 75 | 20.6% |
 | 2007 | 384 | 26 | 56 | 0 | 82 | 21.4% |
 | 2008 | 394 | 17 | 55 | 0 | 74 | 18.8% |
 | 2009 | 417 | 29 | 51 | 0 | 82 | 19.7% |
 | 2010 | 502 | 35 | 76 | 0 | 111 | 22.1% |
-| 2011 | 546 | 28 | 82 | 0 | 114 | 20.9% |
+| 2011 | 546 | 28 | 82 | 0 | 115 | 21.1% |
 | 2012 | 563 | 37 | 70 | 0 | 111 | 19.7% |
 | 2013 | 505 | 27 | 81 | 0 | 110 | 21.8% |
 | 2014 | 593 | 45 | 86 | 0 | 132 | 22.3% |
