@@ -35,12 +35,12 @@ The API caps page sizes and never serializes the full author table: the AER base
 |---|---|---|---|
 | AER | 4,787 | 10,786 | 4,305 |
 | RES | 1,748 | 4,034 | 1,716 |
-| ECMA | 1,740 | 3,859 | 1,621 |
+| ECMA | 1,740 | 3,830 | 1,621 |
 | JPE | 1,500 | 3,477 | 1,329 |
 | QJE | 1,181 | 3,085 | 1,164 |
-| **Total** | **10,956** | **25,241** | **10,135** |
+| **Total** | **10,956** | **25,212** | **10,135** |
 
-The combined pilot has 10,065 canonical authors and 24,478 coauthorship edges. 3,337 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. In the largest connected component (7,501 authors), the average shortest coauthorship path is 6.53 steps and the diameter is 18; journal-scoped averages range from 7.10 (QJE) to 10.74 (JPE). The overview leaderboards cover assistant-professor output, the five-journal club, most coauthors, and strongest recurring pairs; a connection finder returns shortest paths with paper evidence. Career coverage is 4,109 assignments (16.3% of slots): ORCID plus a CV layer of 438 parsed documents, 1,895 events, and 106 CV assignments. The CV queue is empty; 777 sources failed or were unreachable and remain visible for audit. The AER baseline remains higher because it also has byline rank and a fuller CV corpus. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
+The combined pilot has 10,051 active canonical authors and 24,146 coauthorship edges. 3,335 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. In the largest connected component (7,480 authors), the average shortest coauthorship path is 6.57 steps and the diameter is 18; journal-scoped averages range from 7.10 (QJE) to 10.74 (JPE). The overview leaderboards cover assistant-professor output, the five-journal club, most coauthors, strongest recurring pairs, largest teams, longest careers, and institutions; a connection finder returns shortest paths with paper evidence, and portals link to the network, methodology, and paper index. Career coverage is 4,107 assignments (16.3% of slots): ORCID plus a CV layer of 438 parsed documents, 1,895 events, and 106 CV assignments. The CV queue is empty; 777 sources failed or were unreachable and remain visible for audit. The AER baseline remains higher because it also has byline rank and a fuller CV corpus. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
 
 ## AER baseline dataset (M4)
 

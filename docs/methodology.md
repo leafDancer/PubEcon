@@ -131,6 +131,14 @@ Overview leaderboards are descriptive, not evaluations:
   single large-team paper can place an early-career author high on this list.
 - **Strongest pairs** count shared research articles; up to three papers are
   shown per pair.
+- **Largest teams** rank papers by author count and exclude papers whose byline
+  was recovered from OpenAlex, because that fallback is not reliable enough for
+  a byline ranking.
+- **Longest careers** measure the span between the first and last top-five
+  article, not the author's full academic career.
+- **Institutions** rank primary publish-time OpenAlex affiliations by author
+  slots. Coverage varies by journal, and the primary flag is positional rather
+  than an employer-of-record claim.
 
 Rankings never combine career coverage, citations, and network position into a
 composite "influence" score. A missing stage is not treated as zero output.

@@ -27,13 +27,23 @@ function Stat({
   )
 }
 
-type RankingTab = 'assistant_professor' | 'five_journal' | 'most_coauthors' | 'strongest_pair'
+type RankingTab =
+  | 'assistant_professor'
+  | 'five_journal'
+  | 'most_coauthors'
+  | 'strongest_pair'
+  | 'largest_teams'
+  | 'longest_careers'
+  | 'institutions'
 
 const RANKING_TABS: Array<{ id: RankingTab; label: string }> = [
-  { id: 'assistant_professor', label: 'Assistant professors' },
-  { id: 'five_journal', label: 'Five-journal club' },
-  { id: 'most_coauthors', label: 'Most coauthors' },
-  { id: 'strongest_pair', label: 'Strongest pairs' },
+  { id: 'assistant_professor', label: 'Assistant' },
+  { id: 'five_journal', label: 'Five journals' },
+  { id: 'most_coauthors', label: 'Coauthors' },
+  { id: 'strongest_pair', label: 'Pairs' },
+  { id: 'largest_teams', label: 'Teams' },
+  { id: 'longest_careers', label: 'Longest' },
+  { id: 'institutions', label: 'Institutions' },
 ]
 
 function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) {
@@ -65,7 +75,79 @@ function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) 
     )
   }
 
-  const rows = data[tab]
+  if (tab === 'largest_teams') {
+    return (
+      <ol className="ep-ranked-list">
+        {data.largest_teams.map((paper, index) => (
+          <li key={paper.doi}>
+            <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <Link to={`/papers/${paper.doi}`}>{paper.title}</Link>
+              <small>
+                {paper.journal} · {paper.year ?? '—'}
+              </small>
+            </div>
+            <span className="ep-rank-value">
+              {paper.authors}
+              <small>authors</small>
+            </span>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  if (tab === 'longest_careers') {
+    return (
+      <ol className="ep-ranked-list">
+        {data.longest_careers.map((author, index) => (
+          <li key={author.id}>
+            <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <Link to={`/authors/${author.id}`}>{author.name}</Link>
+              <small>
+                {author.first_year ?? '—'}–{author.last_year ?? '—'} · {author.papers} papers
+              </small>
+            </div>
+            <span className="ep-rank-value">
+              {author.span}
+              <small>years</small>
+            </span>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  if (tab === 'institutions') {
+    return (
+      <ol className="ep-ranked-list">
+        {data.institutions.map((institution, index) => (
+          <li key={institution.name}>
+            <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <strong className="ep-rank-institution">{institution.name}</strong>
+              <small>
+                {institution.country ?? 'Country not resolved'} · {institution.authors} authors ·{' '}
+                {institution.papers} papers
+              </small>
+            </div>
+            <span className="ep-rank-value">
+              {institution.slots}
+              <small>slots</small>
+            </span>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  const rows =
+    tab === 'assistant_professor'
+      ? data.assistant_professor
+      : tab === 'five_journal'
+        ? data.five_journal
+        : data.most_coauthors
   return (
     <ol className="ep-ranked-list">
       {rows.map((row, index) => {
@@ -341,6 +423,12 @@ export default function OverviewPage() {
               'Distinct coauthors across all five journals. Large-team papers can put early-career authors high on this list.'}
             {rankingTab === 'strongest_pair' &&
               'Pairs ranked by shared research articles; multiple shared papers do not affect path distance.'}
+            {rankingTab === 'largest_teams' &&
+              'Research articles with the most authors. Papers whose byline was recovered from OpenAlex are excluded.'}
+            {rankingTab === 'longest_careers' &&
+              'Span between the first and last top-five article. This measures activity in these journals, not the full academic career.'}
+            {rankingTab === 'institutions' &&
+              'Primary publish-time OpenAlex institution. Coverage varies by journal; the primary flag is positional, not an employer-of-record claim.'}
           </p>
         </div>
 
@@ -374,6 +462,49 @@ export default function OverviewPage() {
           </dl>
           <Link className="ep-text-link" to="/methodology">
             Read the methodology
+          </Link>
+        </div>
+      </section>
+
+      <section className="ep-portals" aria-labelledby="explore-heading">
+        <div className="ep-section-heading">
+          <div>
+            <h2 id="explore-heading">Explore further</h2>
+            <p>Jump from the summary to the question you have in mind.</p>
+          </div>
+        </div>
+        <div className="ep-portal-grid">
+          <Link className="ep-portal" to="/connection">
+            <strong>How are two authors connected?</strong>
+            <span>
+              Search two names and trace the shortest coauthorship chain, with the paper behind
+              every step.
+            </span>
+            <small>Open the connection finder →</small>
+          </Link>
+          <Link className="ep-portal" to="/network">
+            <strong>Who works with whom?</strong>
+            <span>
+              Explore journal-scoped coauthor graphs, the most connected authors, and the
+              small-world statistics.
+            </span>
+            <small>Open the network explorer →</small>
+          </Link>
+          <Link className="ep-portal" to="/methodology#evidence">
+            <strong>How is a career stage inferred?</strong>
+            <span>
+              Read the evidence hierarchy, identity checks, confidence rules, and the limits of
+              every source.
+            </span>
+            <small>Read the methodology →</small>
+          </Link>
+          <Link className="ep-portal" to="/papers">
+            <strong>Browse the record</strong>
+            <span>
+              Filter {formatNumber(data.counts.papers)} research articles across the five journals
+              by journal, year, and topic.
+            </span>
+            <small>Browse the papers →</small>
           </Link>
         </div>
       </section>

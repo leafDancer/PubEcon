@@ -185,7 +185,10 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
             (SELECT COUNT(*) FROM papers WHERE content_type='article' AND is_duplicate=0) AS articles,
             (SELECT COUNT(*) FROM authorships s JOIN papers p ON p.paper_id=s.paper_id
                 WHERE p.content_type='article' AND p.is_duplicate=0) AS slots,
-            (SELECT COUNT(*) FROM authors) AS authors,
+            (SELECT COUNT(*) FROM authors a WHERE EXISTS (
+                SELECT 1 FROM authorships s JOIN papers p ON p.paper_id=s.paper_id
+                WHERE s.author_id=a.author_id AND p.content_type='article'
+                  AND p.is_duplicate=0)) AS authors,
             (SELECT COUNT(*) FROM coauthorship_edges) AS edges,
             (SELECT COUNT(*) FROM career_assignments) AS assignments,
             (SELECT COUNT(*) FROM authors WHERE needs_review=1) AS needs_review,

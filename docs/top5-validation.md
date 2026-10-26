@@ -60,6 +60,24 @@ starting with "Comment", JPE 6 comments and 1 reply, and ECMA 12 comments and
 not a silent reclassification. Unlabelled book reviews whose title is just the
 book title remain a known gap.
 
+## OpenAlex backfill correction (2026-10-26)
+
+A review of the largest-team ranking exposed two ECMA papers whose Crossref
+deposits had no authors and whose OpenAlex backfill was wrong:
+
+- *Testing Models With Multiple Equilibria by Quantile Methods* (`10.3982/ecta6223`)
+  was backfilled with 25 authors; the paper has two (Echenique and Komunjer).
+- *Belief-Free Equilibria in Games With Incomplete Information*
+  (`10.3982/ecta7134`) was backfilled with nine, including a literal
+  "We Thank Pierpaolo Battigalli" entry; the paper has three (Hörner, Lovo,
+  Tomala).
+
+Both records were corrected in the combined database, their fictitious
+coauthorship ties were removed, and the backfill path now rejects any OpenAlex
+byline with more than 12 authors or an acknowledgement/editor-like name. The
+largest-team leaderboard excludes papers whose byline came from OpenAlex
+backfill. A fresh `top5` build applies the guard automatically.
+
 ## Identity checks
 
 The combined build was resolved from scratch, then OpenAlex-supported merges
@@ -88,8 +106,8 @@ were applied. Known risks were checked explicitly:
 
 ## Career coverage
 
-The combined pilot has ORCID plus a CV layer: 4,109 of 25,241 slots (16.3%)
-receive a stage. Per journal: AER 15.9%, RES 17.9%, ECMA 15.9%, JPE 18.2%, QJE
+The combined pilot has ORCID plus a CV layer: 4,107 of 25,212 slots (16.3%)
+receive a stage. Per journal: AER 15.9%, RES 17.9%, ECMA 16.0%, JPE 18.2%, QJE
 13.8%. The CV crawl parsed 438 documents into 1,895 events and 106 assignments;
 the queue is empty and 777 sources failed or were unreachable. The AER baseline
 remains at 21.4% because it also has byline rank and a fuller CV corpus. New

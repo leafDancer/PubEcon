@@ -34,6 +34,14 @@ OPENALEX_RAW_DIR = RAW_DIR / "openalex"
 WORKS_DIR = OPENALEX_RAW_DIR / "works"
 USER_AGENT = f"EconPubDatabase/0.2 (mailto:{MAILTO})"
 
+# OpenAlex byline recovery is a fallback for deposits that have no authors at
+# all. It occasionally carries an issue-level or acknowledgement-level author
+# list, so implausible backfills are rejected rather than promoted to a byline.
+MAX_BACKFILL_AUTHORS = 12
+_SUSPECT_BACKFILL_NAME = re.compile(
+    r"\b(?:we\s+thank|thanks|acknowledg(?:e)?ment|anonymous|editor)\b", re.IGNORECASE
+)
+
 OPENALEX_SELECT = [
     "id",
     "doi",
@@ -446,6 +454,12 @@ def _apply_work(
         # Some publishers (notably Econometrica 2008–2014) deposit works
         # without author metadata. OpenAlex often has the byline; use it as a
         # bibliographic supplement while keeping the provenance explicit.
+        names = [clean_text(oa.get("author_name")) for oa in work["authorships"]]
+        if len(names) > MAX_BACKFILL_AUTHORS or any(
+            _SUSPECT_BACKFILL_NAME.search(name) for name in names
+        ):
+            stats["authorships_skipped"] += 1
+            return
         for order, oa in enumerate(work["authorships"], start=1):
             display = clean_text(oa.get("author_name"))
             parts = display.split()
@@ -579,6 +593,7 @@ def enrich_openalex(
         "topics": 0,
         "authorships_matched": 0,
         "authorships_created": 0,
+        "authorships_skipped": 0,
         "institutions": 0,
         "failed_batches": 0,
     }

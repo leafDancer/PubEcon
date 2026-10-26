@@ -176,7 +176,10 @@ def _stats_payload(conn: sqlite3.Connection) -> dict[str, Any]:
         SELECT
             (SELECT COUNT(*) FROM papers WHERE content_type='article' AND is_duplicate=0) AS papers,
             (SELECT COUNT(*) FROM papers WHERE content_type='article' AND is_duplicate=0 AND is_pp=1) AS pp_papers,
-            (SELECT COUNT(*) FROM authors) AS authors,
+            (SELECT COUNT(*) FROM authors a WHERE EXISTS (
+                SELECT 1 FROM authorships s JOIN papers p ON p.paper_id=s.paper_id
+                WHERE s.author_id=a.author_id AND p.content_type='article'
+                  AND p.is_duplicate=0)) AS authors,
             (SELECT COUNT(*) FROM authorships s JOIN papers p ON p.paper_id=s.paper_id
                 WHERE p.content_type='article' AND p.is_duplicate=0) AS authorships,
             (SELECT COUNT(*) FROM coauthorship_edges) AS coauthorship_edges,
@@ -576,6 +579,61 @@ def _rankings(conn: sqlite3.Connection, limit: int = 10) -> dict[str, Any]:
         (limit,),
     ).fetchall()
 
+    largest_teams = conn.execute(
+        """
+        SELECT p.doi, p.title, p.published_year, p.journal_code,
+               COUNT(s.authorship_id) AS authors
+        FROM papers p
+        JOIN authorships s ON s.paper_id=p.paper_id
+        WHERE p.content_type='article' AND p.is_duplicate=0
+        GROUP BY p.paper_id
+        HAVING SUM(CASE WHEN s.openalex_match_method='openalex_backfill' THEN 1 ELSE 0 END)=0
+        ORDER BY authors DESC, p.published_year DESC, p.doi
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    longest_careers = conn.execute(
+        f"""
+        SELECT a.author_id, a.stable_id, a.canonical_name,
+               MIN(p.published_year) AS first_year,
+               MAX(p.published_year) AS last_year,
+               COUNT(DISTINCT p.paper_id) AS papers,
+               MAX(p.published_year) - MIN(p.published_year) AS span,
+               {_INSTITUTION_SQL} AS institution
+        FROM authors a
+        JOIN authorships s ON s.author_id=a.author_id
+        JOIN papers p ON p.paper_id=s.paper_id
+        WHERE p.content_type='article' AND p.is_duplicate=0
+          AND p.published_year IS NOT NULL
+        GROUP BY a.author_id
+        HAVING papers>=2 AND span IS NOT NULL
+        ORDER BY span DESC, papers DESC, a.canonical_name
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    institutions = conn.execute(
+        """
+        SELECT i.display_name, i.country,
+               COUNT(DISTINCT ai.authorship_id) AS slots,
+               COUNT(DISTINCT s.author_id) AS authors,
+               COUNT(DISTINCT p.paper_id) AS papers
+        FROM authorship_institutions ai
+        JOIN institutions i ON i.institution_id=ai.institution_id
+        JOIN authorships s ON s.authorship_id=ai.authorship_id
+        JOIN papers p ON p.paper_id=s.paper_id
+        WHERE ai.is_primary=1
+          AND p.content_type='article' AND p.is_duplicate=0
+        GROUP BY i.institution_id
+        ORDER BY slots DESC, i.display_name
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
     return {
         "assistant_professor": [
             {
@@ -634,6 +692,38 @@ def _rankings(conn: sqlite3.Connection, limit: int = 10) -> dict[str, Any]:
             }
             for row in pair_rows
         ],
+        "largest_teams": [
+            {
+                "doi": row["doi"],
+                "title": row["title"],
+                "year": row["published_year"],
+                "journal": row["journal_code"] or "AER",
+                "authors": row["authors"],
+            }
+            for row in largest_teams
+        ],
+        "longest_careers": [
+            {
+                "id": row["stable_id"],
+                "name": row["canonical_name"],
+                "institution": _clean(row["institution"]),
+                "first_year": row["first_year"],
+                "last_year": row["last_year"],
+                "papers": row["papers"],
+                "span": row["span"],
+            }
+            for row in longest_careers
+        ],
+        "institutions": [
+            {
+                "name": row["display_name"],
+                "country": _clean(row["country"]),
+                "slots": row["slots"],
+                "authors": row["authors"],
+                "papers": row["papers"],
+            }
+            for row in institutions
+        ],
         "definitions": {
             "assistant_professor": (
                 "Papers with an explicit assistant-professor assignment at high or "
@@ -650,6 +740,19 @@ def _rankings(conn: sqlite3.Connection, limit: int = 10) -> dict[str, Any]:
             "strongest_pair": (
                 "Author pairs with the most shared research articles; up to three "
                 "papers are shown per pair."
+            ),
+            "largest_teams": (
+                "Research articles with the most authors, across the five journals."
+            ),
+            "longest_careers": (
+                "Authors ranked by the span between their first and last top-five "
+                "research articles. This measures activity in these five journals, "
+                "not the full academic career."
+            ),
+            "institutions": (
+                "Institutions ranked by primary publish-time author slots. OpenAlex "
+                "resolves the institution; coverage varies by journal and the primary "
+                "flag is positional, not an employer-of-record claim."
             ),
         },
     }

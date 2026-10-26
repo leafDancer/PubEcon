@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-26T13:56:08+00:00",
+  "generated_at": "2026-10-26T14:58:50+00:00",
   "totals": {
     "records": 13443,
     "articles": 10956,
-    "slots": 25241,
-    "authors": 10065,
-    "edges": 24478,
-    "assignments": 4109,
+    "slots": 25212,
+    "authors": 10051,
+    "edges": 24146,
+    "assignments": 4107,
     "needs_review": 2454,
     "separation_rules": 3
   },
@@ -92,9 +92,9 @@
       "articles": 1740,
       "openalex_works": 1671,
       "resolved_slots": 3332,
-      "slots": 3859,
-      "authors": 2376,
-      "accepted_orcid_authors": 971
+      "slots": 3830,
+      "authors": 2361,
+      "accepted_orcid_authors": 970
     },
     {
       "journal": "JPE",
@@ -133,8 +133,8 @@
     },
     {
       "journal": "ECMA",
-      "slots": 3859,
-      "assigned": 613,
+      "slots": 3830,
+      "assigned": 611,
       "high_medium": 244
     },
     {
@@ -160,7 +160,7 @@
     {
       "evidence_type": "orcid_employment",
       "confidence": "low",
-      "n": 2280
+      "n": 2278
     },
     {
       "evidence_type": "orcid_employment",
@@ -241,19 +241,19 @@
   "journal_reach": [
     {
       "journal_count": 1,
-      "authors": 6726
+      "authors": 6716
     },
     {
       "journal_count": 2,
-      "authors": 1841
+      "authors": 1839
     },
     {
       "journal_count": 3,
-      "authors": 863
+      "authors": 864
     },
     {
       "journal_count": 4,
-      "authors": 455
+      "authors": 454
     },
     {
       "journal_count": 5,

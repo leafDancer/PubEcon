@@ -341,11 +341,40 @@ export interface RankingPair {
   papers: PathPaper[]
 }
 
+export interface RankingTeam {
+  doi: string
+  title: string
+  year: number | null
+  journal: string
+  authors: number
+}
+
+export interface RankingCareer {
+  id: string
+  name: string
+  institution: string | null
+  first_year: number | null
+  last_year: number | null
+  papers: number
+  span: number
+}
+
+export interface RankingInstitution {
+  name: string
+  country: string | null
+  slots: number
+  authors: number
+  papers: number
+}
+
 export interface RankingsPayload {
   assistant_professor: RankingAuthor[]
   five_journal: RankingAuthor[]
   most_coauthors: RankingAuthor[]
   strongest_pair: RankingPair[]
+  largest_teams: RankingTeam[]
+  longest_careers: RankingCareer[]
+  institutions: RankingInstitution[]
   definitions: Record<string, string>
 }
 

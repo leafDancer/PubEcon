@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-10-26T14:33:45+00:00",
+  "generated_at": "2026-10-26T14:58:51+00:00",
   "scopes": [
     {
-      "nodes": 9516,
-      "edges": 20094,
-      "components": 704,
-      "largest_component": 7501,
+      "nodes": 9503,
+      "edges": 19767,
+      "components": 706,
+      "largest_component": 7480,
       "component_sizes": [
-        7501,
+        7480,
         16,
         11,
         11,
@@ -18,13 +18,13 @@
         9,
         8
       ],
-      "average_degree": 4.223,
-      "average_path_length": 6.5343,
+      "average_degree": 4.16,
+      "average_path_length": 6.5744,
       "diameter": 18,
-      "average_clustering": 0.6802,
-      "pairs": 28128750,
+      "average_clustering": 0.6788,
+      "pairs": 27971460,
       "scope": "ALL",
-      "generated_at": "2026-10-26T14:33:45+00:00"
+      "generated_at": "2026-10-26T14:58:51+00:00"
     },
     {
       "nodes": 5463,
@@ -49,15 +49,15 @@
       "average_clustering": 0.7394,
       "pairs": 4683330,
       "scope": "AER",
-      "generated_at": "2026-10-26T14:33:45+00:00"
+      "generated_at": "2026-10-26T14:58:51+00:00"
     },
     {
-      "nodes": 2192,
-      "edges": 3229,
-      "components": 385,
-      "largest_component": 888,
+      "nodes": 2176,
+      "edges": 2901,
+      "components": 389,
+      "largest_component": 858,
       "component_sizes": [
-        888,
+        858,
         20,
         16,
         14,
@@ -68,13 +68,13 @@
         13,
         10
       ],
-      "average_degree": 2.946,
-      "average_path_length": 9.0408,
+      "average_degree": 2.666,
+      "average_path_length": 9.7086,
       "diameter": 24,
-      "average_clustering": 0.7688,
-      "pairs": 393828,
+      "average_clustering": 0.7635,
+      "pairs": 367653,
       "scope": "ECMA",
-      "generated_at": "2026-10-26T14:33:45+00:00"
+      "generated_at": "2026-10-26T14:58:51+00:00"
     },
     {
       "nodes": 2318,
@@ -99,7 +99,7 @@
       "average_clustering": 0.8199,
       "pairs": 89253,
       "scope": "JPE",
-      "generated_at": "2026-10-26T14:33:45+00:00"
+      "generated_at": "2026-10-26T14:58:51+00:00"
     },
     {
       "nodes": 1957,
@@ -124,7 +124,7 @@
       "average_clustering": 0.8125,
       "pairs": 509545,
       "scope": "QJE",
-      "generated_at": "2026-10-26T14:33:45+00:00"
+      "generated_at": "2026-10-26T14:58:51+00:00"
     },
     {
       "nodes": 2683,
@@ -149,7 +149,7 @@
       "average_clustering": 0.7962,
       "pairs": 158766,
       "scope": "RES",
-      "generated_at": "2026-10-26T14:33:45+00:00"
+      "generated_at": "2026-10-26T14:58:51+00:00"
     }
   ]
 }

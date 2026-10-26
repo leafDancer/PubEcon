@@ -242,8 +242,12 @@ export default function MethodologyPage() {
               more prolific. The five-journal list requires at least one research article in each
               journal. The coauthor list counts distinct coauthors across all five journals, so a
               single large-team paper can place an early-career author high. The strongest-pair list
-              counts shared research articles. Coverage and confidence always travel with the
-              metric.
+              counts shared research articles. Largest teams exclude papers whose byline was recovered
+              from OpenAlex, because that fallback is not reliable enough for a byline ranking.
+              Longest careers measure the span between the first and last top-five article, not
+              the full academic career. Institutions rank primary publish-time OpenAlex
+              affiliations by author slots; coverage varies by journal. Coverage and confidence
+              always travel with the metric.
             </p>
           </section>
 

@@ -1,6 +1,6 @@
 # Top-five dataset report
 
-Generated 2026-10-26T13:56:08+00:00.
+Generated 2026-10-26T14:58:50+00:00.
 
 Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica*, 2000–present. AER includes Papers & Proceedings through 2017. Counts are research articles unless stated otherwise.
 
@@ -10,10 +10,10 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 |---|---|
 | Crossref records | 13443 |
 | Research articles | 10956 |
-| Author slots | 25241 |
-| Canonical authors | 10065 |
-| Coauthorship edges | 24478 |
-| Career assignments | 4109 |
+| Author slots | 25212 |
+| Canonical authors | 10051 |
+| Coauthorship edges | 24146 |
+| Career assignments | 4107 |
 | Authors flagged for review | 2454 |
 | Separation rules | 3 |
 
@@ -35,7 +35,7 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 | QJE | 98.6% | 89.5% | 38.4% |
 | JPE | 99.6% | 88.6% | 43.1% |
 | RES | 98.6% | 95.1% | 44.1% |
-| ECMA | 96.0% | 86.3% | 40.9% |
+| ECMA | 96.0% | 87.0% | 41.1% |
 
 OpenAlex work coverage is DOI-keyed. Resolved institution includes an OpenAlex institution or a non-empty Crossref byline hint, so it is an upper bound on usable institution evidence. Accepted ORCID authors exclude unverified and rejected links.
 
@@ -47,7 +47,7 @@ OpenAlex work coverage is DOI-keyed. Resolved institution includes an OpenAlex i
 | QJE | 3085 | 427 | 13.8% | 182 |
 | JPE | 3477 | 634 | 18.2% | 269 |
 | RES | 4034 | 722 | 17.9% | 332 |
-| ECMA | 3859 | 613 | 15.9% | 244 |
+| ECMA | 3830 | 611 | 16.0% | 244 |
 
 Career evidence is ORCID and CV only for the new journals. AER also has byline rank evidence. Unknown slots are not imputed.
 
@@ -69,7 +69,7 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 
 | Evidence | Confidence | Assignments |
 |---|---|---|
-| orcid_employment | low | 2280 |
+| orcid_employment | low | 2278 |
 | orcid_employment | medium | 1143 |
 | orcid_employment | high | 506 |
 | orcid_education | medium | 70 |
@@ -83,10 +83,10 @@ The CV crawl is resumable. A non-zero candidate count is a visible queue, not a 
 
 | Journals per author | Authors |
 |---|---|
-| 1 | 6726 |
-| 2 | 1841 |
-| 3 | 863 |
-| 4 | 455 |
+| 1 | 6716 |
+| 2 | 1839 |
+| 3 | 864 |
+| 4 | 454 |
 | 5 | 178 |
 
 | Author | Journals | Papers |

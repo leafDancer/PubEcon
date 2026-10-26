@@ -130,6 +130,9 @@ class ApiTests(unittest.TestCase):
             "five_journal",
             "most_coauthors",
             "strongest_pair",
+            "largest_teams",
+            "longest_careers",
+            "institutions",
         ):
             self.assertIn(key, body)
             self.assertLessEqual(len(body[key]), 3)

@@ -109,18 +109,18 @@ merges. It is a validation build, not the served database.
 |---|---|---|---|
 | AER | 4,787 | 10,786 | 4,305 |
 | RES | 1,748 | 4,034 | 1,716 |
-| ECMA | 1,740 | 3,859 | 1,621 |
+| ECMA | 1,740 | 3,830 | 1,621 |
 | JPE | 1,500 | 3,477 | 1,329 |
 | QJE | 1,181 | 3,085 | 1,164 |
-| **Total** | **10,956** | **25,241** | **10,135** |
+| **Total** | **10,956** | **25,212** | **10,135** |
 
 - OpenAlex backfilled **801** authorships, including 12 AER articles that
   lacked Crossref authors and 359 ECMA articles. A later administrative cleanup
   moved 11 AER society records out of the article count, leaving 4,787 AER
   research articles in the combined database.
-- The combined identity layer has **10,065 canonical authors** and **24,478**
-  coauthorship edges.
-- Cross-journal reach is large: **3,337** authors appear in at least two
+- The combined identity layer has **10,051 active canonical authors** and
+  **24,146** coauthorship edges.
+- Cross-journal reach is large: **3,335** authors appear in at least two
   journals, **1,496** in at least three, and **178** in all five.
 - All three AER namesake pairs survive the from-scratch rebuild
   (Page/Sullivan/Morgan). The first pass still merged John W./M. Morgan through
@@ -140,16 +140,16 @@ The combined database now has an ORCID career layer:
 - Identity tiers: 2,376 verified by DOI, 346 by title, 899 by institution, 454
   by economics-field signal, 1,439 unverified (events withheld), 150 rejected
   for name conflict, 294 for field mismatch, and 28 for career risk.
-- **4,003 of 25,241 author slots (15.9%)** receive an ORCID career stage,
+- **4,001 of 25,212 author slots (15.9%)** receive an ORCID career stage,
   plus **106** CV assignments (438 parsed documents, 1,895 events), for
-  **4,109 total assignments (16.3%)**. Confidence: 506 high, 1,143 medium, and
-  2,280 low from ORCID, plus 18 high, 58 medium, and 30 low from CV.
+  **4,107 total assignments (16.3%)**. Confidence: 506 high, 1,143 medium, and
+  2,278 low from ORCID, plus 18 high, 58 medium, and 30 low from CV.
 
 | Journal | Slots | Assigned | Coverage | High/medium |
 |---|---|---|---|---|
 | AER | 10,786 | 1,713 | 15.9% | 768 |
 | RES | 4,034 | 722 | 17.9% | 332 |
-| ECMA | 3,859 | 613 | 15.9% | 244 |
+| ECMA | 3,830 | 611 | 16.0% | 244 |
 | JPE | 3,477 | 634 | 18.2% | 269 |
 | QJE | 3,085 | 427 | 13.8% | 182 |
 

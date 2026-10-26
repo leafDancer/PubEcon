@@ -2816,9 +2816,9 @@ h3 {
 
 .ep-ranking-tabs {
   display: flex;
-  gap: 2px;
+  flex-wrap: wrap;
+  gap: 2px 4px;
   margin: 14px 0 4px;
-  overflow-x: auto;
   border-bottom: 1px solid var(--line);
 }
 
@@ -2852,4 +2852,67 @@ h3 {
 
 .ep-ranking-note {
   margin-top: 10px;
+}
+
+/* Overview portals */
+
+.ep-portals {
+  margin-top: 28px;
+}
+
+.ep-portal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ep-portal {
+  display: block;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  background: var(--sheet);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 120ms ease;
+}
+
+.ep-portal:hover {
+  border-color: var(--pine);
+}
+
+.ep-portal strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.ep-portal span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ep-portal small {
+  display: block;
+  margin-top: 12px;
+  color: var(--pine);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+@media (max-width: 720px) {
+  .ep-portal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ep-rank-institution {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
 }
