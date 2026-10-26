@@ -258,18 +258,31 @@ export default function OverviewPage() {
         <div className="ep-panel">
           <div className="ep-section-heading">
             <div>
-              <h2>Recent papers</h2>
-              <p>The newest research articles in the record.</p>
+              <h2>Most papers</h2>
+              <p>Authors ranked by research articles across the five journals.</p>
             </div>
-            <Link className="ep-text-link" to="/papers?sort=year_desc">
-              All papers
+            <Link className="ep-text-link" to="/authors?sort=papers">
+              Browse authors
             </Link>
           </div>
-          <div className="ep-paper-list">
-            {data.recent_papers.map((paper) => (
-              <PaperRow key={paper.doi} paper={paper} />
+          <ol className="ep-ranked-list">
+            {data.top_authors.map((author, index) => (
+              <li key={author.stable_id}>
+                <span className="ep-rank-index">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <Link to={`/authors/${author.stable_id}`}>{author.name}</Link>
+                  <small>{author.institution ?? 'Institution not resolved'}</small>
+                </div>
+                <span className="ep-rank-value">
+                  {author.papers}
+                  <small>papers</small>
+                </span>
+              </li>
             ))}
-          </div>
+          </ol>
+          <p className="ep-note ep-ranking-note">
+            Paper count only; this is not a quality or influence ranking.
+          </p>
         </div>
         <div className="ep-panel">
           <div className="ep-section-heading">
