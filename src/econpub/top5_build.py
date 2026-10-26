@@ -6,7 +6,7 @@ from typing import Any
 from .authors import resolve_all_authors
 from .career import assign_orcid_careers
 from .classify import classify_papers
-from .config import JOURNALS
+from .config import DB_PATH, JOURNALS
 from .crossref import harvest
 from .identity import ensure_identity_ledger
 from .openalex import (
@@ -31,6 +31,48 @@ def _has_career_events(conn) -> bool:
     return bool(conn.execute("SELECT COUNT(*) FROM career_events").fetchone()[0])
 
 
+def _copy_separation_rules(conn) -> int:
+    """Carry AER's OpenAlex-ID namesake rules into the combined database.
+
+    The AER baseline has reviewed separation rules with both OpenAlex IDs and
+    authorship pairs. The authorship IDs do not exist in a from-scratch
+    combined build, but the OpenAlex-ID pairs do; copying those prevents the
+    namesake splits from being lost.
+    """
+    from pathlib import Path
+
+    main = conn.execute("PRAGMA database_list").fetchone()["file"]
+    if not DB_PATH.exists() or Path(main).resolve() == DB_PATH.resolve():
+        return 0
+    conn.execute("ATTACH DATABASE ? AS baseline", (str(DB_PATH),))
+    try:
+        cursor = conn.execute(
+            """
+            INSERT INTO author_separation_rules
+                (left_openalex_id, right_openalex_id, left_authorship_id,
+                 right_authorship_id, reason, created_at)
+            SELECT b.left_openalex_id, b.right_openalex_id, NULL, NULL,
+                   b.reason, b.created_at
+            FROM baseline.author_separation_rules b
+            WHERE b.left_openalex_id IS NOT NULL
+              AND b.right_openalex_id IS NOT NULL
+              AND b.left_authorship_id IS NULL
+              AND b.right_authorship_id IS NULL
+              AND NOT EXISTS (
+                  SELECT 1 FROM author_separation_rules r
+                  WHERE r.left_openalex_id=b.left_openalex_id
+                    AND r.right_openalex_id=b.right_openalex_id
+                    AND r.left_authorship_id IS NULL
+                    AND r.right_authorship_id IS NULL
+              )
+            """
+        )
+        conn.commit()
+        return cursor.rowcount
+    finally:
+        conn.execute("DETACH DATABASE baseline")
+
+
 def build_top5(
     conn,
     *,
@@ -52,6 +94,7 @@ def build_top5(
             stats[f"harvest_{code}"] = harvest(conn, journal=code, resume=True)
 
     stats["classify"] = classify_papers(conn)
+    stats["separation_rules"] = _copy_separation_rules(conn)
     can_rebuild = not _has_career_events(conn)
     if can_rebuild:
         stats["authors"] = resolve_all_authors(conn)
