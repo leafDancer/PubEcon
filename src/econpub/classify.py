@@ -57,6 +57,7 @@ AUX_TYPES = {
     "unattributed",
     "retraction_notice",
     "supplement",
+    "book_review",
 }
 TYPE_PRIORITY = {
     "article": 0,
@@ -141,6 +142,18 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
             OR LOWER(TRIM(COALESCE(title,''))) LIKE 'announcements of the winners%'
             OR LOWER(COALESCE(title,'')) LIKE '%call for papers%'
             OR LOWER(COALESCE(title,'')) LIKE '%call for nominations%'
+        )
+        """
+    )
+
+    # Book reviews are not research articles. Crossref does not mark them
+    # consistently, so this is a title-prefix rule; unlabelled reviews whose
+    # title is just the book title remain a known gap.
+    conn.execute(
+        """
+        UPDATE papers SET content_type='book_review'
+        WHERE content_type='article' AND (
+            LOWER(COALESCE(title,'')) LIKE 'book review%'
         )
         """
     )

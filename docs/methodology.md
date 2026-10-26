@@ -4,10 +4,36 @@ This document defines what EconPub measures, how each field is derived, and wher
 
 ## Unit of analysis
 
-- **Paper:** a Crossref record belonging to the American Economic Review, published in 2000 or later.
+- **Paper:** a Crossref record belonging to one of the five journals in scope — the *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, or *Econometrica* — published in 2000 or later. The AER-only baseline and the combined top-five pilot are separate databases with separate reports.
 - **Authorship:** one author in one paper, in byline order.
 - **Author:** a canonical entity resolved by ORCID when available and otherwise by a middle-initial-, particle-, and Unicode-aware name key with explicit namesake exclusions.
 - **Career assignment:** the inferred stage of one author at the publication date of one paper.
+
+## Journal dimension
+
+`papers.journal_code` is a first-class field (`AER`, `QJE`, `JPE`, `RES`,
+`ECMA`). It is set at ingest from the journal registry and never inferred from
+the container title.
+
+- **Article-type rules are journal-specific.** Generic rules cover issue
+  metadata, errata/addenda, announcements, editorial boards, covers, referee
+  lists, indexes, supplements, and records with no authors. AER-only rules cover
+  Papers & Proceedings, AEA reports/minutes, and AEA front matter. JPE
+  turnaround tables, RES meeting notices, and Econometric Society reports have
+  their own rules.
+- **Deduplication is scoped by journal.** Title, year, volume, issue, and page
+  overlap are compared only within the same journal, so an identically titled
+  paper in two journals is never merged.
+- **Cross-journal identities are merged explicitly.** The same person may have
+  papers in several journals; canonical authors are resolved across the whole
+  corpus, not per journal. OpenAlex-supported merges retain the same evidence
+  and review rules as the AER-only layer.
+- **Missing bylines.** When a Crossref deposit has no authors, OpenAlex work
+  authorship may supply the byline. Created rows carry
+  `openalex_match_method='openalex_backfill'`, the raw affiliation, and
+  `institution_source='openalex'`; Crossref authors are never replaced.
+- **Coverage is reported per journal.** A pooled coverage number is never shown
+  without the per-journal breakdown.
 
 ## Career-stage taxonomy
 

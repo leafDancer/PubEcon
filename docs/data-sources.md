@@ -4,12 +4,18 @@ This note records what was actually observed while scoping the project. It is a 
 
 ## Scope decision
 
-The project covers **AER 2000–present**. This deliberately excludes the 1911–1999 archive, which has no AEA DOI deposits and would require JSTOR/RePEc reconstruction. The 2000+ window is where Crossref, AEA, OpenAlex, and author CVs all have usable coverage.
+The project's validated baseline is **AER 2000–present**; the combined top-five
+pilot adds **QJE, JPE, RES, and Econometrica** for the same window. The 2000+
+start deliberately excludes the 1911–1999 archive, which has no AEA DOI deposits
+and would require JSTOR/RePEc reconstruction. The 2000+ window is where Crossref,
+AEA, OpenAlex, and author CVs all have usable coverage.
 
 ## Crossref
 
-- Journal endpoint: `https://api.crossref.org/journals/0002-8282/works`
-- Records from 1999 onward. The 2000+ filter returns **5,498 records** (observed 2026-10).
+- Journal endpoints: `https://api.crossref.org/journals/<ISSN>/works` for each
+  of the five print ISSNs. The 2000+ filter returned these record counts
+  (observed 2026-10): AER **5,498**, QJE **1,368**, JPE **2,143**, RES
+  **1,832**, Econometrica **2,602** — **13,443** in total.
 - Cursor pagination works with `cursor=*`; `rows=1000` is accepted. A full harvest is roughly six page requests.
 - Author records include `given`, `family`, `sequence`, and `affiliation` entries. AEA deposits frequently include publish-time affiliations, often with rank words:
 
@@ -18,7 +24,10 @@ The project covers **AER 2000–present**. This deliberately excludes the 1911�
 - Abstracts are present for many research articles. Subject fields are not consistently populated; JEL codes come from AEA pages instead.
 - Crossref rate limits can return HTTP 429 under bursts. The harvester uses a contact address, sequential requests, and exponential backoff, and caches every raw page.
 
-## AEA website
+## AEA website (AER only)
+
+These sources apply only to the *American Economic Review*; the other four
+journals do not use the AEA platform.
 
 - Article pages are addressable by DOI: `https://www.aeaweb.org/articles?id=<DOI>`.
 - The all-issues page `https://www.aeaweb.org/journals/aer/issues` lists every volume and issue with its cover month, including combined issues such as "April 2018 (Vol. 108, No. 4-5)". This is the source of record for issue months.

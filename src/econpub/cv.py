@@ -158,7 +158,7 @@ def _client() -> httpx.Client:
     if client is None:
         client = httpx.Client(
             headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/pdf,*/*"},
-            timeout=httpx.Timeout(20.0, connect=8.0),
+            timeout=httpx.Timeout(10.0, connect=5.0),
             follow_redirects=True,
         )
         _THREAD_LOCAL.client = client

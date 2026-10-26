@@ -1,6 +1,6 @@
 # EconPub
 
-An open, methodologically documented database of publications in the *American Economic Review* (AER), with a coauthor network and publish-time career-stage inference.
+An open, methodologically documented database of publications in the top five economics journals — the *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica* — with a coauthor network and publish-time career-stage inference.
 
 ## Why this exists
 
@@ -11,13 +11,13 @@ Existing economics publication sites are strong on citation counts and journal r
 
 EconPub makes both first-class. Every inferred field carries its evidence and confidence, so the result is inspectable rather than a black box.
 
-## Scope (v0.1)
+## Scope (v0.2)
 
-- **Journal:** American Economic Review (ISSN 0002-8282)
+- **Journals:** AER (0002-8282), QJE (0033-5533), JPE (0022-3808), RES (0034-6527), Econometrica (0012-9682)
 - **Years:** 2000–present
-- **Status:** M5 frontend MVP and M6 coverage pass complete — Crossref metadata classified and deduplicated; AEA issue calendar and OpenAlex enrichment done; stable author IDs and identity review in place; ORCID career timelines validated against AER evidence; 268 CVs parsed into 1,129 events; a read-only API and React frontend serve paper, author, career-timeline, network, and methodology views. The AEA JEL crawl and the failed CV sources remain resumable.
+- **Status:** The combined top-five pilot is built: 13,443 Crossref records classified and deduplicated by journal, OpenAlex DOI enrichment and missing-byline recovery, 10,965 canonical authors, 24,478 coauthorship edges, ORCID career validation, and journal-aware API/frontend views. The AER-only dataset remains the validated baseline for the committed M1–M6 reports; the top-five pilot still needs per-journal validation, CV coverage, and the final switch of the served database.
 - **Not included:** pre-2000 archive, full text, or personal data such as birth dates, addresses, and emails
-- **Planned (M7):** expand to the top five journals — AER, QJE, JPE, *Review of Economic Studies*, and *Econometrica* — with journal as a first-class dimension. See `docs/roadmap.md` for phases, acceptance criteria, and risks.
+- **Plan:** `docs/roadmap.md` tracks the M7 phases, acceptance criteria, and risks.
 
 ## Architecture
 
@@ -27,9 +27,22 @@ The browser never downloads the database. A read-only FastAPI service exposes pa
 React (web/)  ->  FastAPI /api (src/econpub/api.py)  ->  SQLite mode=ro
 ```
 
-The API caps page sizes and never serializes all 5,892 authors or 9,375 coauthorship edges. Network views are explicit ranked samples, and the response reports what was truncated. See `docs/m5-frontend.md` for routes, endpoints, design tokens, and deployment notes.
+The API caps page sizes and never serializes the full author table: the AER baseline has 5,892 authors and 9,375 coauthorship edges; the top-five pilot has 10,065 authors and 24,478 edges. Network views are explicit ranked samples, and the response reports what was truncated. See `docs/m5-frontend.md` for routes, endpoints, design tokens, and deployment notes.
 
-## Current dataset (M4)
+## Top-five pilot dataset (M7)
+
+| Journal | Research articles | Author slots | Abstracts |
+|---|---|---|---|
+| AER | 4,798 | 10,802 | 4,307 |
+| RES | 1,748 | 4,034 | 1,716 |
+| ECMA | 1,740 | 3,859 | 1,621 |
+| JPE | 1,501 | 3,478 | 1,329 |
+| QJE | 1,181 | 3,085 | 1,164 |
+| **Total** | **10,968** | **25,258** | **10,137** |
+
+The combined pilot has 10,065 canonical authors and 24,478 coauthorship edges. 3,337 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. ORCID-only career coverage is 4,004 assignments (15.8% of slots); the AER baseline remains higher because it also has byline and CV evidence. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
+
+## AER baseline dataset (M4)
 
 | Metric | Value |
 |---|---|
@@ -72,7 +85,7 @@ The API caps page sizes and never serializes all 5,892 authors or 9,375 coauthor
 | Duplicate records excluded | 67 |
 | Retraction notices / retracted originals | 2 / 2 |
 
-The M2/M3/M4 reports are in `data/reports/m2_quality.md`, `m3_quality.md`, and `m4_quality.md`; the M6 coverage report is `data/reports/m6_coverage.md`. The M1 independent audit and its full evidence are in `docs/audit-m1.md` and `docs/audit-m1-findings.json`. The API and frontend are documented in `docs/m5-frontend.md`; coverage engineering is in `docs/m6-coverage.md`.
+The M2/M3/M4 reports are in `data/reports/m2_quality.md`, `m3_quality.md`, and `m4_quality.md`; the M6 coverage report is `data/reports/m6_coverage.md`; the combined top-five report is `data/reports/top5_quality.md`. The M1 independent audit and its full evidence are in `docs/audit-m1.md` and `docs/audit-m1-findings.json`. The API and frontend are documented in `docs/m5-frontend.md`; coverage engineering is in `docs/m6-coverage.md`; the top-five expansion plan is in `docs/roadmap.md`.
 
 Three findings shape the next milestones:
 
@@ -84,10 +97,11 @@ Three findings shape the next milestones:
 
 | Source | Role |
 |---|---|
-| Crossref REST API | Primary article metadata and publish-time affiliation strings |
-| AEA article pages | JEL classification, abstracts, publication details |
-| OpenAlex | DOI-keyed enrichment: author IDs, citation counts, topics |
-| Author CVs and faculty pages | Education and employment timelines for career-stage inference |
+| Crossref REST API | Primary article metadata for all five journals and publish-time affiliation strings |
+| AEA article pages | AER-only JEL classification, abstracts, and publication details |
+| OpenAlex | DOI-keyed enrichment: author IDs, citation counts, topics, institutions, and missing-byline recovery |
+| ORCID | Self-reported employment and education timelines, used only after identity validation |
+| Author CVs and faculty pages | Education and employment timelines where byline/ORCID evidence is absent |
 
 OpenAlex is never used as the primary record. Its author affiliation history mixes in coauthor institutions, and its historical publication years contain known errors. See `docs/data-sources.md` for the reconnaissance evidence.
 
@@ -127,6 +141,24 @@ python run.py cvs --limit 300
 ```
 
 It seeds from ORCID researcher URLs, discovers CV links, stores raw documents only in the local ignored cache, extracts dated events, and uses them only where byline/ORCID evidence is absent.
+
+### Build the combined top-five database
+
+The combined build is separate from the AER baseline so the validated reports are
+not overwritten while the new journals are checked:
+
+```powershell
+python run.py top5 --db data/curated/top5.db
+```
+
+The `top5` command harvests all five journals, classifies and deduplicates by
+journal, rebuilds canonical authors, enriches with OpenAlex (including missing-
+byline recovery), validates ORCID links, assigns ORCID career stages, and writes
+`data/reports/top5_quality.md` and `.json`. The pipeline is resumable: Crossref
+pages and OpenAlex/ORCID payloads are cached under `data/raw/`. Use
+`--skip-harvest`, `--skip-openalex`, or `--skip-orcid` to refresh one layer; if
+career events already exist, the author table is not rebuilt because those
+events are author-keyed. For a full rebuild, start from a fresh database.
 
 ### Run the public interface
 
@@ -201,6 +233,8 @@ src/econpub/
   pages.py         abbreviated page-range expansion and validation
   quality.py       coverage, provenance, and M2-M4 reports
   coverage.py      M6 CV and historical-page coverage report
+  top5_build.py    combined top-five harvest, identity, ORCID, and report pipeline
+  top5_report.py   per-journal inventory, coverage, identity, and missingness report
   api.py           read-only FastAPI service for the public frontend
   cli.py           command-line entry point
   schema.sql       database schema
@@ -214,6 +248,8 @@ docs/
   m4-validation.md  concrete ORCID/CV spot checks and parser fixes
   m5-frontend.md   API surface, frontend routes, design system, deployment
   m6-coverage.md   CV crawl, Wayback historical pages, coverage policy
+  roadmap.md       top-five expansion phases, acceptance criteria, and risks
+  top5-validation.md  per-journal ingest, identity, and coverage checks
   audit-m1.md      independent multi-agent audit and remediation status
 tests/
   test_normalize.py
@@ -222,13 +258,14 @@ tests/
   test_m3.py
   test_m4.py
   test_api.py
+  test_m7.py      journal registry, multi-journal ingest, classification, report
 ```
 
 ## Data model
 
 The core tables are `papers`, `authorships`, `authors`, `author_aliases`, `author_merge_candidates`, `author_openalex_evidence`, `author_split_candidates`, `author_identity_ledger`, `author_identity_events`, `author_separation_rules`, `institutions`, `authorship_institutions`, `paper_topics`, and `source_records`. `coauthorship_edges` is built from canonical authorships. `career_events` stores dated education/employment facts from ORCID and CVs; `career_assignments` stores the inferred stage at each publication with evidence type, confidence, and source URL. `author_cv_sources` records public CV/homepage provenance; raw documents are kept only in the ignored local cache.
 
-`papers.content_type` separates research articles from front matter, issue metadata, unattributed records, errata, AEA association reports/minutes, retraction notices, and duplicates. Only research articles feed the publication and network statistics; P&P articles are research articles with `is_pp = 1`. Retracted originals stay in `article` with a `retraction_status` flag and a pointer to the notice. Crossref `update-to` is the primary retraction link, with an explicit fallback pair list.
+`papers.journal_code` identifies the journal; `papers.content_type` separates research articles from front matter, issue metadata, unattributed records, errata, society reports, supplements, retraction notices, and duplicates. Duplicate detection is scoped by journal. Only research articles feed the publication and network statistics; P&P articles are research articles with `is_pp = 1`. Retracted originals stay in `article` with a `retraction_status` flag and a pointer to the notice. Crossref `update-to` is the primary retraction link, with an explicit fallback pair list.
 
 Author resolution is rebuildable: `authors.py` groups authorships by a middle-initial-, particle-, and Unicode-aware key, merges safe variants, splits known namesakes, and writes uncertain pairs to `author_merge_candidates`. `openalex.py` attaches OpenAlex author IDs, records every observed ID in `author_openalex_evidence`, and merges only pairs that OpenAlex says are the same person and whose names are compatible.
 
@@ -246,6 +283,7 @@ Author resolution is rebuildable: `authors.py` groups authorships by a middle-in
 - **M4** — ORCID employment/education timelines; conservative CV discovery and parsing; career assignments with evidence and confidence ✅ (CV corpus remains resumable)
 - **M5** — read-only FastAPI service and React frontend: paper pages, author pages, career timelines, coauthor network explorer, methodology page, and a bounded network API ✅ (deployment remains)
 - **M6** — coverage engineering: resumable CV crawl with caching/threading (268 documents parsed, 1,129 events), historical Wayback faculty-page pipeline, and evidence tests ✅ (Internet Archive was unreachable from the development network; the pipeline must be run where archive.org is accessible)
+- **M7** — top-five expansion: journal registry, journal-scoped Crossref ingest and deduplication, OpenAlex missing-byline recovery, cross-journal identity reconciliation, ORCID career layer, journal-aware API/frontend, and a per-journal quality report 🚧 (pilot complete; per-journal validation, CV coverage, and the served-database switch remain)
 
 ## Data ethics
 

@@ -1,0 +1,97 @@
+# Top-five pilot validation
+
+This is a working validation log for the combined dataset. It records what was
+checked against the source, what failed, and what remains unverified. It is not
+a precision estimate.
+
+## Ingest and article-type checks
+
+Each journal was harvested from Crossref by print ISSN for 2000–present and
+classified in its own pilot database before the combined build.
+
+- **QJE** — 1,368 records, 1,181 research articles, 55 duplicate deposits. The
+  duplicates are mostly MIT Press (`10.1162/...`) versus Oxford (`10.1093/qje/...`)
+  deposits of the same article; title, year, volume, issue, and page range
+  agree. Front matter includes editorial boards, tables of contents, covers,
+  and referee lists. Crossref provides abstracts for about half the articles;
+  OpenAlex raises coverage to 98.6%.
+- **JPE** — 2,143 records, 1,501 research articles. The largest correction was
+  editorial: 592 records are back-cover teasers, JPE turnaround-time tables,
+  mastheads, indexes, and submission notices. "Back Cover" pages alone
+  accounted for 166 records. Crossref has **no abstracts** for JPE; OpenAlex
+  supplied 1,327.
+- **RES** — 1,832 records, 1,748 research articles, 35 errata, 8 duplicates.
+  Indexes, travel-fund notices, meeting announcements, and editorial
+  announcements were moved to front matter. RES has almost no book-review
+  deposits in Crossref.
+- **ECMA** — 2,602 records, 1,740 research articles after remediation. The
+  society's annual reports, editor reports, election/nomination notices,
+  forthcoming-paper lists, news notes, and meeting programs were classified as
+  association reports or front matter. Six "Supplement to ..." deposits are
+  stored as `supplement`, not articles.
+
+## Crossref metadata gaps
+
+- **ECMA 2008–2014** deposits omit authors for 388 articles (DOI prefix
+  `10.3982/ecta`). OpenAlex recovered 359 bylines (801 author slots). The
+  remaining 29 stay `unattributed`; they are visible in the report rather than
+  dropped.
+- **AER** had 49 `unattributed` records before the combined build. OpenAlex
+  recovered authors for 12, raising AER research articles from 4,786 to 4,798
+  in the combined database. The AER baseline reports still reflect the older
+  number until the main database is refreshed.
+- **JPE abstracts**: Crossref supplies none. This is a source limitation, not a
+  parser failure; OpenAlex is required for JPE abstract coverage.
+
+## Identity checks
+
+The combined build was resolved from scratch, then OpenAlex-supported merges
+were applied. Known risks were checked explicitly:
+
+- **Cross-journal reach.** 3,337 authors appear in at least two journals, 1,496
+  in at least three, and 178 in all five. Daron Acemoglu has 82 papers across
+  all five; John List has 50. This is consistent with their known records.
+- **Namesake pairs.** The three AER splits survive the rebuild:
+  - Benjamin I. Page (`A5089044770`) and Benjamin R. Page (`A5002652442`).
+  - Daniel G. Sullivan (`A5060507064`) and Daniel M. Sullivan (`A5021617351`).
+  - John W. Morgan (`A5037782885`, 2001) and John M. Morgan (`A5113551723`,
+    2008–2012).
+- **The Morgan bridge.** The first combined pass merged John W.'s 2001 paper
+  into John M. because a 2009 byline without an OpenAlex ID connected the two
+  sides transitively. The resolver now splits any component that contains both
+  sides of a separation rule, anchors on the OpenAlex IDs, and assigns unlinked
+  bylines by institution, name compatibility, and year proximity. Ambiguous
+  bylines stay in a review component.
+- **ORCID validation.** 5,988 identifiers were read; 4,075 reached an accepted
+  tier (DOI, title, institution, or economics field), 1,439 remain unverified
+  with events withheld, and 472 were rejected for name, field, or career risk.
+  The top-five corpus gives ORCID validation more papers to compare against,
+  but it also produces more same-name candidates; the rejection rules are
+  unchanged.
+
+## Career coverage
+
+The combined pilot is ORCID-only: 4,004 of 25,258 slots (15.8%) receive a
+stage. Per journal: AER 15.4%, RES 17.6%, ECMA 15.2%, JPE 17.8%, QJE 13.6%.
+The AER baseline remains at 21.4% because it also has byline rank and CV
+evidence. New journals have no byline rank field in Crossref, so their
+coverage is structurally lower; no heuristic fills the gap.
+
+## Still unverified
+
+- A random, manually coded sample of article types for each journal, with a
+  published error rate. The current checks are targeted, not random.
+- Comments, replies, and short notes: these are kept as research articles.
+  Whether to expose them as a separate type is a product decision that needs a
+  per-journal count.
+- Book reviews in JPE/RES/ECMA: Crossref deposits are sparse or absent, so the
+  current corpus may undercount them. They should not be treated as research
+  articles if they appear.
+- Author identity across journals for common names beyond the three known
+  pairs. The review queue and OpenAlex evidence are the controls; a manual
+  sample of high-reach authors should be added before release.
+- CV coverage for authors who appear only in the new journals. The CV crawl is
+  resumable and seeded from ORCID researcher URLs.
+- Historical-page evidence for the new journals. The Wayback pipeline exists
+  but is not runnable from the current network; Common Crawl is the documented
+  fallback.

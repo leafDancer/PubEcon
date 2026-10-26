@@ -22,7 +22,7 @@ from .cv import (
     parse_cv_sources,
     queue_landing_links,
 )
-from .config import DB_PATH, DEFAULT_JOURNAL, JOURNALS, LOGS_DIR, REPORTS_DIR
+from .config import CURATED_DIR, DB_PATH, DEFAULT_JOURNAL, JOURNALS, LOGS_DIR, REPORTS_DIR
 from .coverage import generate_m6_report
 from .crossref import harvest
 from .identity import ensure_identity_ledger
@@ -100,6 +100,16 @@ def build_parser() -> argparse.ArgumentParser:
     all_parser.add_argument("--resume", action="store_true")
     all_parser.add_argument("--refresh", action="store_true")
     all_parser.add_argument("--db", type=Path, default=DB_PATH)
+
+    top5_build_parser = subparsers.add_parser(
+        "top5", help="Build or refresh the combined top-five database"
+    )
+    top5_build_parser.add_argument("--skip-harvest", action="store_true")
+    top5_build_parser.add_argument("--skip-openalex", action="store_true")
+    top5_build_parser.add_argument("--skip-orcid", action="store_true")
+    top5_build_parser.add_argument("--workers", type=int, default=4)
+    top5_build_parser.add_argument("--batch-size", type=int, default=50)
+    top5_build_parser.add_argument("--db", type=Path, default=CURATED_DIR / "top5.db")
 
     aea_parser = subparsers.add_parser(
         "aea", help="Fetch AEA article pages for JEL codes, abstracts, and issue months"
@@ -237,7 +247,21 @@ def main(argv: list[str] | None = None) -> None:
     conn = db.connect(args.db)
     db.init_db(conn)
     try:
-        if args.command in {"harvest", "all"}:
+        if args.command == "top5":
+            from .top5_build import build_top5
+
+            print(
+                "Top-five build:",
+                build_top5(
+                    conn,
+                    skip_harvest=args.skip_harvest,
+                    skip_openalex=args.skip_openalex,
+                    skip_orcid=args.skip_orcid,
+                    workers=args.workers,
+                    batch_size=args.batch_size,
+                ),
+            )
+        elif args.command in {"harvest", "all"}:
             harvest(
                 conn,
                 journal=args.journal,

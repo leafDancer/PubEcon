@@ -73,6 +73,7 @@ class JournalClassificationTests(unittest.TestCase):
                 ("10.1093/qje/announcement", "journal-article", "Announcement", None),
                 ("10.1093/qje/board", "journal-article", "Editorial Board", None),
                 ("10.1093/qje/article", "journal-article", "A Real Article", "Jane Doe"),
+                ("10.1093/qje/book-review", "journal-article", "Book Review: A Book", "Jane Doe"),
                 (
                     "10.1093/qje/announcements-research",
                     "journal-article",
@@ -107,6 +108,7 @@ class JournalClassificationTests(unittest.TestCase):
             self.assertEqual(types["10.1093/qje/announcement"], "front_matter")
             self.assertEqual(types["10.1093/qje/board"], "front_matter")
             self.assertEqual(types["10.1093/qje/article"], "article")
+            self.assertEqual(types["10.1093/qje/book-review"], "book_review")
             self.assertEqual(types["10.1093/qje/announcements-research"], "article")
             conn.close()
 

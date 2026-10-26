@@ -36,6 +36,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                    SUM(CASE WHEN content_type='front_matter' THEN 1 ELSE 0 END) AS front_matter,
                    SUM(CASE WHEN content_type='association_report' THEN 1 ELSE 0 END) AS association_reports,
                    SUM(CASE WHEN content_type='supplement' THEN 1 ELSE 0 END) AS supplements,
+                   SUM(CASE WHEN content_type='book_review' THEN 1 ELSE 0 END) AS book_reviews,
                    SUM(CASE WHEN content_type='unattributed' THEN 1 ELSE 0 END) AS unattributed,
                    SUM(CASE WHEN content_type='article' AND is_duplicate=0
                             AND abstract IS NOT NULL AND abstract<>'' THEN 1 ELSE 0 END) AS abstracts
@@ -203,6 +204,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                 "Front matter",
                 "Society reports",
                 "Supplements",
+                "Book reviews",
                 "Unattributed",
                 "Abstracts",
             ],
@@ -216,6 +218,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                     row["front_matter"],
                     row["association_reports"],
                     row["supplements"],
+                    row["book_reviews"],
                     row["unattributed"],
                     row["abstracts"],
                 )
