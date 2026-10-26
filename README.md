@@ -148,14 +148,16 @@ The combined build is separate from the AER baseline so the validated reports ar
 not overwritten while the new journals are checked:
 
 ```powershell
-python run.py top5 --db data/curated/top5.db
+python run.py top5 --db data/curated/top5.db --cv
 ```
 
 The `top5` command harvests all five journals, classifies and deduplicates by
 journal, rebuilds canonical authors, enriches with OpenAlex (including missing-
-byline recovery), validates ORCID links, assigns ORCID career stages, and writes
-`data/reports/top5_quality.md` and `.json`. The pipeline is resumable: Crossref
-pages and OpenAlex/ORCID payloads are cached under `data/raw/`. Use
+byline recovery), validates ORCID links, assigns ORCID career stages, optionally runs the CV
+crawl (`--cv`), and writes `data/reports/top5_quality.md` and `.json`. The
+pipeline is resumable: Crossref pages and OpenAlex/ORCID payloads are cached
+under `data/raw/`. The CV crawl is the slowest stage and can take hours; omit
+`--cv` to build the bibliographic and ORCID layers first. Use
 `--skip-harvest`, `--skip-openalex`, or `--skip-orcid` to refresh one layer; if
 career events already exist, the author table is not rebuilt because those
 events are author-keyed. For a full rebuild, start from a fresh database.

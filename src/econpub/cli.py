@@ -115,6 +115,11 @@ def build_parser() -> argparse.ArgumentParser:
     top5_build_parser.add_argument("--skip-harvest", action="store_true")
     top5_build_parser.add_argument("--skip-openalex", action="store_true")
     top5_build_parser.add_argument("--skip-orcid", action="store_true")
+    top5_build_parser.add_argument(
+        "--cv",
+        action="store_true",
+        help="Run the resumable CV crawl after ORCID (can take hours)",
+    )
     top5_build_parser.add_argument("--workers", type=int, default=4)
     top5_build_parser.add_argument("--batch-size", type=int, default=50)
     top5_build_parser.add_argument("--db", type=Path, default=TOP5_DB)
@@ -270,6 +275,7 @@ def main(argv: list[str] | None = None) -> None:
                     skip_harvest=args.skip_harvest,
                     skip_openalex=args.skip_openalex,
                     skip_orcid=args.skip_orcid,
+                    run_cv=args.cv,
                     workers=args.workers,
                     batch_size=args.batch_size,
                 ),

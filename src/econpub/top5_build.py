@@ -4,10 +4,17 @@ import logging
 from typing import Any
 
 from .authors import resolve_all_authors
-from .career import assign_orcid_careers
+from .career import assign_cv_careers, assign_orcid_careers
 from .classify import classify_papers
 from .config import DB_PATH, JOURNALS
 from .crossref import harvest
+from .cv import (
+    collect_orcid_urls,
+    discover_cv_links,
+    fetch_cv_documents,
+    parse_cv_sources,
+    queue_landing_links,
+)
 from .identity import ensure_identity_ledger
 from .openalex import (
     apply_author_links,
@@ -79,6 +86,7 @@ def build_top5(
     skip_harvest: bool = False,
     skip_openalex: bool = False,
     skip_orcid: bool = False,
+    run_cv: bool = False,
     workers: int = 4,
     batch_size: int = 50,
 ) -> dict[str, Any]:
@@ -104,6 +112,10 @@ def build_top5(
         stats["openalex"] = openalex_stats
         stats["abstract_cleanup"] = clean_openalex_abstracts(conn)
         if openalex_stats.get("authorships_created") and can_rebuild:
+            # Backfilled bylines can expose new duplicates. Re-run the
+            # classifier before rebuilding authors so duplicate records do
+            # not create ghost authors.
+            stats["classify_after_backfill"] = classify_papers(conn)
             stats["authors_after_backfill"] = resolve_all_authors(conn)
 
     ensure_identity_ledger(conn)
@@ -119,6 +131,14 @@ def build_top5(
         stats["orcid_fetch"] = fetch_orcid_records(conn, workers=workers)
         stats["orcid_validation"] = revalidate_orcid_records(conn)
         stats["orcid_careers"] = assign_orcid_careers(conn)
+
+    if run_cv:
+        stats["cv_seed"] = collect_orcid_urls(conn)
+        stats["cv_discover"] = discover_cv_links(conn, workers=workers)
+        stats["cv_landing"] = queue_landing_links(conn)
+        stats["cv_fetch"] = fetch_cv_documents(conn, workers=workers)
+        stats["cv_parse"] = parse_cv_sources(conn)
+        stats["cv_careers"] = assign_cv_careers(conn)
 
     markdown_path, metrics_path = generate_top5_report(conn)
     stats["report"] = str(markdown_path)
