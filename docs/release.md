@@ -1,5 +1,8 @@
 # Release checklist
 
+- Repository: <https://github.com/leafDancer/PubEcon>
+- Release page: <https://github.com/leafDancer/PubEcon/releases/tag/v1.0.0>
+
 ## v1.0.0 (code and data)
 
 - Package version: `1.0.0` (`pyproject.toml`, `src/econpub/__init__.py`,

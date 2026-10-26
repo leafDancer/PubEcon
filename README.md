@@ -2,6 +2,10 @@
 
 Repository: <https://github.com/leafDancer/PubEcon>
 
+```powershell
+git clone https://github.com/leafDancer/PubEcon.git
+```
+
 A public, methodologically documented database of publications in the top five economics journals — the *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica* — with a coauthor network and publish-time career-stage inference.
 
 ## Why this exists
