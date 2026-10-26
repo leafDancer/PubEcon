@@ -27,6 +27,7 @@ def connect(path: Path | str = DB_PATH) -> sqlite3.Connection:
 
 MIGRATION_COLUMNS: dict[str, dict[str, str]] = {
     "papers": {
+        "journal_code": "TEXT",
         "abstract_source": "TEXT",
         "abstract_aea": "TEXT",
         "abstract_openalex": "TEXT",
@@ -99,6 +100,15 @@ def migrate_db(conn: sqlite3.Connection) -> None:
             if name not in existing:
                 conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {declaration}")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_papers_openalex ON papers(openalex_id)")
+    # Everything ingested before the journal registry existed is AER. New
+    # harvests write journal_code explicitly, so the backfill is safe.
+    conn.execute(
+        "UPDATE papers SET journal_code='AER' WHERE journal_code IS NULL OR journal_code=''"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_papers_journal_year "
+        "ON papers(journal_code, published_year)"
+    )
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_authorships_openalex ON authorships(openalex_author_id)"
     )
@@ -182,13 +192,13 @@ def upsert_paper(conn: sqlite3.Connection, paper: dict[str, Any]) -> int:
     params = {**paper, "now": now}
     conn.execute(
         """INSERT INTO papers (
-              doi, doi_synthetic, title, item_type, content_type, container_title, issn, publisher,
+              doi, doi_synthetic, title, item_type, content_type, journal_code, container_title, issn, publisher,
               volume, issue, page_first, page_last, published_year, published_month,
               published_day, published_date, published_print_date, published_online_date,
               abstract, abstract_available, citation_count,
               url, is_pp, pp_confidence, source_primary, created_at, updated_at
            ) VALUES (
-              :doi, :doi_synthetic, :title, :item_type, :content_type, :container_title, :issn, :publisher,
+              :doi, :doi_synthetic, :title, :item_type, :content_type, :journal_code, :container_title, :issn, :publisher,
               :volume, :issue, :page_first, :page_last, :published_year, :published_month,
               :published_day, :published_date, :published_print_date, :published_online_date,
               :abstract, :abstract_available, :citation_count,
@@ -199,6 +209,7 @@ def upsert_paper(conn: sqlite3.Connection, paper: dict[str, Any]) -> int:
               title=excluded.title,
               item_type=excluded.item_type,
               content_type=excluded.content_type,
+              journal_code=excluded.journal_code,
               container_title=excluded.container_title,
               issn=excluded.issn,
               publisher=excluded.publisher,

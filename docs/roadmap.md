@@ -52,6 +52,27 @@ The existing pipeline is AER-specific in several places:
 A journal is therefore a first-class dimension of the data model, not a filter
 applied after ingestion.
 
+## M7.1 status (2026-10-26)
+
+The multi-journal data foundation is in progress:
+
+- A journal registry (`config.JOURNALS`) now holds the five codes, names, and
+  print ISSNs. `harvest --journal {AER,QJE,JPE,RES,ECMA}` selects one.
+- `papers.journal_code` is part of the schema, backfilled to `AER` for the
+  existing database, and indexed with `(journal_code, published_year)`.
+- Crossref page caches are namespaced per journal (`data/raw/crossref/pages/QJE/`).
+- The classifier now separates generic rules (issue metadata, errata,
+  announcements, editorial board/table-of-contents pages, duplicates) from
+  AER-only section conventions (P&P, AEA reports, AEA front matter). AER output
+  is unchanged; the AER-only SQL is gated by `journal_code`.
+- A QJE pilot (separate database, not merged into the public AER corpus)
+  ingested all **1,368** Crossref records for 2000–2026: **1,181** research
+  articles, **55** duplicate deposits, **10** errata, **81** front-matter
+  items, **35** issue records, **3,085** author slots, and **609** records with
+  a Crossref abstract. The remaining two journals' section conventions — book
+  reviews in JPE/RES and comments/notes in all three — still need inspection
+  before their pilots are considered clean.
+
 ## Phases
 
 ### M7.1 — Multi-journal data foundation

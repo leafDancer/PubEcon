@@ -12,7 +12,9 @@ from . import db
 from .config import (
     CROSSREF_BASE,
     CROSSREF_SELECT,
+    DEFAULT_JOURNAL,
     JOURNAL_ISSN,
+    JOURNALS,
     MAILTO,
     RAW_DIR,
     START_YEAR,
@@ -87,6 +89,7 @@ def fetch_page(
     cursor: str = "*",
     rows: int = 1000,
     start_year: int = START_YEAR,
+    issn: str = JOURNAL_ISSN,
 ) -> dict[str, Any]:
     params = {
         "filter": f"from-pub-date:{start_year}-01-01",
@@ -95,7 +98,7 @@ def fetch_page(
         "select": ",".join(CROSSREF_SELECT),
         "mailto": MAILTO,
     }
-    url = f"{CROSSREF_BASE}/journals/{JOURNAL_ISSN}/works"
+    url = f"{CROSSREF_BASE}/journals/{issn}/works"
     return _request_json(client, url, params)
 
 
@@ -109,7 +112,11 @@ def _format_date(year: int | None, month: int | None, day: int | None) -> str | 
     return None
 
 
-def parse_item(item: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any]], list[str]]:
+def parse_item(
+    item: dict[str, Any],
+    *,
+    journal_code: str = DEFAULT_JOURNAL,
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[str]]:
     title = clean_text(item.get("title"))
     doi = normalize_doi(item.get("DOI"))
     year, month, day = extract_date(item)
@@ -131,6 +138,7 @@ def parse_item(item: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any
         "title": title or None,
         "item_type": item.get("type"),
         "content_type": "article",
+        "journal_code": journal_code,
         "container_title": clean_text(item.get("container-title")) or None,
         "issn": ", ".join(item.get("ISSN") or []) or None,
         "publisher": item.get("publisher"),
@@ -189,6 +197,7 @@ def parse_item(item: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any
 def harvest(
     conn,
     *,
+    journal: str = DEFAULT_JOURNAL,
     rows: int = 1000,
     max_pages: int | None = None,
     resume: bool = False,
@@ -196,9 +205,14 @@ def harvest(
     request_interval: float = 1.0,
     start_year: int = START_YEAR,
 ) -> int:
-    PAGES_DIR.mkdir(parents=True, exist_ok=True)
+    journal_def = JOURNALS.get(journal.upper())
+    if journal_def is None:
+        raise ValueError(f"Unknown journal {journal!r}; expected one of {sorted(JOURNALS)}")
+    pages_dir = PAGES_DIR / journal_def.code
+    pages_dir.mkdir(parents=True, exist_ok=True)
     params = {
-        "issn": JOURNAL_ISSN,
+        "journal": journal_def.code,
+        "issn": journal_def.issn,
         "start_year": start_year,
         "rows": rows,
         "select": CROSSREF_SELECT,
@@ -217,13 +231,19 @@ def harvest(
         ) as client:
             while True:
                 page_number += 1
-                page_path = PAGES_DIR / f"page_{page_number:04d}.json"
+                page_path = pages_dir / f"page_{page_number:04d}.json"
                 if resume and not refresh and page_path.exists():
                     log.info("Page %s loaded from %s", page_number, page_path)
                     payload = json.loads(page_path.read_text(encoding="utf-8"))
                 else:
                     log.info("Fetching page %s (cursor=%s...)", page_number, cursor[:18])
-                    payload = fetch_page(client, cursor=cursor, rows=rows, start_year=start_year)
+                    payload = fetch_page(
+                        client,
+                        cursor=cursor,
+                        rows=rows,
+                        start_year=start_year,
+                        issn=journal_def.issn,
+                    )
                     temp_path = page_path.with_suffix(".json.tmp")
                     temp_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
                     temp_path.replace(page_path)
@@ -233,7 +253,7 @@ def harvest(
                 message = payload.get("message") or {}
                 items = message.get("items") or []
                 for item in items:
-                    paper, authors, topics = parse_item(item)
+                    paper, authors, topics = parse_item(item, journal_code=journal_def.code)
                     db.save_source_record(conn, "crossref", paper["doi"], run_id, item)
                     paper_id = db.upsert_paper(conn, paper)
                     db.upsert_authorships(conn, paper_id, authors)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
 PACKAGE_DIR = Path(__file__).resolve().parent
@@ -15,8 +16,33 @@ LOGS_DIR = DATA_DIR / "logs"
 DB_PATH = CURATED_DIR / "econpub.db"
 SCHEMA_PATH = PACKAGE_DIR / "schema.sql"
 
-JOURNAL_NAME = "American Economic Review"
-JOURNAL_ISSN = "0002-8282"
+
+@dataclass(frozen=True)
+class Journal:
+    """A journal in the harvest registry.
+
+    ``issn`` is the print ISSN used for the Crossref journal endpoint. Online
+    ISSNs can be added later when a journal's Crossref deposit is split.
+    """
+
+    code: str
+    name: str
+    issn: str
+
+
+JOURNALS: dict[str, Journal] = {
+    "AER": Journal("AER", "American Economic Review", "0002-8282"),
+    "QJE": Journal("QJE", "Quarterly Journal of Economics", "0033-5533"),
+    "JPE": Journal("JPE", "Journal of Political Economy", "0022-3808"),
+    "RES": Journal("RES", "Review of Economic Studies", "0034-6527"),
+    "ECMA": Journal("ECMA", "Econometrica", "0012-9682"),
+}
+DEFAULT_JOURNAL = "AER"
+
+# Backwards-compatible aliases for the AER-only pipeline. New code should use
+# the journal registry so a journal never has to be hard-coded again.
+JOURNAL_NAME = JOURNALS[DEFAULT_JOURNAL].name
+JOURNAL_ISSN = JOURNALS[DEFAULT_JOURNAL].issn
 CROSSREF_BASE = "https://api.crossref.org"
 START_YEAR = 2000
 

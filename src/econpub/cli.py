@@ -22,7 +22,7 @@ from .cv import (
     parse_cv_sources,
     queue_landing_links,
 )
-from .config import DB_PATH, LOGS_DIR, REPORTS_DIR
+from .config import DB_PATH, DEFAULT_JOURNAL, JOURNALS, LOGS_DIR, REPORTS_DIR
 from .coverage import generate_m6_report
 from .crossref import harvest
 from .identity import ensure_identity_ledger
@@ -73,6 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     harvest_parser = subparsers.add_parser("harvest", help="Harvest Crossref metadata")
+    harvest_parser.add_argument("--journal", choices=sorted(JOURNALS), default=DEFAULT_JOURNAL)
     harvest_parser.add_argument("--rows", type=int, default=1000)
     harvest_parser.add_argument("--max-pages", type=int)
     harvest_parser.add_argument("--resume", action="store_true")
@@ -83,6 +84,7 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser.add_argument("--db", type=Path, default=DB_PATH)
 
     all_parser = subparsers.add_parser("all", help="Harvest, then generate the report")
+    all_parser.add_argument("--journal", choices=sorted(JOURNALS), default=DEFAULT_JOURNAL)
     all_parser.add_argument("--rows", type=int, default=1000)
     all_parser.add_argument("--max-pages", type=int)
     all_parser.add_argument("--resume", action="store_true")
@@ -228,14 +230,18 @@ def main(argv: list[str] | None = None) -> None:
         if args.command in {"harvest", "all"}:
             harvest(
                 conn,
+                journal=args.journal,
                 rows=args.rows,
                 max_pages=args.max_pages,
                 resume=args.resume,
                 refresh=args.refresh,
             )
+            # Generic rules (errata, editorial matter, duplicates) run for
+            # every journal; AER-only section conventions are gated inside
+            # classify_papers by journal_code.
             classification = classify_papers(conn)
-            author_stats = resolve_all_authors(conn)
             print(f"Classification: {classification}")
+            author_stats = resolve_all_authors(conn)
             print(f"Authors: {author_stats}")
 
         elif args.command in {"aea", "openalex", "m2", "pages", "calendar", "m3", "m4", "cvs"}:

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS papers (
     content_type       TEXT NOT NULL DEFAULT 'article',
     is_duplicate       INTEGER NOT NULL DEFAULT 0,
     duplicate_of_paper_id INTEGER,
+    journal_code       TEXT,
     container_title    TEXT,
     issn               TEXT,
     publisher          TEXT,
@@ -75,6 +76,7 @@ CREATE TABLE IF NOT EXISTS papers (
 );
 
 CREATE INDEX IF NOT EXISTS idx_papers_year ON papers(published_year);
+CREATE INDEX IF NOT EXISTS idx_papers_journal_year ON papers(journal_code, published_year);
 CREATE INDEX IF NOT EXISTS idx_papers_type ON papers(item_type);
 CREATE INDEX IF NOT EXISTS idx_papers_duplicate ON papers(is_duplicate);
 CREATE INDEX IF NOT EXISTS idx_papers_retraction ON papers(retraction_status);

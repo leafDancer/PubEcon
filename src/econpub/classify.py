@@ -122,11 +122,26 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
     for doi in EXPLICIT_ERRATA:
         conn.execute("UPDATE papers SET content_type='erratum' WHERE doi=?", (doi,))
 
-    # AEA reports/minutes already identifiable by prefix.
+    # Announcements and prize notices are editorial matter in every journal.
+    conn.execute(
+        """
+        UPDATE papers SET content_type='front_matter'
+        WHERE content_type='article' AND (
+            LOWER(TRIM(COALESCE(title,''))) IN ('announcement', 'announcements')
+            OR LOWER(TRIM(COALESCE(title,''))) LIKE 'announcement of the winners%'
+            OR LOWER(TRIM(COALESCE(title,''))) LIKE 'announcements of the winners%'
+            OR LOWER(COALESCE(title,'')) LIKE '%call for papers%'
+            OR LOWER(COALESCE(title,'')) LIKE '%call for nominations%'
+        )
+        """
+    )
+
+    # AEA reports/minutes already identifiable by prefix. These are AER/AEA
+    # section conventions, not a general journal rule.
     conn.execute(
         """
         UPDATE papers SET content_type='association_report'
-        WHERE content_type='article' AND (
+        WHERE content_type='article' AND COALESCE(journal_code,'AER')='AER' AND (
             LOWER(COALESCE(title,'')) LIKE 'minutes of%'
             OR LOWER(COALESCE(title,'')) LIKE 'report of the%'
             OR LOWER(COALESCE(title,'')) LIKE 'report on the%'
@@ -139,8 +154,10 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
 
     # Remaining administrative titles: Foreword, Editors' Introduction,
     # "Editor, <journal>", journal-name report sections, award notices.
+    # The journal-name keys are AEA-specific, so this pass is AER-only.
     admin_rows = conn.execute(
-        "SELECT paper_id, title FROM papers WHERE content_type='article'"
+        "SELECT paper_id, title FROM papers "
+        "WHERE content_type='article' AND COALESCE(journal_code,'AER')='AER'"
     ).fetchall()
     for row in admin_rows:
         key = title_key(row["title"])
@@ -179,11 +196,31 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
         UPDATE papers SET content_type='front_matter'
         WHERE content_type='article' AND (
             title IS NULL OR TRIM(title)=''
-            OR LOWER(TRIM(title)) IN ('front matter', 'the american economic review')
+            OR LOWER(TRIM(title)) = 'front matter'
             OR LOWER(COALESCE(title,'')) LIKE 'front matter%'
+            OR LOWER(COALESCE(title,'')) LIKE '%back matter%'
+            OR LOWER(TRIM(COALESCE(title,''))) IN (
+                'editorial board', 'editorial board.', 'subscription page',
+                'table of content', 'table of contents', 'contents',
+                'front cover', 'back cover', 'referee', 'referee list',
+                'masthead', 'cover', 'title page', 'acknowledgements',
+                'acknowledgments'
+            )
+            OR LOWER(COALESCE(title,'')) LIKE '%front cover%'
+            OR LOWER(COALESCE(title,'')) LIKE 'contents for volume%'
+            OR LOWER(COALESCE(title,'')) LIKE 'referee list%'
+            OR LOWER(COALESCE(title,'')) LIKE '%acknowledg%referee%'
+            OR LOWER(COALESCE(title,'')) LIKE '%gratefully acknowledges%'
+        )
+        """
+    )
+    conn.execute(
+        """
+        UPDATE papers SET content_type='front_matter'
+        WHERE content_type='article' AND COALESCE(journal_code,'AER')='AER' AND (
+            LOWER(TRIM(COALESCE(title,''))) = 'the american economic review'
             OR LOWER(COALESCE(title,'')) LIKE 'american economic association%'
             OR LOWER(COALESCE(title,'')) LIKE 'the american economic association%'
-            OR LOWER(COALESCE(title,'')) LIKE '%back matter%'
             OR LOWER(COALESCE(title,'')) LIKE '%minutes of the annual meeting%'
             OR LOWER(COALESCE(title,'')) LIKE '%report of the editor%'
             OR LOWER(COALESCE(title,'')) LIKE '%report of the secretary%'
@@ -209,6 +246,7 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
         SELECT published_year AS year, volume, issue, COUNT(*) AS n
         FROM papers
         WHERE content_type='article'
+          AND COALESCE(journal_code,'AER')='AER'
           AND published_year BETWEEN 2000 AND 2017
           AND volume IS NOT NULL
           AND issue IS NOT NULL
@@ -228,6 +266,7 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
             """
             UPDATE papers SET is_pp=1, pp_confidence=?
             WHERE content_type='article'
+              AND COALESCE(journal_code,'AER')='AER'
               AND published_year=?
               AND volume=?
               AND issue=?
