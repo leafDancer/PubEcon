@@ -2,8 +2,8 @@
 
 - **Product:** PubEcon
 - **Version:** 1.0.0
-- **Generated:** 2026-10-26T15:56:11+00:00
-- **Git commit:** 08fc100bbe8a1fa2b991359be9b82c04dc702375
+- **Generated:** 2026-10-26T16:12:05+00:00
+- **Git commit:** ec05e9f3dde34530c2a32e464d733bd5890b6dff
 - **Database:** `data\curated\top5.db`
 - **Database bytes:** 549,416,960
 - **Database SHA-256:** `cdedad2fd7f231ef6a1c037e7e3bdf7f9d55dc7437574bf407088e4bc626569e`

@@ -1,8 +1,8 @@
 {
   "product": "PubEcon",
   "version": "1.0.0",
-  "generated_at": "2026-10-26T15:56:11+00:00",
-  "git_commit": "08fc100bbe8a1fa2b991359be9b82c04dc702375",
+  "generated_at": "2026-10-26T16:12:05+00:00",
+  "git_commit": "ec05e9f3dde34530c2a32e464d733bd5890b6dff",
   "database": {
     "path": "data\\curated\\top5.db",
     "bytes": 549416960,
