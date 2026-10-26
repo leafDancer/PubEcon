@@ -128,6 +128,34 @@ merges. It is a validation build, not the served database.
   compatibility, and year proximity. Ambiguous bylines stay in their own review
   component. This is a general fix, not a special case for Morgan.
 
+### M7.3 pilot: ORCID career layer (2026-10-26)
+
+The combined database now has an ORCID career layer:
+
+- **5,988** ORCID identifiers were read (3,583 already cached, 2,403 fetched
+  in this run; 2 failed with HTTP 409). **3,499** records parsed into **9,803**
+  dated events.
+- Identity tiers: 2,376 verified by DOI, 346 by title, 899 by institution, 454
+  by economics-field signal, 1,439 unverified (events withheld), 150 rejected
+  for name conflict, 294 for field mismatch, and 28 for career risk.
+- **4,004 of 25,258 author slots (15.8%)** receive an ORCID career stage:
+  506 high, 1,213 medium, and 2,285 low confidence.
+
+| Journal | Slots | Assigned | Coverage | High/medium |
+|---|---|---|---|---|
+| AER | 10,802 | 1,668 | 15.4% | 734 |
+| RES | 4,034 | 710 | 17.6% | 322 |
+| ECMA | 3,859 | 587 | 15.2% | 226 |
+| JPE | 3,478 | 620 | 17.8% | 261 |
+| QJE | 3,085 | 419 | 13.6% | 176 |
+
+This is an **ORCID-only** layer for the combined database. The separate AER
+database still reaches 21.4% because it also has byline rank (669 slots) and CV
+(45 slots) evidence. New-journal authors have no byline rank data, so their
+coverage is lower and remains visibly missing rather than imputed. Coverage
+rises from about 11% for 2000 papers to about 21% for 2026 papers, tracking the
+period ORCID records describe best.
+
 ### M7.4 progress
 
 The read-only API now exposes the journal dimension: paper payloads include
