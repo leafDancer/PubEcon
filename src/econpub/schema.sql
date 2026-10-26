@@ -434,3 +434,19 @@ CREATE TABLE IF NOT EXISTS coauthorship_edges (
     FOREIGN KEY (author_b_id) REFERENCES authors(author_id),
     FOREIGN KEY (paper_id) REFERENCES papers(paper_id) ON DELETE CASCADE
 );
+
+-- Cached graph statistics, one row per scope ('ALL' or a journal code).
+CREATE TABLE IF NOT EXISTS network_statistics (
+    scope              TEXT PRIMARY KEY,
+    nodes              INTEGER NOT NULL,
+    edges              INTEGER NOT NULL,
+    components         INTEGER NOT NULL,
+    largest_component  INTEGER NOT NULL,
+    average_degree     REAL,
+    average_path_length REAL,
+    diameter           INTEGER,
+    average_clustering REAL,
+    pairs              INTEGER,
+    details_json       TEXT,
+    generated_at       TEXT NOT NULL
+);

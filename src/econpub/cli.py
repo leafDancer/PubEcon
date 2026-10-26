@@ -101,6 +101,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     top5_parser.add_argument("--db", type=Path, default=DB_PATH)
 
+    network_stats_parser = subparsers.add_parser(
+        "network-stats", help="Compute and cache coauthor-network statistics"
+    )
+    network_stats_parser.add_argument("--journal", choices=sorted(JOURNALS))
+    network_stats_parser.add_argument("--db", type=Path, default=TOP5_DB)
+
     all_parser = subparsers.add_parser("all", help="Harvest, then generate the report")
     all_parser.add_argument("--journal", choices=sorted(JOURNALS), default=DEFAULT_JOURNAL)
     all_parser.add_argument("--rows", type=int, default=1000)
@@ -463,6 +469,15 @@ def main(argv: list[str] | None = None) -> None:
             from .top5_report import generate_top5_report
 
             markdown_path, metrics_path = generate_top5_report(conn)
+            print(f"Report:  {markdown_path}")
+            print(f"Metrics: {metrics_path}")
+        if args.command == "network-stats":
+            from .network_report import generate_network_stats
+
+            journals = [args.journal] if args.journal else None
+            markdown_path, metrics_path = generate_network_stats(
+                conn, journals=journals
+            )
             print(f"Report:  {markdown_path}")
             print(f"Metrics: {metrics_path}")
         if args.command in {"m2", "report", "all"}:

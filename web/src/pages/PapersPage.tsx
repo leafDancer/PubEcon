@@ -136,7 +136,7 @@ export default function PapersPage() {
             <select value={pp} onChange={(event) => update({ pp: event.target.value })}>
               <option value="all">All research</option>
               <option value="articles">Regular articles</option>
-              <option value="pp">Papers &amp; Proceedings</option>
+              <option value="pp">AER Papers &amp; Proceedings</option>
             </select>
           </label>
         )}

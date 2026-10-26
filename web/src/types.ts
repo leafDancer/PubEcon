@@ -284,3 +284,54 @@ export interface NetworkPayload {
     truncated: boolean
   }
 }
+
+export interface PathPaper {
+  doi: string
+  title: string
+  year: number | null
+  journal: string
+  url: string
+}
+
+export interface PathStep {
+  from: string
+  to: string
+  papers: PathPaper[]
+}
+
+export interface PathPayload {
+  found: boolean
+  distance: number | null
+  journal: string | null
+  from: { id: string; name: string }
+  to: { id: string; name: string }
+  nodes: NetworkNode[]
+  steps: PathStep[]
+  meta: {
+    algorithm: string
+    max_depth: number
+    graph_nodes: number
+    graph_edges: number
+    unique_shortest_path?: boolean
+    papers_per_step?: number
+    source_component_size?: number
+    target_component_size?: number
+  }
+}
+
+export interface NetworkStats {
+  scope: string
+  journal: string | null
+  nodes: number
+  edges: number
+  components: number
+  largest_component: number
+  average_degree: number | null
+  average_path_length: number | null
+  diameter: number | null
+  average_clustering: number | null
+  pairs: number
+  component_sizes: number[]
+  generated_at: string
+  definition: string
+}

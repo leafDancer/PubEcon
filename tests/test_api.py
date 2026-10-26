@@ -102,6 +102,19 @@ class ApiTests(unittest.TestCase):
         )
         self.assertEqual(self.client.get("/api/network?journal=NOPE").status_code, 422)
 
+        stats = self.client.get("/api/network/stats")
+        self.assertEqual(stats.status_code, 200)
+        self.assertGreater(stats.json()["nodes"], 1000)
+        self.assertIsNotNone(stats.json()["average_path_length"])
+
+        path = self.client.get(
+            "/api/path?from=aer-a-000929&to=aer-a-000291"
+        )
+        self.assertEqual(path.status_code, 200)
+        self.assertTrue(path.json()["found"])
+        self.assertEqual(path.json()["distance"], 1)
+        self.assertTrue(path.json()["steps"][0]["papers"])
+
         ego = self.client.get("/api/authors/aer-a-000929/network?limit=5")
         self.assertEqual(ego.status_code, 200)
         ego_body = ego.json()

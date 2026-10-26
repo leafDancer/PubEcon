@@ -98,6 +98,25 @@ Stable IDs are reconciled after a rebuild by, in order: ORCID, OpenAlex ID, exac
 
 Confirmed name splits are protected by `author_separation_rules`. Each rule records the two OpenAlex IDs and the cross-group authorship pairs, so a later name-only rebuild cannot silently re-merge the two people. The kept group retains the original stable ID; each new group receives a new stable ID.
 
+## Coauthorship network
+
+- **Nodes** are canonical authors. **Edges** are undirected and unweighted: two
+  authors are connected when they shared at least one research article. Two
+  authors with five shared papers are still one step apart in path queries.
+- **Shortest paths** use breadth-first search. The product returns one
+  deterministic shortest path, not all of them; a different equally short path
+  may exist. Each step carries the shared papers that establish the tie, so the
+  connection is inspectable.
+- **Journal-scoped graphs** use only papers in the selected journal. A tie in
+  the QJE graph is a QJE coauthorship, even if the same two authors also wrote
+  an AER paper.
+- **Average path length and diameter** are computed over unordered pairs in the
+  largest connected component. Authors outside that component are reported as
+  components, not as infinitely distant pairs. This avoids hiding fragmentation
+  inside a single "average distance" number.
+- **Clustering** is the mean local clustering coefficient: the share of an
+  author's coauthor pairs that also coauthor with each other.
+
 ## ORCID identity validation
 
 An ORCID link is not accepted merely because OpenAlex attached it to an authorship. Each link is assessed against the author's AER record:

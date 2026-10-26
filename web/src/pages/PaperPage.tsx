@@ -31,7 +31,7 @@ export default function PaperPage() {
           </span>
           {data.pages && <span>pp. {data.pages}</span>}
           <span className="ep-flag is-journal">{data.journal}</span>
-          {data.is_pp && <span className="ep-flag">Papers &amp; Proceedings</span>}
+          {data.is_pp && <span className="ep-flag">AER Papers &amp; Proceedings</span>}
           {data.retraction_status && <span className="ep-flag is-alert">Retracted</span>}
         </div>
         <h1>{data.title}</h1>
@@ -197,7 +197,7 @@ export default function PaperPage() {
             <h2>How to cite</h2>
             <p>
               Use the DOI. This page describes the record; it does not replace the published
-              article or its metadata at the AEA.
+              article or its metadata at the publisher.
             </p>
           </section>
         </aside>

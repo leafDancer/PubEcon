@@ -7,6 +7,7 @@ const nav = [
   { to: '/papers', label: 'Papers' },
   { to: '/authors', label: 'Authors' },
   { to: '/network', label: 'Network' },
+  { to: '/connection', label: 'Connection' },
   { to: '/methodology', label: 'Methodology' },
 ]
 
@@ -88,9 +89,13 @@ export default function AppShell() {
           </p>
           <p className="ep-footer-links">
             <NavLink to="/methodology">Methodology</NavLink>
-            <a href="https://www.aeaweb.org/journals/aer" target="_blank" rel="noreferrer">
-              AER at AEA
-            </a>
+            {isMulti ? (
+              <NavLink to="/methodology#scope">Journal sources</NavLink>
+            ) : (
+              <a href="https://www.aeaweb.org/journals/aer" target="_blank" rel="noreferrer">
+                AER at AEA
+              </a>
+            )}
             {isMulti ? (
               <a href="https://www.crossref.org" target="_blank" rel="noreferrer">
                 Crossref

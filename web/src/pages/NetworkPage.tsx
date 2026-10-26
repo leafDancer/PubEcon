@@ -33,6 +33,10 @@ export default function NetworkPage() {
 
   const overview = useApi(() => api.overview(), [])
   const journalOptions = overview.data?.dataset.journals ?? []
+  const stats = useApi(
+    () => api.networkStats(journal === 'all' ? undefined : journal),
+    [journal],
+  )
 
   const graph = useApi(
     () =>
@@ -70,6 +74,42 @@ export default function NetworkPage() {
           year range for a ranked sample, or open one author&apos;s ego network.
         </p>
       </header>
+
+      {stats.data && (
+        <section className="ep-network-stats" aria-label="Network statistics">
+          <div>
+            <strong>
+              {stats.data.average_path_length !== null
+                ? stats.data.average_path_length.toFixed(2)
+                : '—'}
+            </strong>
+            <span>average path</span>
+            <small>within largest component</small>
+          </div>
+          <div>
+            <strong>{stats.data.diameter ?? '—'}</strong>
+            <span>diameter</span>
+            <small>longest shortest path</small>
+          </div>
+          <div>
+            <strong>
+              {formatNumber(stats.data.largest_component)}
+              <em> / {formatNumber(stats.data.nodes)}</em>
+            </strong>
+            <span>largest component</span>
+            <small>{formatNumber(stats.data.components)} components</small>
+          </div>
+          <div>
+            <strong>
+              {stats.data.average_clustering !== null
+                ? stats.data.average_clustering.toFixed(3)
+                : '—'}
+            </strong>
+            <span>clustering</span>
+            <small>coauthors also coauthor</small>
+          </div>
+        </section>
+      )}
 
       <section className="ep-network-controls" aria-label="Network controls">
         {journalOptions.length > 1 && (

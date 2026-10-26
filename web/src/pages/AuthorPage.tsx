@@ -113,7 +113,7 @@ export default function AuthorPage() {
                       <td>
                         <Link to={`/papers/${paper.doi}`}>{paper.title}</Link>
                         <small className="ep-cell-note">
-                          {paper.is_pp ? 'Papers & Proceedings' : 'Research article'}
+                          {paper.is_pp ? 'AER Papers & Proceedings' : 'Research article'}
                         </small>
                       </td>
                       <td>

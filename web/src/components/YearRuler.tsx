@@ -134,7 +134,7 @@ export default function YearRuler({ years }: { years: YearPoint[] }) {
           >
             <strong>{hover.point.year}</strong>
             <span>{formatNumber(hover.point.papers)} articles</span>
-            <span>{formatNumber(hover.point.pp)} P&amp;P</span>
+            <span>{formatNumber(hover.point.pp)} AER P&amp;P</span>
             <span>{hover.point.coverage.toFixed(0)}% with a career stage</span>
           </div>
         )}
@@ -142,10 +142,10 @@ export default function YearRuler({ years }: { years: YearPoint[] }) {
       <figcaption className="ep-figure-caption">
         <span className="ep-legend">
           <span className="ep-legend-swatch is-regular" /> Regular articles
-          <span className="ep-legend-swatch is-pp" /> Papers &amp; Proceedings
+          <span className="ep-legend-swatch is-pp" /> AER Papers &amp; Proceedings
         </span>
         <span>
-          P&amp;P became a separate AEA journal in 2018. Counts include research articles only.
+          AER Papers &amp; Proceedings are included through 2017. Counts include research articles only.
         </span>
       </figcaption>
       <details className="ep-data-table">
@@ -155,7 +155,7 @@ export default function YearRuler({ years }: { years: YearPoint[] }) {
             <tr>
               <th scope="col">Year</th>
               <th scope="col">Articles</th>
-              <th scope="col">P&amp;P</th>
+              <th scope="col">AER P&amp;P</th>
               <th scope="col">With career stage</th>
             </tr>
           </thead>

@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import OverviewPage from './pages/OverviewPage'
 import PaperPage from './pages/PaperPage'
 import PapersPage from './pages/PapersPage'
+import PathPage from './pages/PathPage'
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="authors" element={<AuthorsPage />} />
         <Route path="authors/:stableId" element={<AuthorPage />} />
         <Route path="network" element={<NetworkPage />} />
+        <Route path="connection" element={<PathPage />} />
         <Route path="methodology" element={<MethodologyPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

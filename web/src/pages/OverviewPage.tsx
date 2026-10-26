@@ -65,7 +65,7 @@ export default function OverviewPage() {
         <Stat
           value={formatNumber(data.counts.papers)}
           label="research articles"
-          note={`${formatNumber(data.counts.pp_papers)} AER Papers & Proceedings`}
+          note="from five journals, 2000–2026"
         />
         <Stat value={formatNumber(data.counts.authors)} label="canonical authors" note="with stable public IDs" />
         <Stat

@@ -21,7 +21,7 @@ EconPub makes both first-class. Every inferred field carries its evidence and co
 
 ## Architecture
 
-The browser never downloads the database. A read-only FastAPI service exposes paginated paper and author views plus bounded network subgraphs; a React/Vite frontend consumes only those endpoints.
+The browser never downloads the database. A read-only FastAPI service exposes paginated paper and author views, bounded network subgraphs, shortest-path queries, and cached graph statistics; a React/Vite frontend consumes only those endpoints.
 
 ```
 React (web/)  ->  FastAPI /api (src/econpub/api.py)  ->  SQLite mode=ro
@@ -40,7 +40,7 @@ The API caps page sizes and never serializes the full author table: the AER base
 | QJE | 1,181 | 3,085 | 1,164 |
 | **Total** | **10,956** | **25,241** | **10,135** |
 
-The combined pilot has 10,065 canonical authors and 24,478 coauthorship edges. 3,337 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. Career coverage is 4,109 assignments (16.3% of slots): ORCID plus a CV layer of 438 parsed documents, 1,895 events, and 106 CV assignments. The CV queue is empty; 777 sources failed or were unreachable and remain visible for audit. The AER baseline remains higher because it also has byline rank and a fuller CV corpus. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
+The combined pilot has 10,065 canonical authors and 24,478 coauthorship edges. 3,337 authors appear in at least two journals, 1,496 in at least three, and 178 in all five. In the largest connected component (7,501 authors), the average shortest coauthorship path is 6.53 steps and the diameter is 18; journal-scoped averages range from 7.10 (QJE) to 10.74 (JPE). Career coverage is 4,109 assignments (16.3% of slots): ORCID plus a CV layer of 438 parsed documents, 1,895 events, and 106 CV assignments. The CV queue is empty; 777 sources failed or were unreachable and remain visible for audit. The AER baseline remains higher because it also has byline rank and a fuller CV corpus. See `data/reports/top5_quality.md` and `docs/roadmap.md`.
 
 ## AER baseline dataset (M4)
 
@@ -203,6 +203,8 @@ python run.py m4 --skip-orcid   # revalidate cached ORCID links without network
 python run.py cvs --limit 300   # expand CV discovery/parsing
 python run.py cvs --workers 5 --skip-seed   # resume the cached CV crawl
 python run.py wayback --limit 100           # historical faculty-page snapshots
+python run.py top5-report --db data/curated/top5.db      # per-journal quality report
+python run.py network-stats --db data/curated/top5.db     # cached path-length/diameter statistics
 python run.py serve             # run the read-only JSON API on port 8000
 python run.py report            # regenerate the report without rebuilding authors
 python -m unittest discover -s tests -v
@@ -243,7 +245,7 @@ src/econpub/
   cli.py           command-line entry point
   schema.sql       database schema
 web/
-  src/             React routes, components, charts, and network explorer
+  src/             React routes, components, charts, network explorer, connection finder
   public/          static assets
   scripts/         build helpers (SPA 404 fallback)
 docs/

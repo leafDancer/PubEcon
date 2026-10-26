@@ -2,9 +2,11 @@ import type {
   AuthorDetail,
   AuthorList,
   NetworkPayload,
+  NetworkStats,
   Overview,
   PaperDetail,
   PaperList,
+  PathPayload,
 } from './types'
 
 const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? '/api'
@@ -57,4 +59,7 @@ export const api = {
   authorNetwork: (stableId: string, limit = 50, journal?: string) =>
     get<NetworkPayload>(`/authors/${stableId}/network`, { limit, journal }),
   network: (params: Params) => get<NetworkPayload>('/network', params),
+  networkStats: (journal?: string) =>
+    get<NetworkStats>('/network/stats', { journal }),
+  path: (params: Params) => get<PathPayload>('/path', params),
 }

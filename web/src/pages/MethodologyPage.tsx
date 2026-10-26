@@ -36,6 +36,7 @@ export default function MethodologyPage() {
           <a href="#evidence">Evidence hierarchy</a>
           <a href="#orcid">ORCID identity</a>
           <a href="#identity">Stable identity</a>
+          <a href="#network">Coauthor network</a>
           <a href="#dates">Dates and topics</a>
           <a href="#limits">Limits</a>
         </aside>
@@ -214,14 +215,33 @@ export default function MethodologyPage() {
             </p>
           </section>
 
+          <section id="network">
+            <h2>Coauthor network</h2>
+            <p>
+              Nodes are canonical authors. An edge means two authors shared at least one research
+              article; it is undirected and unweighted, so five shared papers are still one step.
+              The connection finder returns one deterministic shortest path, not every equally
+              short path, and lists the papers that establish each step. Journal-scoped graphs use
+              only papers in that journal.
+            </p>
+            <p>
+              Average path length and diameter are computed over unordered pairs in the largest
+              connected component. Authors outside that component are reported separately rather
+              than treated as infinitely distant. Clustering is the mean local clustering
+              coefficient: how often two coauthors of an author also coauthor with each other.
+            </p>
+          </section>
+
           <section id="dates">
             <h2>Dates, topics, and citations</h2>
             <p>
-              Issue months come from the AEA article page or the AEA all-issues calendar, not from
-              Crossref&apos;s historical month field. JEL codes are parsed from AEA article pages
-              and stored separately from machine-generated OpenAlex topics; the two schemes are
-              never merged. Citation counts are stored as reported by Crossref and OpenAlex and are
-              not reconciled into a single “true” count. The interface prefers OpenAlex&apos;s
+              AER issue months come from the AEA article page or the all-issues calendar, not from
+              Crossref&apos;s historical month field; the other journals use Crossref dates. AER JEL
+              codes are parsed from AEA pages and stored separately from machine-generated OpenAlex
+              topics; the two schemes are never merged. The other journals have no AEA JEL pages, so
+              their topic coverage is OpenAlex-only. Citation counts are stored as reported by
+              Crossref and OpenAlex and are not reconciled into a single “true” count. The interface
+              prefers OpenAlex&apos;s
               <code>cited_by_count</code> and falls back to Crossref&apos;s
               <code>is-referenced-by-count</code>.
             </p>
@@ -234,9 +254,9 @@ export default function MethodologyPage() {
               reconciled “true” citation count.
             </p>
             <p>
-              Every abstract records its provenance: <code>crossref</code>, <code>aea</code>, or{' '}
-              <code>openalex</code>. OpenAlex page-description boilerplate is filtered rather than
-              shown as an abstract.
+              Every abstract records its provenance: <code>crossref</code>, <code>aea</code> (AER
+              only), or <code>openalex</code>. OpenAlex page-description boilerplate is filtered
+              rather than shown as an abstract.
             </p>
           </section>
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import re
 import sqlite3
@@ -13,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .config import DB_PATH, JOURNALS, START_YEAR
+from .network import build_graph, edge_papers, graph_counts, shortest_path
 from .normalize import normalize_doi
 
 STAGE_ORDER = [
@@ -1193,6 +1195,163 @@ def _top_network(
     }
 
 
+def _network_stats(conn: sqlite3.Connection, journal: str | None) -> dict[str, Any]:
+    scope = journal or "ALL"
+    row = conn.execute(
+        "SELECT * FROM network_statistics WHERE scope=?", (scope,)
+    ).fetchone()
+    if not row:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Network statistics are not cached. Run `python run.py "
+                "network-stats` to compute them."
+            ),
+        )
+    details = {}
+    if row["details_json"]:
+        try:
+            details = json.loads(row["details_json"])
+        except ValueError:
+            details = {}
+    return {
+        "scope": row["scope"],
+        "journal": None if scope == "ALL" else scope,
+        "nodes": row["nodes"],
+        "edges": row["edges"],
+        "components": row["components"],
+        "largest_component": row["largest_component"],
+        "average_degree": row["average_degree"],
+        "average_path_length": row["average_path_length"],
+        "diameter": row["diameter"],
+        "average_clustering": row["average_clustering"],
+        "pairs": row["pairs"],
+        "component_sizes": details.get("component_sizes", []),
+        "generated_at": row["generated_at"],
+        "definition": (
+            "Unweighted coauthorship graph. Average path length and diameter are "
+            "over unordered pairs in the largest connected component."
+        ),
+    }
+
+
+def _author_path(
+    conn: sqlite3.Connection,
+    from_id: str,
+    to_id: str,
+    *,
+    journal: str | None,
+    max_depth: int,
+    papers_per_step: int,
+) -> dict[str, Any]:
+    authors = conn.execute(
+        """
+        SELECT author_id, stable_id, canonical_name
+        FROM authors WHERE stable_id IN (?, ?)
+        """,
+        (from_id, to_id),
+    ).fetchall()
+    by_stable = {row["stable_id"]: row for row in authors}
+    if from_id not in by_stable:
+        raise HTTPException(status_code=404, detail=f"Author not found: {from_id}")
+    if to_id not in by_stable:
+        raise HTTPException(status_code=404, detail=f"Author not found: {to_id}")
+    source = by_stable[from_id]
+    target = by_stable[to_id]
+    source_author = int(source["author_id"])
+    target_author = int(target["author_id"])
+    graph = build_graph(conn, journal)
+    nodes_count, edges_count = graph_counts(graph)
+    path = shortest_path(
+        graph, source_author, target_author, max_depth=max_depth
+    )
+    if path is None:
+        source_size = 0
+        target_size = 0
+        for start, is_source in ((source_author, True), (target_author, False)):
+            if start not in graph:
+                continue
+            seen = {start}
+            queue = [start]
+            while queue:
+                node = queue.pop()
+                for neighbor in graph[node]:
+                    if neighbor not in seen:
+                        seen.add(neighbor)
+                        queue.append(neighbor)
+            if is_source:
+                source_size = len(seen)
+            else:
+                target_size = len(seen)
+        return {
+            "found": False,
+            "distance": None,
+            "journal": journal,
+            "from": {"id": from_id, "name": source["canonical_name"]},
+            "to": {"id": to_id, "name": target["canonical_name"]},
+            "nodes": [],
+            "steps": [],
+            "meta": {
+                "algorithm": "bfs",
+                "max_depth": max_depth,
+                "graph_nodes": nodes_count,
+                "graph_edges": edges_count,
+                "source_component_size": source_size,
+                "target_component_size": target_size,
+            },
+        }
+
+    node_rows = _network_nodes(conn, path, None, None, journal=journal)
+    node_by_stable = {row["id"]: row for row in node_rows}
+    placeholders = ",".join("?" for _ in path)
+    id_map = {
+        int(row["author_id"]): row["stable_id"]
+        for row in conn.execute(
+            f"SELECT author_id, stable_id FROM authors WHERE author_id IN ({placeholders})",
+            path,
+        )
+    }
+    nodes = [
+        node_by_stable.get(
+            id_map[author_id],
+            {"id": id_map[author_id], "name": None},
+        )
+        for author_id in path
+    ]
+    steps = []
+    for left, right in zip(path, path[1:]):
+        steps.append(
+            {
+                "from": id_map[left],
+                "to": id_map[right],
+                "papers": edge_papers(
+                    conn,
+                    left,
+                    right,
+                    journal=journal,
+                    limit=papers_per_step,
+                ),
+            }
+        )
+    return {
+        "found": True,
+        "distance": len(path) - 1,
+        "journal": journal,
+        "from": {"id": from_id, "name": source["canonical_name"]},
+        "to": {"id": to_id, "name": target["canonical_name"]},
+        "nodes": nodes,
+        "steps": steps,
+        "meta": {
+            "algorithm": "bfs",
+            "max_depth": max_depth,
+            "graph_nodes": nodes_count,
+            "graph_edges": edges_count,
+            "unique_shortest_path": False,
+            "papers_per_step": papers_per_step,
+        },
+    }
+
+
 def create_app(
     database: Path | str | None = None,
     *,
@@ -1210,7 +1369,7 @@ def create_app(
     app = FastAPI(
         title="EconPub API",
         version="0.1.0",
-        description="Read-only API for the American Economic Review 2000+ database.",
+        description="Read-only API for the top five economics journals, 2000+.",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -1395,6 +1554,31 @@ def create_app(
                 journal=journal,
                 limit=limit,
                 min_papers=min_papers,
+            )
+
+    @app.get("/api/network/stats")
+    def network_stats(
+        journal: str | None = Query(None, pattern="^(AER|QJE|JPE|RES|ECMA)$"),
+    ) -> dict[str, Any]:
+        with connection() as conn:
+            return _network_stats(conn, journal)
+
+    @app.get("/api/path")
+    def path(
+        from_id: str = Query(..., alias="from", min_length=1, max_length=80),
+        to_id: str = Query(..., alias="to", min_length=1, max_length=80),
+        journal: str | None = Query(None, pattern="^(AER|QJE|JPE|RES|ECMA)$"),
+        max_depth: int = Query(10, ge=1, le=20),
+        papers_per_step: int = Query(3, ge=1, le=10),
+    ) -> dict[str, Any]:
+        with connection() as conn:
+            return _author_path(
+                conn,
+                from_id,
+                to_id,
+                journal=journal,
+                max_depth=max_depth,
+                papers_per_step=papers_per_step,
             )
 
     @app.exception_handler(HTTPException)

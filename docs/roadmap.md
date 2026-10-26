@@ -178,6 +178,10 @@ The read-only API and frontend now expose the journal dimension:
 - The network explorer supports a journal filter. When a journal is selected,
   edges are derived from that journal's papers, so a tie is a tie in that
   journal; the "All five" view uses the precomputed cross-journal edge table.
+- A connection finder returns one shortest coauthorship path between two
+  authors, with the papers that establish each step. The network page reports
+  average path length, diameter, components, and clustering from the cached
+  graph statistics.
 - The served database remains the AER baseline until the combined pilot passes
   the remaining validation and the CV queue is processed.
 
