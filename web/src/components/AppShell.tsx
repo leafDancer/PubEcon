@@ -8,6 +8,7 @@ const nav = [
   { to: '/authors', label: 'Authors' },
   { to: '/network', label: 'Network' },
   { to: '/connection', label: 'Connection' },
+  { to: '/leaderboards', label: 'Leaderboards' },
   { to: '/methodology', label: 'Methodology' },
 ]
 

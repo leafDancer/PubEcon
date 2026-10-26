@@ -1849,7 +1849,7 @@ def create_app(
 
     @app.get("/api/rankings")
     def rankings(
-        limit: int = Query(10, ge=1, le=50),
+        limit: int = Query(10, ge=1, le=100),
     ) -> dict[str, Any]:
         with connection() as conn:
             return _rankings(conn, limit)

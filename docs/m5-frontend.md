@@ -78,6 +78,7 @@ Pagination is capped at 100 rows. The network endpoint is always a filtered samp
 | `/authors/{stable_id}` | Author page with career timeline, papers, evidence, coauthors, institutions |
 | `/network` | Coauthor explorer; supports `?focus=<stable_id>` for an ego network and `?journal=` for a journal-scoped graph; shows cached graph statistics |
 | `/connection` | Shortest-path finder between two authors, with per-step paper evidence |
+| `/leaderboards` | Full leaderboard views with a 10/25/50/100 row selector; the overview shows the top five |
 | `/methodology` | Public method, evidence hierarchy, ORCID identity tiers, and limitations |
 
 ## Design system

@@ -2916,3 +2916,21 @@ h3 {
   font-size: 13px;
   font-weight: 500;
 }
+
+/* Leaderboards page */
+
+.ep-leaderboard-panel {
+  margin-top: 18px;
+}
+
+.ep-leaderboard-table td:first-child,
+.ep-leaderboard-table th:first-child {
+  width: 44px;
+}
+
+.ep-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+}

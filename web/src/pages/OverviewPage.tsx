@@ -192,7 +192,7 @@ function RankingList({ tab, data }: { tab: RankingTab; data: RankingsPayload }) 
 export default function OverviewPage() {
   const { data, loading, error } = useApi(() => api.overview(), [])
   const network = useApi(() => api.network({ limit: 36, min_papers: 4 }), [])
-  const rankings = useApi(() => api.rankings(10), [])
+  const rankings = useApi(() => api.rankings(5), [])
   const [rankingTab, setRankingTab] = useState<RankingTab>('assistant_professor')
 
   if (loading) return <LoadingState label="Loading the EconPub record" />
@@ -391,8 +391,8 @@ export default function OverviewPage() {
               <h2>Leaderboards</h2>
               <p>Descriptive rankings; coverage travels with each list.</p>
             </div>
-            <Link className="ep-text-link" to="/methodology#network">
-              Definitions
+            <Link className="ep-text-link" to="/leaderboards">
+              Full leaderboards
             </Link>
           </div>
           <div className="ep-ranking-tabs" role="tablist" aria-label="Leaderboard">

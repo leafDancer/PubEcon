@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import AppShell from './components/AppShell'
 import AuthorPage from './pages/AuthorPage'
 import AuthorsPage from './pages/AuthorsPage'
+import LeaderboardsPage from './pages/LeaderboardsPage'
 import MethodologyPage from './pages/MethodologyPage'
 import NetworkPage from './pages/NetworkPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="authors/:stableId" element={<AuthorPage />} />
         <Route path="network" element={<NetworkPage />} />
         <Route path="connection" element={<PathPage />} />
+        <Route path="leaderboards" element={<LeaderboardsPage />} />
         <Route path="methodology" element={<MethodologyPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
