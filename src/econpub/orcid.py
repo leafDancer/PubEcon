@@ -206,6 +206,24 @@ def assign_author_orcids(conn) -> dict[str, int]:
         chosen = existing or orcids[0]
         if len(orcids) > 1:
             multiple += 1
+            other = conn.execute(
+                "SELECT author_id FROM authors WHERE orcid=? AND author_id<>?",
+                (chosen, row["author_id"]),
+            ).fetchone()
+            if other:
+                # Two canonical authors claim the same ORCID through different
+                # authorship evidence. Flag both rather than violating the
+                # unique constraint or silently dropping one.
+                conflicts += 1
+                conn.execute(
+                    """
+                    UPDATE authors
+                    SET needs_review=1, review_status='orcid_conflict', updated_at=?
+                    WHERE author_id=?
+                    """,
+                    (db.utcnow(), row["author_id"]),
+                )
+                continue
             conn.execute(
                 """
                 UPDATE authors

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from econpub.orcid import (
     _name_compatible,
     _person_names,
     assess_orcid_identity,
+    assign_author_orcids,
     parse_orcid_record,
     upsert_orcid_events,
 )
@@ -535,6 +537,46 @@ class CVExtractionTests(unittest.TestCase):
         education = [event for event in events if event["event_type"] == "education"]
         self.assertEqual(len(education), 1)
         self.assertIn("Ph.D.", education[0]["title"])
+
+
+class OrcidAuthorAssignmentTests(unittest.TestCase):
+    def test_shared_orcid_does_not_violate_unique_constraint(self) -> None:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as temp:
+            path = Path(temp) / "test.db"
+            conn = db.connect(path)
+            db.init_db(conn)
+            conn.execute(
+                "INSERT INTO papers (doi, created_at, updated_at) VALUES ('10.1/x', '2026-01-01', '2026-01-01')"
+            )
+            for name in ("Jane A", "Jane B"):
+                conn.execute(
+                    "INSERT INTO authors "
+                    "(canonical_name, resolution_method, resolution_confidence, created_at, updated_at) "
+                    "VALUES (?, 'test', 'low', '2026-01-01', '2026-01-01')",
+                    (name,),
+                )
+            conn.executemany(
+                """
+                INSERT INTO authorships (paper_id, author_order, author_id, openalex_orcid)
+                VALUES (1, ?, ?, ?)
+                """,
+                [
+                    (1, 1, "https://orcid.org/0000-0000-0000-0001"),
+                    (2, 1, "https://orcid.org/0000-0000-0000-0002"),
+                    (3, 2, "https://orcid.org/0000-0000-0000-0001"),
+                    (4, 2, "https://orcid.org/0000-0000-0000-0003"),
+                ],
+
+            )
+            conn.commit()
+            stats = assign_author_orcids(conn)
+            self.assertEqual(stats["conflicts"], 1)
+            rows = conn.execute(
+                "SELECT orcid, needs_review FROM authors ORDER BY author_id"
+            ).fetchall()
+            self.assertEqual(sum(1 for row in rows if row["orcid"]), 1)
+            self.assertTrue(any(row["needs_review"] for row in rows))
+            conn.close()
 
 
 if __name__ == "__main__":
