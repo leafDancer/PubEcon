@@ -65,13 +65,33 @@ The multi-journal data foundation is in progress:
   announcements, editorial board/table-of-contents pages, duplicates) from
   AER-only section conventions (P&P, AEA reports, AEA front matter). AER output
   is unchanged; the AER-only SQL is gated by `journal_code`.
-- A QJE pilot (separate database, not merged into the public AER corpus)
-  ingested all **1,368** Crossref records for 2000–2026: **1,181** research
-  articles, **55** duplicate deposits, **10** errata, **81** front-matter
-  items, **35** issue records, **3,085** author slots, and **609** records with
-  a Crossref abstract. The remaining two journals' section conventions — book
-  reviews in JPE/RES and comments/notes in all three — still need inspection
-  before their pilots are considered clean.
+- All four new journals were piloted in separate databases, not merged into the
+  public AER corpus. Every Crossref record for 2000–present was ingested:
+
+| Journal | Records | Research articles | Author slots | Abstracts (after OpenAlex) | Unattributed |
+|---|---|---|---|---|---|
+| QJE | 1,368 | 1,181 | 3,085 | 1,164 | 0 |
+| JPE | 2,143 | 1,501 | 3,478 | 1,327 | 0 |
+| RES | 1,832 | 1,748 | 4,034 | 1,715 | 0 |
+| ECMA | 2,602 | 1,741 | 3,858 | 1,623 | 29 |
+
+- The classifier gained generic rules for announcements, editorial-board and
+  cover pages, referee lists, indexes, errata/addenda, and supplements, plus
+  journal-specific rules for JPE turnaround/cover records, RES meeting notices,
+  and Econometric Society reports. No pilot has an unclassified editorial
+  record left.
+- OpenAlex backfilled missing bibliographic metadata without replacing the
+  Crossref record:
+  - **JPE had no Crossref abstracts at all**; OpenAlex supplied 1,327.
+  - **ECMA 2008–2014 deposits omit authors** for 388 articles. OpenAlex
+    recovered 359 of them, raising ECMA from 1,382 to 1,741 articles and from
+    3,058 to 3,858 author slots. The remaining 29 stay `unattributed`.
+- The combined research-article base is now **25,237 author slots**
+  (AER 10,782 plus 14,455 in the four new journals), about 2.3× AER.
+- Two identity-layer edge cases surfaced and were fixed: an ORCID can no
+  longer be assigned to two components split by a namesake rule, and a merge
+  candidate whose author was already merged in the same pass is left pending
+  instead of dereferencing a missing row.
 
 ## Phases
 

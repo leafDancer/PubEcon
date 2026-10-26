@@ -51,7 +51,13 @@ ADMIN_CONTAINS_KEYS = (
 )
 
 ROMAN_PAGE_RE = re.compile(r"^[ivxlcdm]+$", re.IGNORECASE)
-AUX_TYPES = {"front_matter", "association_report", "unattributed", "retraction_notice"}
+AUX_TYPES = {
+    "front_matter",
+    "association_report",
+    "unattributed",
+    "retraction_notice",
+    "supplement",
+}
 TYPE_PRIORITY = {
     "article": 0,
     "erratum": 1,
@@ -116,6 +122,9 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
             LOWER(COALESCE(title,'')) LIKE '%erratum%'
             OR LOWER(COALESCE(title,'')) LIKE '%corrigendum%'
             OR LOWER(COALESCE(title,'')) LIKE '%correction to%'
+            OR LOWER(COALESCE(title,'')) LIKE 'correction:%'
+            OR LOWER(COALESCE(title,'')) LIKE 'corrigendum:%'
+            OR LOWER(TRIM(COALESCE(title,''))) = 'addendum'
         )
         """
     )
@@ -152,6 +161,31 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
         """
     )
 
+    # Econometric Society annual reports and editor reports are association
+    # business, not research articles.
+    conn.execute(
+        """
+        UPDATE papers SET content_type='association_report'
+        WHERE content_type='article' AND journal_code='ECMA' AND (
+            LOWER(COALESCE(title,'')) LIKE 'report of the%'
+            OR LOWER(COALESCE(title,'')) LIKE 'reports of the%'
+            OR LOWER(COALESCE(title,'')) LIKE 'the econometric society annual report%'
+            OR LOWER(COALESCE(title,'')) LIKE 'the econometric society % annual report%'
+            OR LOWER(COALESCE(title,'')) LIKE 'the econometric society research monograph series report%'
+            OR LOWER(COALESCE(title,'')) LIKE '%election of fellows%'
+            OR LOWER(COALESCE(title,'')) LIKE '%nomination of fellows%'
+        )
+        """
+    )
+    # Supplementary appendices are separate deposits, not articles.
+    conn.execute(
+        """
+        UPDATE papers SET content_type='supplement'
+        WHERE content_type='article'
+          AND LOWER(COALESCE(title,'')) LIKE 'supplement to%'
+        """
+    )
+
     # Remaining administrative titles: Foreword, Editors' Introduction,
     # "Editor, <journal>", journal-name report sections, award notices.
     # The journal-name keys are AEA-specific, so this pass is AER-only.
@@ -177,7 +211,7 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
     # Roman-numeral page ranges are administrative paratext in this corpus.
     roman_rows = conn.execute(
         """
-        SELECT p.paper_id, p.page_first,
+        SELECT p.paper_id, p.page_first, p.journal_code,
                EXISTS(SELECT 1 FROM authorships a WHERE a.paper_id=p.paper_id) AS has_authors
         FROM papers p
         WHERE p.content_type='article' AND p.page_first IS NOT NULL
@@ -185,7 +219,8 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
     ).fetchall()
     for row in roman_rows:
         if ROMAN_PAGE_RE.match(str(row["page_first"]).strip()):
-            new_type = "association_report" if row["has_authors"] else "front_matter"
+            association = row["has_authors"] and (row["journal_code"] or "AER") == "AER"
+            new_type = "association_report" if association else "front_matter"
             conn.execute(
                 "UPDATE papers SET content_type=? WHERE paper_id=?",
                 (new_type, row["paper_id"]),
@@ -204,13 +239,50 @@ def classify_papers(conn: sqlite3.Connection) -> dict[str, Any]:
                 'table of content', 'table of contents', 'contents',
                 'front cover', 'back cover', 'referee', 'referee list',
                 'masthead', 'cover', 'title page', 'acknowledgements',
-                'acknowledgments'
+                'acknowledgments', 'index', 'subject index', 'author index',
+                'travel fund', 'editorial announcement', 'notice',
+                'oup accepted manuscript'
             )
             OR LOWER(COALESCE(title,'')) LIKE '%front cover%'
             OR LOWER(COALESCE(title,'')) LIKE 'contents for volume%'
             OR LOWER(COALESCE(title,'')) LIKE 'referee list%'
             OR LOWER(COALESCE(title,'')) LIKE '%acknowledg%referee%'
             OR LOWER(COALESCE(title,'')) LIKE '%gratefully acknowledges%'
+            OR LOWER(TRIM(COALESCE(title,''))) = 'recent referees'
+            OR LOWER(COALESCE(title,'')) LIKE 'index to volume%'
+            OR LOWER(COALESCE(title,'')) LIKE '%prize announcement%'
+            OR LOWER(COALESCE(title,'')) LIKE 'in memoriam%'
+            OR LOWER(COALESCE(page_first,'')) LIKE '%cover%'
+            OR (
+                LOWER(TRIM(COALESCE(title,''))) = LOWER(TRIM(COALESCE(container_title,'')))
+                AND TRIM(COALESCE(container_title,'')) <> ''
+            )
+            OR (
+                journal_code='JPE' AND (
+                    LOWER(COALESCE(title,'')) LIKE 'jpe data on time to first decision%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'jpe submissions%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'jpe turnaround times%'
+                )
+            )
+            OR (
+                journal_code='RES' AND (
+                    LOWER(COALESCE(title,'')) LIKE 'review of economic studies european meetings%'
+                )
+            )
+            OR (
+                journal_code='ECMA' AND (
+                    LOWER(COALESCE(title,'')) LIKE 'forthcoming papers%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'news notes%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'accepted manuscripts%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'fellows of the econometric society%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'submission of manuscripts%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'econometrica referees%'
+                    OR LOWER(COALESCE(title,'')) LIKE 'program of the%'
+                    OR LOWER(TRIM(COALESCE(title,''))) = 'editorial'
+                    OR LOWER(COALESCE(title,'')) LIKE '<tocheading>%'
+                    OR LOWER(COALESCE(title,'')) LIKE '%frisch medal%'
+                )
+            )
         )
         """
     )

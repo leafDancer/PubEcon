@@ -442,6 +442,57 @@ def _apply_work(
         """,
         (paper_id,),
     ).fetchall()
+    if not our_rows and work["authorships"]:
+        # Some publishers (notably Econometrica 2008–2014) deposit works
+        # without author metadata. OpenAlex often has the byline; use it as a
+        # bibliographic supplement while keeping the provenance explicit.
+        for order, oa in enumerate(work["authorships"], start=1):
+            display = clean_text(oa.get("author_name"))
+            parts = display.split()
+            given = " ".join(parts[:-1]) if len(parts) > 1 else None
+            family = parts[-1] if parts else None
+            institutions = [item for item in oa["institutions"] if item.get("openalex_id")]
+            primary = institutions[0] if institutions else None
+            for institution in institutions:
+                _upsert_institution(conn, institution)
+            conn.execute(
+                """
+                INSERT INTO authorships
+                    (paper_id, author_order, given_name, family_name, full_name, orcid,
+                     match_key, institution_hint, institution_source,
+                     openalex_author_id, openalex_author_name, openalex_orcid,
+                     openalex_raw_affiliation, openalex_match_method,
+                     openalex_match_confidence, openalex_institution_id,
+                     openalex_institution_name)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'openalex_backfill',
+                        'medium', ?, ?)
+                """,
+                (
+                    paper_id,
+                    order,
+                    given,
+                    family,
+                    display or None,
+                    oa.get("orcid"),
+                    name_match_key(given, family),
+                    primary.get("display_name") if primary else None,
+                    "openalex" if primary else None,
+                    oa.get("openalex_author_id"),
+                    display or None,
+                    oa.get("orcid"),
+                    oa.get("raw_affiliation"),
+                    primary.get("openalex_id") if primary else None,
+                    primary.get("display_name") if primary else None,
+                ),
+            )
+            stats["authorships_created"] += 1
+        conn.execute(
+            "UPDATE papers SET content_type='article' "
+            "WHERE paper_id=? AND content_type='unattributed'",
+            (paper_id,),
+        )
+        return
+
     matches = match_authorships(our_rows, work["authorships"])
     stats["authorships_matched"] += len(matches)
     for our_row, oa, method, confidence in matches:
@@ -476,7 +527,9 @@ def _apply_work(
             SET openalex_author_id=?,
                 openalex_author_name=?,
                 openalex_raw_affiliation=?,
-                openalex_match_method=?,
+                openalex_match_method=CASE
+                    WHEN openalex_match_method='openalex_backfill'
+                    THEN 'openalex_backfill' ELSE ? END,
                 openalex_match_confidence=?,
                 openalex_institution_id=?,
                 openalex_institution_name=?,
@@ -525,6 +578,7 @@ def enrich_openalex(
         "abstracts": 0,
         "topics": 0,
         "authorships_matched": 0,
+        "authorships_created": 0,
         "institutions": 0,
         "failed_batches": 0,
     }
@@ -532,7 +586,8 @@ def enrich_openalex(
         """
         SELECT paper_id, doi
         FROM papers
-        WHERE content_type='article' AND is_duplicate=0 AND doi_synthetic=0
+        WHERE content_type IN ('article','unattributed')
+          AND is_duplicate=0 AND doi_synthetic=0
         ORDER BY paper_id
         """
     ).fetchall()
@@ -1027,12 +1082,19 @@ def merge_openalex_supported_authors(conn) -> dict[str, int]:
     conn.execute("DELETE FROM coauthorship_edges")
     merged = 0
     for candidate_id, target_id, source_id in merges:
-        target_stable = conn.execute(
+        target = conn.execute(
             "SELECT stable_id FROM authors WHERE author_id=?", (target_id,)
-        ).fetchone()["stable_id"]
-        source_stable = conn.execute(
+        ).fetchone()
+        source = conn.execute(
             "SELECT stable_id FROM authors WHERE author_id=?", (source_id,)
-        ).fetchone()["stable_id"]
+        ).fetchone()
+        if not target or not source or not target["stable_id"] or not source["stable_id"]:
+            # A previous merge in this pass can remove one side, or the
+            # identity ledger may not have assigned a stable ID yet. Leave the
+            # candidate pending rather than merging without an audit trail.
+            continue
+        target_stable = target["stable_id"]
+        source_stable = source["stable_id"]
         conn.execute(
             "UPDATE authorships SET author_id=? WHERE author_id=?", (target_id, source_id)
         )

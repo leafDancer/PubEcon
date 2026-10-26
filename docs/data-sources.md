@@ -38,6 +38,7 @@ The project covers **AER 2000–present**. This deliberately excludes the 1911�
 - OpenAlex topics are stored under `scheme='openalex_topic'` and are not treated as equivalent to JEL codes.
 - Author profiles carry useful ORCIDs and citation counts, but `affiliations` is noisy: Markus Brunnermeier's profile lists dozens of institutions that are clearly coauthor affiliations, not his employment history.
 - OpenAlex work authorship supplies author IDs and publish-time institution IDs. 5,526 of 5,892 canonical authors receive an OpenAlex link; 40 authors had more than one OpenAlex ID and were reviewed in M3 (3 splits, 32 duplicate-profile cases, 5 uncertain).
+- **Missing-byline backfill.** When a publisher deposit has no authors at all, OpenAlex work authorship may supply the byline. Created rows carry `openalex_match_method='openalex_backfill'`, `openalex_author_name`, the raw affiliation, and `institution_source='openalex'`. Crossref authors are never replaced when present. In the top-five pilot this recovered 359 of 388 Econometrica articles from 2008–2014 whose Crossref deposits omit authors; the remaining 29 stay `unattributed`.
 - **Decision:** use OpenAlex only as DOI-keyed enrichment, never as the primary paper record or as a career timeline.
 
 ## ORCID

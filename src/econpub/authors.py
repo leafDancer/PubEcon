@@ -398,6 +398,19 @@ def resolve_all_authors(conn: sqlite3.Connection) -> dict[str, int]:
             review = _needs_review(component) or len(components) > 1
             confidence = "high" if orcids else ("low" if review else "medium")
             method = "orcid" if orcids else ("name_variant" if variants > 1 else "name_key")
+            orcid_value = orcids[0] if len(orcids) == 1 else None
+            if orcid_value:
+                # A separation rule can split one ORCID group into components
+                # (known namesakes). Only the first component keeps the ORCID;
+                # the others stay reviewable rather than violating the unique
+                # constraint or silently merging distinct people.
+                duplicate = conn.execute(
+                    "SELECT 1 FROM authors WHERE orcid=?", (orcid_value,)
+                ).fetchone()
+                if duplicate:
+                    orcid_value = None
+                    review = True
+                    confidence = "low"
             if review:
                 review_count += 1
 
@@ -413,7 +426,7 @@ def resolve_all_authors(conn: sqlite3.Connection) -> dict[str, int]:
                     canonical_name,
                     given or None,
                     family or None,
-                    orcids[0] if len(orcids) == 1 else None,
+                    orcid_value,
                     name_key(given, family),
                     match_key,
                     suffix or None,

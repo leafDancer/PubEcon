@@ -44,6 +44,11 @@ from .review import resolve_merge_candidates, resolve_multi_id_authors
 
 
 def link_openalex_authors(conn) -> None:
+    unresolved = conn.execute(
+        "SELECT COUNT(*) FROM authorships WHERE author_id IS NULL"
+    ).fetchone()[0]
+    if unresolved:
+        print(f"Authors resolved after OpenAlex backfill: {resolve_all_authors(conn)}")
     stats = apply_author_links(conn)
     print(f"Author OpenAlex links: {stats}")
     merge_stats = merge_openalex_supported_authors(conn)

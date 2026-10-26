@@ -191,7 +191,7 @@ The 2000+ AER harvest yields **67 duplicate rows**, including the 51 legacy/mode
 - **CV corpus:** 1,362 public CV/homepage sources are tracked, and 268 documents have been parsed. The queue is empty; 370 homepages and 72 CV documents remain unreachable. Raw CVs are stored only in the local ignored cache; the public database stores structured events and short snippets. See `docs/m4-validation.md` for concrete spot checks and parser fixes.
 - **JEL and topics:** JEL codes are parsed from AEA article pages; OpenAlex topics are a separate scheme. JEL coverage is reported in `data/reports/m2_quality.md` and varies by year.
 - **Abstracts:** coverage is 89.9% after OpenAlex backfill and boilerplate filtering; 481 articles still lack an abstract. Of the 1,210 OpenAlex abstracts, 377 were citation boilerplate and were removed. AEA abstracts are preferred when present.
-- **OpenAlex coverage:** 51 AER articles are not indexed by OpenAlex, mostly 2006–2007 and the newest 2026 issue.
+- **OpenAlex coverage:** 51 AER articles are not indexed by OpenAlex, mostly 2006–2007 and the newest 2026 issue. OpenAlex is also allowed to supply a byline only when the publisher deposit has none; those authorships are marked `openalex_backfill` and never replace an existing Crossref byline. The top-five pilot used this to recover 359 Econometrica articles whose Crossref deposits omit authors.
 - **Page validation:** one reversed numeric page range remains (`10.1257/aer.20181830`); it is flagged and will be corrected against the AEA page.
 - **P&P flags:** identified structurally by the largest spring issue; the AEA issue calendar confirms that the selected issue is the May issue in every year 2000–2017 (No. 2, No. 3, or No. 5 as the numbering changed).
 
