@@ -254,6 +254,80 @@ def _components(
     return list(grouped.values())
 
 
+def _split_conflicting_components(
+    components: list[list[dict[str, Any]]],
+    separation_rules: tuple[set[frozenset[str]], set[frozenset[int]]] | None,
+) -> list[list[dict[str, Any]]]:
+    """Split components that are bridged across a known namesake rule.
+
+    Pairwise separation rules are not enough: a byline with no OpenAlex ID can
+    connect the two sides transitively (John W. Morgan 2001 -> an unlinked
+    2009 byline -> John M. Morgan). Anchor the sides on the rule's OpenAlex
+    IDs, then assign unlinked bylines by institution overlap, name
+    compatibility, and year proximity. Ambiguous bylines stay in a separate
+    review component instead of being forced onto one side.
+    """
+    if not separation_rules:
+        return components
+    oa_pairs, _authorship_pairs = separation_rules
+    if not oa_pairs:
+        return components
+    result: list[list[dict[str, Any]]] = []
+    for component in components:
+        oa_ids = {
+            profile["openalex_author_id"]
+            for profile in component
+            if profile.get("openalex_author_id")
+        }
+        conflicts = [pair for pair in oa_pairs if pair <= oa_ids]
+        if not conflicts:
+            result.append(component)
+            continue
+        side_ids = sorted(set().union(*conflicts))
+        sides: dict[str, list[dict[str, Any]]] = {oa: [] for oa in side_ids}
+        unassigned: list[dict[str, Any]] = []
+        for profile in component:
+            oa = profile.get("openalex_author_id")
+            if oa in sides:
+                sides[oa].append(profile)
+            else:
+                unassigned.append(profile)
+        remaining: list[dict[str, Any]] = []
+        for profile in unassigned:
+            scores: dict[str, tuple[int, int, int]] = {}
+            for oa, anchors in sides.items():
+                if not anchors:
+                    continue
+                compatible = sum(
+                    1 for anchor in anchors if _compatible(profile, anchor, None)
+                )
+                institution = sum(
+                    1
+                    for anchor in anchors
+                    if profile["institution_tokens"] & anchor["institution_tokens"]
+                )
+                years = [
+                    abs(int(profile["year"]) - int(anchor["year"]))
+                    for anchor in anchors
+                    if profile["year"] is not None and anchor["year"] is not None
+                ]
+                proximity = min(years) if years else 9999
+                scores[oa] = (institution, compatible, -proximity)
+            if not scores:
+                remaining.append(profile)
+                continue
+            best = max(scores.values())
+            winners = [oa for oa, score in scores.items() if score == best]
+            if len(winners) == 1:
+                sides[winners[0]].append(profile)
+            else:
+                remaining.append(profile)
+        result.extend(anchors for anchors in sides.values() if anchors)
+        if remaining:
+            result.append(remaining)
+    return result
+
+
 def _name_tokens(value: str) -> set[str]:
     return set(normalize_name_part(value).split())
 
@@ -384,6 +458,7 @@ def resolve_all_authors(conn: sqlite3.Connection) -> dict[str, int]:
 
     for key, group_profiles in grouped.items():
         components = _components(group_profiles, separation_rules)
+        components = _split_conflicting_components(components, separation_rules)
         components.sort(key=lambda component: (-len(component), component[0]["authorship_id"]))
         component_author_ids: list[tuple[int, dict[str, Any], list[dict[str, Any]]]] = []
 

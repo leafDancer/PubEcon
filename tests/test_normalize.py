@@ -269,6 +269,60 @@ class AuthorMatchingTests(unittest.TestCase):
         components = _components([left, right])
         self.assertEqual(len(components), 1)
 
+    def test_separation_rule_beats_unlinked_bridge(self) -> None:
+        from econpub.authors import _split_conflicting_components
+
+        base = {
+            "author_order": 1,
+            "given": "John",
+            "family": "Morgan",
+            "affiliation": "",
+            "hint": "",
+            "orcid": "",
+            "suffix": "",
+            "match_key": "morgan|john",
+        }
+        left = {
+            **base,
+            "authorship_id": 1,
+            "paper_id": 1,
+            "openalex_author_id": "A1",
+            "full": "John W. Morgan",
+            "normalized_full": "john w morgan",
+            "middle_initials": {"w"},
+            "institution_tokens": {"princeton"},
+            "year": 2001,
+        }
+        right = {
+            **base,
+            "authorship_id": 2,
+            "paper_id": 2,
+            "openalex_author_id": "A2",
+            "full": "John M. Morgan",
+            "normalized_full": "john m morgan",
+            "middle_initials": {"m"},
+            "institution_tokens": {"berkeley"},
+            "year": 2008,
+        }
+        bridge = {
+            **base,
+            "authorship_id": 3,
+            "paper_id": 3,
+            "openalex_author_id": None,
+            "full": "John Morgan",
+            "normalized_full": "john morgan",
+            "middle_initials": set(),
+            "institution_tokens": {"berkeley"},
+            "year": 2009,
+        }
+        rules = ({frozenset({"A1", "A2"})}, set())
+        components = _split_conflicting_components([[left, right, bridge]], rules)
+        self.assertEqual(len(components), 2)
+        self.assertEqual({len(component) for component in components}, {1, 2})
+        bridged = next(component for component in components if len(component) == 2)
+        self.assertIn(right, bridged)
+        self.assertIn(bridge, bridged)
+
 
 if __name__ == "__main__":
     unittest.main()

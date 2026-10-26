@@ -88,15 +88,54 @@ The multi-journal data foundation is in progress:
     3,058 to 3,858 author slots. The remaining 29 stay `unattributed`.
 - The combined research-article base is now **25,237 author slots**
   (AER 10,782 plus 14,455 in the four new journals), about 2.3× AER.
-- Two identity-layer edge cases surfaced and were fixed: an ORCID can no
-  longer be assigned to two components split by a namesake rule, and a merge
+- Three identity-layer edge cases surfaced and were fixed: an ORCID can no
+  longer be assigned to two components split by a namesake rule, a merge
   candidate whose author was already merged in the same pass is left pending
-  instead of dereferencing a missing row.
+  instead of dereferencing a missing row, and a component bridged across a
+  namesake rule is split on the rule's OpenAlex IDs.
 - Cross-journal overlap is substantial even before the ORCID pass: the four
   pilot databases contain **6,220** distinct OpenAlex-linked authors, of whom
   **1,814** appear in at least two journals and **651** in at least three.
   Merging identities across journals is therefore the main value of M7.2, not
   a cosmetic deduplication step.
+
+### Combined top-five pilot (2026-10-26)
+
+A separate `top5.db` was built from cached Crossref pages with all five
+journals, OpenAlex enrichment, author resolution, and OpenAlex-supported
+merges. It is a validation build, not the served database.
+
+| Journal | Research articles | Author slots | Abstracts |
+|---|---|---|---|
+| AER | 4,798 | 10,802 | 4,307 |
+| RES | 1,748 | 4,034 | 1,716 |
+| ECMA | 1,740 | 3,859 | 1,621 |
+| JPE | 1,501 | 3,478 | 1,329 |
+| QJE | 1,181 | 3,085 | 1,164 |
+| **Total** | **10,968** | **25,258** | **10,137** |
+
+- OpenAlex backfilled **801** authorships, including 12 AER articles that
+  lacked Crossref authors (4,786 → 4,798) and 359 ECMA articles.
+- The combined identity layer has **10,065 canonical authors** and **24,478**
+  coauthorship edges.
+- Cross-journal reach is large: **3,337** authors appear in at least two
+  journals, **1,496** in at least three, and **178** in all five.
+- All three AER namesake pairs survive the from-scratch rebuild
+  (Page/Sullivan/Morgan). The first pass still merged John W./M. Morgan through
+  a 2009 byline without an OpenAlex ID, so the resolver now splits any component
+  that contains both sides of a known namesake rule: the OpenAlex IDs anchor the
+  two sides, and unlinked bylines are assigned by institution overlap, name
+  compatibility, and year proximity. Ambiguous bylines stay in their own review
+  component. This is a general fix, not a special case for Morgan.
+
+### M7.4 progress
+
+The read-only API now exposes the journal dimension: paper payloads include
+`journal`, `/api/papers` and `/api/authors` accept a `journal=` filter, and
+`/api/overview` reports per-journal paper and abstract counts. The frontend
+types carry the new fields; the journal filter controls and per-journal
+overview panels are still to be built. The served database remains AER-only
+until the combined build is validated.
 
 ## Phases
 
