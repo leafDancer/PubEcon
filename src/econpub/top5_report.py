@@ -64,6 +64,33 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
     )
     career_by_journal = {row["journal"]: row for row in career}
 
+    metadata = _dicts(
+        conn.execute(
+            """
+            SELECT p.journal_code AS journal,
+                   COUNT(DISTINCT p.paper_id) AS articles,
+                   COUNT(DISTINCT CASE WHEN p.openalex_id IS NOT NULL
+                       THEN p.paper_id END) AS openalex_works,
+                   SUM(CASE WHEN EXISTS (
+                       SELECT 1 FROM authorship_institutions ai
+                       WHERE ai.authorship_id=s.authorship_id
+                   ) OR (s.institution_hint IS NOT NULL AND TRIM(s.institution_hint)<>'')
+                   THEN 1 ELSE 0 END) AS resolved_slots,
+                   COUNT(*) AS slots,
+                   COUNT(DISTINCT s.author_id) AS authors,
+                   COUNT(DISTINCT CASE WHEN a.orcid_source IN
+                       ('verified_doi','verified_title','verified_institution','field_economics')
+                       THEN s.author_id END) AS accepted_orcid_authors
+            FROM papers p
+            JOIN authorships s ON s.paper_id=p.paper_id
+            LEFT JOIN authors a ON a.author_id=s.author_id
+            WHERE p.content_type='article' AND p.is_duplicate=0
+            GROUP BY p.journal_code
+            """
+        )
+    )
+    metadata_by_journal = {row["journal"]: row for row in metadata}
+
     evidence = _dicts(
         conn.execute(
             """
@@ -170,6 +197,7 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
         "generated_at": _utcnow(),
         "totals": dict(totals),
         "inventory": inventory,
+        "metadata_by_journal": metadata,
         "career_by_journal": career,
         "career_evidence": evidence,
         "cv": dict(cv),
@@ -255,6 +283,41 @@ def generate_top5_report(conn, path: Path | None = None) -> tuple[Path, Path]:
                 )
             ],
         )
+    )
+    lines.append("")
+    lines.append("## Metadata coverage by journal")
+    lines.append("")
+    metadata_rows = []
+    for journal in JOURNAL_ORDER:
+        row = metadata_by_journal.get(journal)
+        if not row:
+            continue
+        metadata_rows.append(
+            (
+                journal,
+                f"{100.0 * row['openalex_works'] / row['articles']:.1f}%"
+                if row["articles"]
+                else "0%",
+                f"{100.0 * row['resolved_slots'] / row['slots']:.1f}%"
+                if row["slots"]
+                else "0%",
+                f"{100.0 * row['accepted_orcid_authors'] / row['authors']:.1f}%"
+                if row["authors"]
+                else "0%",
+            )
+        )
+    lines.append(
+        _table(
+            ["Journal", "OpenAlex work coverage", "Resolved institution", "Accepted ORCID authors"],
+            metadata_rows,
+        )
+    )
+    lines.append("")
+    lines.append(
+        "OpenAlex work coverage is DOI-keyed. Resolved institution includes an "
+        "OpenAlex institution or a non-empty Crossref byline hint, so it is an "
+        "upper bound on usable institution evidence. Accepted ORCID authors "
+        "exclude unverified and rejected links."
     )
     lines.append("")
     lines.append("## Career coverage by journal")

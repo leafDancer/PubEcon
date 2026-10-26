@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T13:55:35+00:00",
+  "generated_at": "2026-10-26T13:56:08+00:00",
   "totals": {
     "records": 13443,
     "articles": 10956,
@@ -75,6 +75,53 @@
       "book_reviews": 0,
       "unattributed": 0,
       "abstracts": 1716
+    }
+  ],
+  "metadata_by_journal": [
+    {
+      "journal": "AER",
+      "articles": 4787,
+      "openalex_works": 4741,
+      "resolved_slots": 10601,
+      "slots": 10786,
+      "authors": 5894,
+      "accepted_orcid_authors": 2446
+    },
+    {
+      "journal": "ECMA",
+      "articles": 1740,
+      "openalex_works": 1671,
+      "resolved_slots": 3332,
+      "slots": 3859,
+      "authors": 2376,
+      "accepted_orcid_authors": 971
+    },
+    {
+      "journal": "JPE",
+      "articles": 1500,
+      "openalex_works": 1494,
+      "resolved_slots": 3082,
+      "slots": 3477,
+      "authors": 2499,
+      "accepted_orcid_authors": 1078
+    },
+    {
+      "journal": "QJE",
+      "articles": 1181,
+      "openalex_works": 1165,
+      "resolved_slots": 2761,
+      "slots": 3085,
+      "authors": 2044,
+      "accepted_orcid_authors": 784
+    },
+    {
+      "journal": "RES",
+      "articles": 1748,
+      "openalex_works": 1724,
+      "resolved_slots": 3838,
+      "slots": 4034,
+      "authors": 2894,
+      "accepted_orcid_authors": 1277
     }
   ],
   "career_by_journal": [

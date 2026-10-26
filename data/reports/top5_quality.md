@@ -1,6 +1,6 @@
 # Top-five dataset report
 
-Generated 2026-10-26T13:55:35+00:00.
+Generated 2026-10-26T13:56:08+00:00.
 
 Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of Political Economy*, *Review of Economic Studies*, and *Econometrica*, 2000–present. AER includes Papers & Proceedings through 2017. Counts are research articles unless stated otherwise.
 
@@ -26,6 +26,18 @@ Scope: *American Economic Review*, *Quarterly Journal of Economics*, *Journal of
 | JPE | 2143 | 1500 | 1 | 15 | 592 | 0 | 0 | 1 | 0 | 1329 |
 | RES | 1832 | 1748 | 8 | 35 | 19 | 0 | 0 | 0 | 0 | 1716 |
 | ECMA | 2602 | 1740 | 25 | 28 | 570 | 180 | 6 | 0 | 30 | 1621 |
+
+## Metadata coverage by journal
+
+| Journal | OpenAlex work coverage | Resolved institution | Accepted ORCID authors |
+|---|---|---|---|
+| AER | 99.0% | 98.3% | 41.5% |
+| QJE | 98.6% | 89.5% | 38.4% |
+| JPE | 99.6% | 88.6% | 43.1% |
+| RES | 98.6% | 95.1% | 44.1% |
+| ECMA | 96.0% | 86.3% | 40.9% |
+
+OpenAlex work coverage is DOI-keyed. Resolved institution includes an OpenAlex institution or a non-empty Crossref byline hint, so it is an upper bound on usable institution evidence. Accepted ORCID authors exclude unverified and rejected links.
 
 ## Career coverage by journal
 
