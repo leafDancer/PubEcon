@@ -2,11 +2,11 @@
 
 - **Product:** EconPub
 - **Version:** 1.0.0
-- **Generated:** 2026-10-26T15:52:57+00:00
-- **Git commit:** 5a6cfd7b63fc5f4ee6dea13186a2ad123c153499
+- **Generated:** 2026-10-26T15:56:11+00:00
+- **Git commit:** 08fc100bbe8a1fa2b991359be9b82c04dc702375
 - **Database:** `data\curated\top5.db`
 - **Database bytes:** 549,416,960
-- **Database SHA-256:** `2c5f89c05b096dd16d743af5dec952bfafd33f714dd932681cab1dd01d77ba62`
+- **Database SHA-256:** `cdedad2fd7f231ef6a1c037e7e3bdf7f9d55dc7437574bf407088e4bc626569e`
 
 ## Headline counts
 
