@@ -383,6 +383,59 @@ def _match_institution(line: str, names: list[str]) -> str | None:
     return None
 
 
+_MONTH = (
+    r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|"
+    r"Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|"
+    r"Dec(?:ember)?)"
+)
+_LEADING_DATE = re.compile(
+    rf"^\s*(?:{_MONTH}\s+)?(?:19|20)\d{{2}}\s*"
+    rf"(?:[-–—]\s*(?:{_MONTH}\s+)?(?:(?:19|20)\d{{2}}|present|current|now))?"
+    rf"\s*[:\-–—]?\s*",
+    re.IGNORECASE,
+)
+
+
+def _strip_leading_date(line: str) -> str:
+    return _LEADING_DATE.sub("", line, count=1).strip()
+
+
+_DATE_ONLY_LINE = re.compile(
+    rf"^\s*(?:{_MONTH}\s+)?(?:19|20)\d{{2}}\s*"
+    rf"(?:[-–—]\s*(?:{_MONTH}\s+)?(?:(?:19|20)\d{{2}}|present|current|now))?"
+    rf"\s*[:\-–—]?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _merge_date_lines(lines: list[str]) -> list[str]:
+    """Join a date-only line to the role/degree line that follows it.
+
+    PDF extraction often puts "July 2003–June 2005:" and "Associate
+    Professor, ..." on separate lines, or splits a date after the section
+    header insertion above.
+    """
+    merged: list[str] = []
+    index = 0
+    while index < len(lines):
+        line = lines[index].strip()
+        next_line = lines[index + 1].strip() if index + 1 < len(lines) else ""
+        if (
+            next_line
+            and _DATE_ONLY_LINE.match(line)
+            and (_DEGREE_RE.search(next_line) or classify_role(next_line)[0])
+            and not _EDUCATION_HEADER.match(next_line)
+            and not _EMPLOYMENT_HEADER.match(next_line)
+            and not _OTHER_HEADER.match(next_line)
+        ):
+            merged.append(f"{line} {next_line}")
+            index += 2
+            continue
+        merged.append(lines[index])
+        index += 1
+    return merged
+
+
 def _extract_years(line: str) -> tuple[int | None, int | None, int]:
     match = _RANGE_RE.search(line)
     if match:
@@ -414,13 +467,22 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
     dates are optional but increase confidence.
     """
     text = text.replace("�", "-").replace("–", "-").replace("—", "-")
-    # Normalize month/year ranges such as 05/2014-07/2017 before year parsing.
+
+    def _expand_short_year(match: re.Match[str]) -> str:
+        year = int(match.group(1))
+        # CVs use both 7/18 (= 2018) and, rarely, 7/98 (= 1998). Top-five
+        # coverage starts in 2000, but employment can start earlier.
+        return str(2000 + year if year <= 30 else 1900 + year)
+
+    # Normalize M/YY and M/YYYY, including open-ended ranges such as "7/18 -".
+    text = re.sub(r"\b(?:1[0-2]|0?[1-9])/(\d{2})\b", _expand_short_year, text)
     text = re.sub(
-        r"\b\d{1,2}/((?:19|20)\d{2})\s*-\s*\d{1,2}/((?:19|20)\d{2})\b",
+        r"\b(?:1[0-2]|0?[1-9])/((?:19|20)\d{2})\s*-\s*"
+        r"(?:1[0-2]|0?[1-9])/((?:19|20)\d{2})\b",
         r"\1-\2",
         text,
     )
-    text = re.sub(r"\b\d{1,2}/((?:19|20)\d{2})\b", r"\1", text)
+    text = re.sub(r"\b(?:1[0-2]|0?[1-9])/((?:19|20)\d{2})\b", r"\1", text)
     # Some CMS pages render a whole CV as one run of text. Add line breaks
     # before section headers and explicit role titles.
     text = re.sub(
@@ -462,6 +524,7 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
                 break
         lines.append(line)
         index += 1
+    lines = _merge_date_lines(lines)
     section: str | None = None
     events: list[dict[str, Any]] = []
     seen: set[tuple[Any, ...]] = set()
@@ -495,7 +558,7 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
             degree = _DEGREE_RE.search(line)
             if not degree:
                 continue
-            title = clean_text(line)[:240]
+            title = clean_text(_strip_leading_date(line))[:240]
             confidence = "high" if institution and start_year else (
                 "medium" if start_year or institution else "low"
             )
@@ -521,9 +584,11 @@ def extract_cv_events(text: str, institution_names: list[str]) -> list[dict[str,
         stage, role_confidence = classify_role(line)
         if stage is None:
             continue
-        # Keep a short role phrase rather than the entire line.
-        title = re.split(r"\s{2,}|,|\b(?:19|20)\d{2}\b", line, maxsplit=1)[0]
-        title = clean_text(title)[:160] or line[:160]
+        # Keep a short role phrase rather than the entire line, and drop a
+        # leading "July 2005-present:" / "2018-" date prefix.
+        title_line = _strip_leading_date(line)
+        title = re.split(r"\s{2,}|,|\b(?:19|20)\d{2}\b", title_line, maxsplit=1)[0]
+        title = clean_text(title)[:160] or clean_text(title_line)[:160] or line[:160]
         confidence = "high" if institution and start_year and (
             is_current or (end_year is not None and end_year != start_year)
         ) else ("medium" if institution or start_year else "low")

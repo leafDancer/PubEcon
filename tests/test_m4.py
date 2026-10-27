@@ -538,6 +538,23 @@ class CVExtractionTests(unittest.TestCase):
         self.assertEqual(len(education), 1)
         self.assertIn("Ph.D.", education[0]["title"])
 
+    def test_compact_and_month_name_year_ranges(self) -> None:
+        text = """
+        EMPLOYMENT
+        7/18 - 6/20 Assistant Professor, Example University
+        July 2005-present: Professor of Economics, Example University
+        """
+        events = extract_cv_events(text, ["Example University"])
+        employment = [event for event in events if event["event_type"] == "employment"]
+        self.assertEqual(len(employment), 2)
+        self.assertEqual(employment[0]["start_year"], 2018)
+        self.assertEqual(employment[0]["end_year"], 2020)
+        self.assertEqual(employment[0]["title"], "Assistant Professor")
+        self.assertEqual(employment[1]["start_year"], 2005)
+        self.assertIsNone(employment[1]["end_year"])
+        self.assertEqual(employment[1]["is_current"], 1)
+        self.assertEqual(employment[1]["title"], "Professor of Economics")
+
 
 class OrcidAuthorAssignmentTests(unittest.TestCase):
     def test_shared_orcid_does_not_violate_unique_constraint(self) -> None:
